@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/Application/">
+    <Project Path="Application/Service.Contracts/Service.Contracts.csproj" />
+    <Project Path="Application/Services/Services.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="Core/ECommerce.Contracts/ECommerce.Contracts.csproj" />
+    <Project Path="Core/Entities/Entities.csproj" />
+    <Project Path="Core/Shared/Shared.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Infrastructure/ECommerce.Repository/ECommerce.Repository.csproj" />
+    <Project Path="Infrastructure/Logger/Logger.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="Presentation/ECommerce.API/ECommerce.API.csproj" />
+    <Project Path="Presentation/ECommerce.Presentation/ECommerce.Presentation.csproj" />
+  </Folder>
+</Solution>

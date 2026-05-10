@@ -1,0 +1,185 @@
+StoreSystem.sln
+│
+├── 🟣 Core (الطبقة المركزية)
+│   │
+│   ├── StoreSystem.Domain/
+│   │   ├── Entities/
+│   │   │   ├── Catalog/
+│   │   │   │   ├── Category.cs
+│   │   │   │   ├── Product.cs
+│   │   │   │   ├── ProductImage.cs
+│   │   │   │   ├── ProductReview.cs
+│   │   │   │   └── Tag.cs
+│   │   │   │
+│   │   │   ├── Cart/
+│   │   │   │   ├── Cart.cs
+│   │   │   │   └── CartItem.cs
+│   │   │   │
+│   │   │   ├── Orders/
+│   │   │   │   ├── Order.cs
+│   │   │   │   ├── OrderItem.cs
+│   │   │   │   ├── Payment.cs
+│   │   │   │   └── ShippingInfo.cs
+│   │   │   │
+│   │   │   ├── Identity/
+│   │   │   │   └── User.cs (يمتد من IdentityUser)
+│   │   │   │
+│   │   │   └── Notifications/
+│   │   │       └── Notification.cs
+│   │   │
+│   │   ├── Enums/
+│   │   │   ├── OrderStatus.cs (Pending, Shipped, Delivered)
+│   │   │   ├── PaymentStatus.cs (Success, Failed)
+│   │   │   ├── PaymentMethod.cs (Visa, PayPal, Cash)
+│   │   │   ├── NotificationType.cs (Email, SMS, Push)
+│   │   │   └── UserType.cs (Admin, Customer) - اختياري
+│   │   │
+│   │   └── ValueObjects/
+│   │       ├── Address.cs
+│   │       ├── Money.cs
+│   │       └── DateRange.cs
+│   │
+│   ├── StoreSystem.Contracts/
+│   │   ├── Repositories/
+│   │   │   ├── IRepositoryBase.cs
+│   │   │   ├── ICategoryRepository.cs
+│   │   │   ├── IProductRepository.cs
+│   │   │   ├── ICartRepository.cs
+│   │   │   ├── IOrderRepository.cs
+│   │   │   ├── IPaymentRepository.cs
+│   │   │   ├── IUserRepository.cs       (لإضافات Identity)
+│   │   │   ├── INotificationRepository.cs
+│   │   │   └── IRepositoryManager.cs    (يوحد كل المستودعات)
+│   │   │
+│   │   └── Services/
+│   │       ├── ICategoryService.cs
+│   │       ├── IProductService.cs
+│   │       ├── ICartService.cs
+│   │       ├── IOrderService.cs
+│   │       ├── IPaymentService.cs
+│   │       ├── IUserService.cs
+│   │       ├── INotificationService.cs
+│   │       └── IServiceManager.cs       (يوحد كل الخدمات)
+│   │
+│   └── StoreSystem.Shared/
+│       ├── DTOs/
+│       │   ├── Catalog/
+│       │   │   ├── CategoryDto.cs
+│       │   │   ├── CreateCategoryDto.cs
+│       │   │   ├── UpdateCategoryDto.cs
+│       │   │   ├── ProductDto.cs
+│       │   │   ├── CreateProductDto.cs
+│       │   │   ├── UpdateProductDto.cs
+│       │   │   └── ProductImageDto.cs
+│       │   │
+│       │   ├── Cart/
+│       │   │   ├── CartDto.cs
+│       │   │   ├── CartItemDto.cs
+│       │   │   ├── AddToCartDto.cs
+│       │   │   └── UpdateCartItemDto.cs
+│       │   │
+│       │   ├── Orders/
+│       │   │   ├── OrderDto.cs
+│       │   │   ├── CreateOrderDto.cs
+│       │   │   ├── OrderItemDto.cs
+│       │   │   ├── PaymentDto.cs
+│       │   │   └── ShippingInfoDto.cs
+│       │   │
+│       │   ├── Identity/
+│       │   │   ├── UserDto.cs
+│       │   │   ├── RegisterDto.cs
+│       │   │   ├── LoginDto.cs
+│       │   │   ├── AuthResponseDto.cs
+│       │   │   └── RefreshTokenDto.cs
+│       │   │
+│       │   └── Notifications/
+│       │       ├── NotificationDto.cs
+│       │       └── CreateNotificationDto.cs
+│       │
+│       ├── Exceptions/
+│       │   ├── NotFoundException.cs
+│       │   ├── BadRequestException.cs
+│       │   ├── OutOfStockException.cs
+│       │   └── UnauthorizedException.cs
+│       │
+│       └── Helpers/
+│           ├── MappingProfile.cs (AutoMapper)
+│           └── IdempotencyHelper.cs
+│
+├── 🟠 Application (طبقة الخدمات)
+│   │
+│   ├── StoreSystem.Services.Contracts/
+│   │   ├── ICategoryService.cs (واجهة)
+│   │   ├── IProductService.cs
+│   │   ├── ICartService.cs
+│   │   ├── IOrderService.cs
+│   │   ├── IPaymentService.cs
+│   │   ├── IUserService.cs
+│   │   ├── INotificationService.cs
+│   │   └── IServiceManager.cs
+│   │
+│   └── StoreSystem.Services/
+│       ├── CategoryService.cs
+│       ├── ProductService.cs
+│       ├── CartService.cs
+│       ├── OrderService.cs (تجميع الطلب من السلة، حساب الإجمالي، تفريغ السلة)
+│       ├── PaymentService.cs
+│       ├── UserService.cs (تطبيق خدمات Identity مع SignInManager, UserManager)
+│       ├── NotificationService.cs
+│       └── ServiceManager.cs (يجمع كل الخدمات)
+│
+├── 🔵 Infrastructure (البنية التحتية)
+│   │
+│   ├── StoreSystem.Repository/
+│   │   ├── Context/
+│   │   │   └── RepositoryContext.cs (يرث من IdentityDbContext<User>)
+│   │   │
+│   │   ├── Repositories/
+│   │   │   ├── RepositoryBase.cs
+│   │   │   ├── CategoryRepository.cs
+│   │   │   ├── ProductRepository.cs
+│   │   │   ├── CartRepository.cs
+│   │   │   ├── OrderRepository.cs
+│   │   │   ├── PaymentRepository.cs
+│   │   │   ├── UserRepository.cs (اختياري)
+│   │   │   ├── NotificationRepository.cs
+│   │   │   └── RepositoryManager.cs (تطبيق IRepositoryManager)
+│   │   │
+│   │   ├── Configurations/
+│   │   │   ├── CategoryConfiguration.cs
+│   │   │   ├── ProductConfiguration.cs
+│   │   │   ├── CartConfiguration.cs
+│   │   │   ├── CartItemConfiguration.cs
+│   │   │   ├── OrderConfiguration.cs
+│   │   │   ├── OrderItemConfiguration.cs
+│   │   │   ├── PaymentConfiguration.cs
+│   │   │   ├── ShippingInfoConfiguration.cs
+│   │   │   └── NotificationConfiguration.cs
+│   │   │
+│   │   └── Migrations/
+│   │       └── (ملفات الهجرة التلقائية)
+│   │
+│   └── StoreSystem.Logger/
+│       ├── LoggerManager.cs (تطبيق ILoggerManager باستخدام NLog أو Serilog)
+│       └── NLog.config (أو appsettings.json)
+│
+└── 🟢 Presentation (طبقة العرض)
+    │
+    ├── StoreSystem.Presentation/
+    │   └── Controllers/
+    │       ├── CategoriesController.cs
+    │       ├── ProductsController.cs
+    │       ├── CartController.cs
+    │       ├── OrdersController.cs
+    │       ├── PaymentsController.cs
+    │       ├── AuthController.cs (تسجيل الدخول، التسجيل، Refresh Token)
+    │       ├── UsersController.cs (للمدير فقط – CRUD)
+    │       └── NotificationsController.cs
+    │
+    └── StoreSystem.WebAPI/
+        ├── Program.cs
+        ├── appsettings.json
+        ├── appsettings.Development.json
+        ├── ServiceExtensions.cs (تسجيل المستودعات، الخدمات، AutoMapper، Identity، JWT)
+        └── Middleware/
+            └── ExceptionHandlingMiddleware.cs
