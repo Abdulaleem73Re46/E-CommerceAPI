@@ -35,19 +35,29 @@ public sealed class CartService : ICartService
         throw new NotImplementedException();
     }
 
-    public Task<CartDto?> GetCartAsync(Guid CartId)
+    public async Task<CartDto?> GetCartAsync(Guid CartId)
     {
-        throw new NotImplementedException();
+       var cart= await _repository.CartRepository.GetCartAsync(CartId,false);
+      var cartdto=_mapper.Map<CartDto>(cart);
+       return cartdto;
+      
+
+
     }
 
-    public Task<CartDto?> GetCartByUserIdAsync(Guid userId)
+    public async Task<CartDto?> GetCartByUserIdAsync(Guid userId)
     {
-        throw new NotImplementedException();
+       var cart=await _repository.CartRepository.GetByUserIdAsync(userId);
+       var cartdto=_mapper.Map<CartDto>(cart);
+       return cartdto;
     }
 
     public Task<IEnumerable<CartItemDto>> GetCartItemsByCartIdAsync(Guid CartId)
     {
-        throw new NotImplementedException();
+      //var cart=_repository.CartRepository.GetCartAsync(CartId,false);
+   // var cartitem=ca
+    
+    throw new NotImplementedException();
     }
 
     public void UpdateCart(CartDto cartDto)
