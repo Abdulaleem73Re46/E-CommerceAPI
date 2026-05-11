@@ -10,16 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.ConfigureServiceManager(); 
-builder.Services.ConfigureRepositoryManager();
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<RepositoryContext>(opt =>
  opt.UseSqlite(builder.Configuration.GetConnectionString("SqlConnection"),op=>op.MigrationsAssembly("Infrastructure"))
 
 );
-
+builder.Services.ConfigureServiceManager(); 
+builder.Services.ConfigureRepositoryManager();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.ConfigureCors();
 
 
 var app = builder.Build();
@@ -32,7 +33,7 @@ var app = builder.Build();
 
 
 app.UseHttpsRedirection();
-
+app.UseCors("Policy");
 app.UseAuthorization();
 
 app.MapControllers();

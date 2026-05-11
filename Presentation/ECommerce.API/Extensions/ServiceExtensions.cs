@@ -20,7 +20,16 @@ public static void  ConfigureRepositoryManager(this IServiceCollection service)=
    
 public static  void ConfigureServiceManager(this IServiceCollection services)=>services.AddScoped<IServiceManager,ServiceManager>(); 
 
+public static void ConfigureCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("Policy",Builder=>
+            
+            Builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        });
 
+    }
 
 
 
