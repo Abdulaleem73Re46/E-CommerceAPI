@@ -1,18 +1,35 @@
+using  API.Extensions;
+using Microsoft.EntityFrameworkCore;
+
+
+
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.ConfigureServiceManager(); 
+builder.Services.ConfigureRepositoryManager();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddDbContext<RepositoryContext>(opt =>
+ opt.UseSqlite(builder.Configuration.GetConnectionString("SqlConnection"),op=>op.MigrationsAssembly("Infrastructure"))
+
+);
+
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+
+
+
+
+
 
 app.UseHttpsRedirection();
 

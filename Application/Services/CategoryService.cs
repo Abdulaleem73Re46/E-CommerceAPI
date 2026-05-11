@@ -1,3 +1,4 @@
+using AutoMapper;
 using Core.Contracts;
 using Core.Shared.DataTransferObjects;
 using Service.Contracts;
@@ -9,17 +10,18 @@ internal sealed class CategoryService : ICategoryService
 {
 
     private readonly IRepositoryManager _repository;
-
-    public CategoryService(IRepositoryManager repository)
+private readonly IMapper _mapper;
+    public CategoryService(IRepositoryManager repository,IMapper mapper)
     {
         _repository=repository;
+        _mapper=mapper;
     }
 
     public async Task<CategoryDto?> CategoryAsync(Guid CategoryId, bool trackChanges){
        
        var category=await _repository.CategoryRepository.GetCategoryAsync(CategoryId,trackChanges);
-       var  
-      return await category;
+       var categorydto=_mapper.Map<CategoryDto>(category);  
+      return  categorydto;
 
     }
 
