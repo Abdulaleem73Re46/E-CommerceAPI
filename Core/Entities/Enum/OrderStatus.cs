@@ -3,7 +3,8 @@
 
 
 
-namespace Core.Enum;
+namespace Core.Enum.OrderStatus;
+
 
 
 public enum OrderStatus{

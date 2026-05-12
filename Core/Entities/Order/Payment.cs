@@ -18,7 +18,7 @@ public class Payment{
 
     public DateTime PayDate{get;set;}
 [Required]
-    public PaymentStatus  Status{get;set;}
+    public PaymentStatus  PayStatus{get;set;}
 
 
 [ForeignKey("OrderId")]

@@ -23,4 +23,15 @@ public class CategoryRepository : RepositoryBase<Category>, ICategoryRepository
     .OrderBy(ca=>ca.Name)
     .ToListAsync();
     public void UpdateCategory(Category Category)=>Update(Category);
+
+    public async Task<Category?> GetCategoryWithProductsAsync(Guid categoryId)
+    {
+        return await FindByCondition(c=>c.CategoryId.Equals(categoryId),false).Include(p=>p.Products).SingleOrDefaultAsync();
+    }
+
+   
+
+
+
+
 }

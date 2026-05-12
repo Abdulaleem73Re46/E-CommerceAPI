@@ -1,18 +1,19 @@
+// Infrastructure/Configurations/UserConfiguration.cs
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Configurations;
+namespace Infrastructure.Configurations;
 
-public class UserConfigurations : IEntityTypeConfiguration<User>
+public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
-    {   
-
-        builder.HasMany(u => u.Orders)
-               .WithOne(o => o.User)
-               .HasForeignKey(o => o.UserId)
-               .OnDelete(DeleteBehavior.Cascade);
-        
+    {
+        builder.Property(u => u.FullName)
+            .IsRequired()
+            .HasMaxLength(50);
+            
+        builder.Property(u => u.Address)
+            .IsRequired();
     }
 }

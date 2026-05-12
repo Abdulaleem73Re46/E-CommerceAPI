@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Core.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Infrastructure.Data;
 
 
 public class RepositoryContext : IdentityDbContext<User>
@@ -20,8 +21,12 @@ public class RepositoryContext : IdentityDbContext<User>
     public DbSet<OrderItem> OrderItems { get; set; }
     
 
-    protected override void OnModelCreating(ModelBuilder builder)
+    
+     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(builder);  
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RepositoryContext).Assembly);   
+        // Apply seed data
+        modelBuilder.Seed();
     }
 }

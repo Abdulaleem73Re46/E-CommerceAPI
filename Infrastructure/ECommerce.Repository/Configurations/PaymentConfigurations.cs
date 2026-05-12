@@ -1,23 +1,18 @@
-
-
+// Infrastructure/Configurations/PaymentConfiguration.cs
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Configurations;
 
-public class PaymentConfigurations : IEntityTypeConfiguration<Payment>
+public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
     public void Configure(EntityTypeBuilder<Payment> builder)
-    {   
-        builder.HasKey(p=>p.PaymentId);
+    {
+        builder.HasKey(p => p.PaymentId);
         
-
-
         builder.HasOne(p => p.Order)
-               .WithOne(o => o.Payment)
-               .HasForeignKey<Payment>(p => p.OrderId)
-               .OnDelete(DeleteBehavior.Cascade);
-        
+            .WithOne(o => o.Payment)
+            .HasForeignKey<Payment>(p => p.OrderId);
     }
 }

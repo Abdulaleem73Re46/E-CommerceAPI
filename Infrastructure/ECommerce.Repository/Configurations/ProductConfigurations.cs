@@ -5,19 +5,32 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Configurations;
 
-    public class ProductConfigurations : IEntityTypeConfiguration<Product>
+   // Infrastructure/Configurations/ProductConfiguration.cs
+using Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+
+
+public class ProductConfiguration : IEntityTypeConfiguration<Product>
+{
+    public void Configure(EntityTypeBuilder<Product> builder)
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
-        {
-            // Configure the Product entity here
-            builder.HasKey(p => p.ProductId);
-            builder.Property(p => p.Name).IsRequired().HasMaxLength(100);
-            builder.Property(p => p.Description).HasMaxLength(500);
-            builder.Property(p => p.Price).HasColumnType("decimal(18,2)");
+        builder.HasKey(p => p.ProductId);
+        
+        builder.Property(p => p.Name)
+            .IsRequired()
+            .HasMaxLength(200);
             
-            // Configure relationships if needed
-            builder.HasOne(p => p.Category)
-                   .WithMany(c => c.Products)
-                   .HasForeignKey(p => p.CategoryId);
-        }
+        builder.Property(p => p.Price)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
+            
+        builder.Property(p => p.Description)
+            .HasMaxLength(700);
+            
+        builder.HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId);
     }
+}

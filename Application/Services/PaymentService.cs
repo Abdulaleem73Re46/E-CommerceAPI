@@ -20,7 +20,7 @@ public sealed class PaymentService : IPaymentService
         _mapper=mapper;
     }
 
-    public Task CreatePaymentAsync(PaymentForCreation paymentForCreation)
+    public Task CreatePaymentAsync(PaymentForCreationDto paymentForCreation)
     {
         throw new NotImplementedException();
     }

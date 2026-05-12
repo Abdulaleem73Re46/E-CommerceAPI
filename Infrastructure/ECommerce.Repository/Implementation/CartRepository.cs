@@ -11,6 +11,7 @@ namespace Repository;
 
 public class CartRepository : RepositoryBase<Cart>, ICartRepository
 {
+      
     public CartRepository(RepositoryContext repository) : base(repository)
     {
     }
@@ -21,6 +22,7 @@ public class CartRepository : RepositoryBase<Cart>, ICartRepository
     // {
     //     throw new NotImplementedException();
     // }
+
 
     
 
@@ -41,6 +43,18 @@ public class CartRepository : RepositoryBase<Cart>, ICartRepository
     //public async Task<Cart?> GetCartWithItemsAsync(Guid userId)=>await FindAll(Cart)
 
     public void UpdateCart(Cart cart)=>Update(cart);
+
+public async Task<Cart?> GetCartWithItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).Include(c=>c.CartItems).ThenInclude(ci=>ci.Product).SingleOrDefaultAsync();
+
+
+  //public async Task<IQueryable<Cart>> GetCartItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).SingleOrDefaultAsync();
+
+
+   
+
+    
+
+
 }
 
 

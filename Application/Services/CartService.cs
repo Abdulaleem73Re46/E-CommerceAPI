@@ -52,16 +52,21 @@ public sealed class CartService : ICartService
        return cartdto;
     }
 
-    public Task<IEnumerable<CartItemDto>> GetCartItemsByCartIdAsync(Guid CartId)
+    public async Task<IEnumerable<CartItemDto?>> GetCartItemsByCartIdAsync(Guid CartId)
     {
       //var cart=_repository.CartRepository.GetCartAsync(CartId,false);
    // var cartitem=ca
     
-    throw new NotImplementedException();
+    var cartitems=await _repository.CartRepository.GetCartWithItemsAsync(CartId);
+  var cartDto=_mapper.Map<IEnumerable<CartItemDto>>(cartitems);
+  return cartDto;
+
     }
 
     public void UpdateCart(CartDto cartDto)
     {
         throw new NotImplementedException();
+         
+        
     }
 }

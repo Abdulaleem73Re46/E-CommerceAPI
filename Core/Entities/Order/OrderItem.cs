@@ -10,7 +10,7 @@ namespace Core.Entities;
 [Table("OrderItems")]
 public class OrderItem{
 
-[Key]
+   [Key]
    public Guid OrderItemId{get;set;}
 [Required]
    public Guid OrderId{get;set;}
@@ -24,7 +24,7 @@ public class OrderItem{
 
 
 [ForeignKey("ProductId")]
-   public ICollection<Product> Products{get;set;}
+   public Product Products{get;set;}
 [ForeignKey("OrderId")]
    public Order Order{get;set;}
 

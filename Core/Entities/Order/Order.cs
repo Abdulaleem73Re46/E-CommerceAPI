@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Core.Enum;
+using Core.Enum.OrderStatus;
 
 namespace Core.Entities;
 
@@ -14,7 +14,7 @@ public class Order
    public Guid OrderId{get;set;}
    [Required]
 
-   public Guid UserId{get;set;}
+   public string  UserId{get;set;}
     
     [Required,Column(TypeName ="decimal(18,2)")]
     public decimal TotalPrice{get;set;}

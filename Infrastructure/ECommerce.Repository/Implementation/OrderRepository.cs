@@ -28,7 +28,7 @@ public class OrderRepository : RepositoryBase<Order>, IOrderRepository
     public async Task<IEnumerable<Order>> GetByStatusAsync(string Orderstatus)=>await FindByCondition(o=>o.Status.Equals(Orderstatus),false)
     .OrderBy(o=>o.OrderDate)
     .ToListAsync();
-    public async Task<Order?> GetOrderWithItemsAsync(Guid Id)=>await FindByCondition(o=>o.OrderId.Equals(Id),false)
+    public async Task<Order?> GetOrderWithItemsAsync(Guid Id)=>await FindByCondition(o=>o.OrderId.Equals(Id),false).Include(oi=>oi.OrderItems)
     .SingleOrDefaultAsync();
 
     public async Task<IEnumerable<Order>> GetUserOrdersAsync(Guid userId, bool trackChanges)=>await FindByCondition(o=>o.UserId.Equals(userId),trackChanges)

@@ -15,5 +15,8 @@ Task<Category> GetCategoryAsync(Guid CategoryId,bool trackChanges);
     void  UpdateCategory(Category Category);
     void DeleteCategory(Category Category);
 
+    Task<Category?> GetCategoryWithProductsAsync(Guid categoryId);
+
+
 
 }
