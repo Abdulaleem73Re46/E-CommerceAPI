@@ -15,11 +15,15 @@ public interface ICartService
      Task<CartDto?>  GetCartAsync(Guid CartId);
 
 
-     Task<bool> DeleteCartByUserIdAsync(Guid userId);
+    Task   DeleteCartByUserId(Guid userId);
 
      Task<bool> DeleteItemAsync(Guid CartId);
      Task<bool> DeleteAllItemAsync(Guid cartId);
-     void UpdateCart(CartDto cartDto);
+     Task  UpdateCart(CartDto cartDto);
+
+     Task IncreaseQuantityAsync(UpdateCartItemQuantityDto cartDto);
+      Task DecreaseQuantityAsync(UpdateCartItemQuantityDto cartDto);
+     
 
      
 

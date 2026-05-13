@@ -11,9 +11,11 @@ namespace Repository;
 
 public class CartRepository : RepositoryBase<Cart>, ICartRepository
 {
-      
+      private readonly RepositoryContext _repository;
+
     public CartRepository(RepositoryContext repository) : base(repository)
     {
+      _repository=repository;
     }
 
     public void  AddAsync(Cart cart)=> Create(cart);
@@ -26,7 +28,7 @@ public class CartRepository : RepositoryBase<Cart>, ICartRepository
 
     
 
-    public void DeleteItem(Cart cart)=>Delete(cart);
+    public void  DeleteItem(Cart cart)=> Delete(cart);
 
     //public Task<bool> ExistsAsync(Guid userId)
 
@@ -43,16 +45,26 @@ public class CartRepository : RepositoryBase<Cart>, ICartRepository
     //public async Task<Cart?> GetCartWithItemsAsync(Guid userId)=>await FindAll(Cart)
 
     public void UpdateCart(Cart cart)=>Update(cart);
-
+/// <summary>
+/// the Include It use in Navigations Prop
+/// </summary>
+/// <param name="cartId"></param>
+/// <returns></returns>
 public async Task<Cart?> GetCartWithItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).Include(c=>c.CartItems).ThenInclude(ci=>ci.Product).SingleOrDefaultAsync();
 
+public async Task<CartItem?> GetCartItemAsync(Guid cartid,Guid productId)=>await _repository.CartItems.FirstOrDefaultAsync(ci=>ci.CartId==cartid && ci.ProductId==productId);
 
-  //public async Task<IQueryable<Cart>> GetCartItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).SingleOrDefaultAsync();
+
+public void DeleteItem(CartItem cartItem)=>_repository.CartItems.Remove(cartItem);
 
 
-   
 
-    
+    //public async Task<IQueryable<Cart>> GetCartItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).SingleOrDefaultAsync();
+
+
+
+
+
 
 
 }

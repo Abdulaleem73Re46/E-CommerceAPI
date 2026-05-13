@@ -17,5 +17,7 @@ public record CategoryForCreationDto
 
 public record CategoryForUpdateDto
 {
+    public Guid CategoryId{get;init;}
+
     public string Name { get; init; }
 }

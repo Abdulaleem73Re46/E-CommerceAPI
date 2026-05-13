@@ -30,4 +30,20 @@ public record CartItemDto
 public record CartItemForUpdateDto
 {
     public int Quantity { get; init; }
+   
+
+}
+
+public record UpdateCartItemQuantityDto
+{
+    
+   public Guid CartId{get;init;}
+
+   public Guid ProductId{get;init;}
+
+   public int Quantity{get;init;}
+
+
+
+
 }

@@ -12,7 +12,7 @@ public interface ICategoryService
     
     Task<IEnumerable<ProductDto?>> GetProductsDtosAsync(Guid CategoryId,bool trackChanges);
 
-    Task<CategoryForCreationDto> CreateCategoryDtoAsync(CategoryForCreationDto categoryForCreation,bool trackChanges);
+    Task<CategoryDto> CreateCategoryDtoAsync(CategoryForCreationDto categoryForCreation,bool trackChanges);
 
     void UpdateCategory(CategoryForUpdateDto categoryForUpdateDto);
 

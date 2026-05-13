@@ -1,4 +1,6 @@
 
+using System.Configuration.Assemblies;
+using System.Runtime.CompilerServices;
 using AutoMapper;
 using Core.Contracts;
 using Core.Shared.DataTransferObjects;
@@ -20,13 +22,47 @@ public sealed class CartService : ICartService
         _mapper=mapper;
     }
 
+    public async  Task DecreaseQuantityAsync(UpdateCartItemQuantityDto cartDto)
+    {
+       
+        var item=await _repository.CartRepository.GetCartItemAsync(cartDto.CartId,cartDto.ProductId);
+        if(item is null)
+        {
+            throw new Exception("Item not Found!");
+
+        }
+        if (item.Quantity > 1)
+        {
+             item.Quantity--;
+        }
+        else
+        {
+            _repository.CartRepository.DeleteItem(item);
+
+
+        }
+        
+        await _repository.SaveAsync();
+
+
+       
+    }
+
+    
+
     public Task<bool> DeleteAllItemAsync(Guid cartId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteCartByUserIdAsync(Guid userId)
+    public  Task  DeleteCartByUserId(Guid userId)
     {
+
+        // var cart= _repository.CartRepository.GetByUserIdAsync(userId);
+        // if(cart is null)throw new Exception("Not Found");
+
+        // _repository.CartRepository.DeleteItem(cart);
+
         throw new NotImplementedException();
     }
 
@@ -63,10 +99,36 @@ public sealed class CartService : ICartService
 
     }
 
-    public void UpdateCart(CartDto cartDto)
+    public async Task IncreaseQuantityAsync(UpdateCartItemQuantityDto cartDto)
     {
-        throw new NotImplementedException();
+    var cart=await _repository.CartRepository.GetCartItemAsync(cartDto.CartId,cartDto.ProductId);
+    if (cart is null)throw new Exception("Not Fond");
+
+    cart.Quantity++;
+  
+  await _repository.SaveAsync();
+
+
+    }
+
+    public async Task UpdateCart(CartDto cartDto)
+    {
+
+        var cart=await _repository.CartRepository.GetCartAsync(cartDto.CartId,false);
+        if(cart is null)throw new Exception("Not Found");
+
+      _mapper.Map(cartDto,cart);
+   
+      await _repository.SaveAsync();
+
+
+        //_repository.CartRepository.UpdateCart()
          
         
     }
+
+    // Task ICartService.DeleteCartByUserId(Guid userId)
+    // {
+    //     throw new NotImplementedException();
+    // }
 }
