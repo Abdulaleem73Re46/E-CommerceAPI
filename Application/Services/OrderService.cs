@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using Core.Contracts;
+using Core.Entities;
 using Core.Shared.DataTransferObjects;
 using Service.Contracts;
 
@@ -23,10 +24,19 @@ public sealed class OrderService : IOrderService
         
     }
 
-    public Task<OrderForCreationDto> CreateOrderAsync(OrderDto order, bool trackChanges)
-    {
-        throw new NotImplementedException();
+    public async Task<OrderForCreationDto> CreateOrderAsync(string userId,OrderDto order, bool trackChanges)
+    { 
+          var Orderentity=_mapper.Map<Order>(order);
+          _repository.OrderRepository.CreateOrder(userId,Orderentity);
+         await  _repository.SaveAsync();
+          var entityToReturn=_mapper.Map<OrderForCreationDto>(Orderentity);
+          return entityToReturn;
+
+
+         
     }
+
+   
 
     public async Task<IEnumerable<OrderItemDto>> GetAllOrderItemsByOrderId(Guid orderId, bool trackChanges)
     {
@@ -40,28 +50,34 @@ public sealed class OrderService : IOrderService
          throw new NotImplementedException();
     }
 
-    public Task<OrderDto?> GetOrderByIdAsync(Guid OrderId, bool trackChanges)
+    public async Task<OrderDto?> GetOrderByIdAsync(Guid OrderId, bool trackChanges)
     {
-    //    var order= _repository.OrderRepository.GetByIdAsync(OrderId,trackChanges);
-    //    var orderdto=_mapper.Map<OrderDto>(order);
-    //    return orderdto;
-    throw new NotImplementedException();
+       var order=await _repository.OrderRepository.GetByIdAsync(OrderId,trackChanges);
+       var orderdto=_mapper.Map<OrderDto>(order);
+       return orderdto;
+
 
     }
 
-    public Task<IEnumerable<OrderDto>> GetOrdersByUserId(Guid userId, bool trackChanges)
+    public async Task<IEnumerable<OrderDto>> GetOrdersByUserId(Guid userId, bool trackChanges)
     {
-        throw new NotImplementedException();
+          var order=await _repository.OrderRepository.GetUserOrdersAsync(userId,trackChanges);
+          var orderDtos=_mapper.Map<IEnumerable<OrderDto>>(order);
+          return orderDtos;
     }
 
-    public Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId, bool trackChanges)
+    public async Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId, bool trackChanges)
     {
-        // var order=_repository.OrderRepository.GetOrderWithItemsAsync(orderId);
-        // var payment=_repository.PaymentRepository.GetPaymentAsync(orderId,trackChanges);
-        // throw new NotImplementedException();
+        
+        var payment=await _repository.PaymentRepository.GetPaymentAsync(orderId,trackChanges);
+
+        var paymentDto=_mapper.Map<PaymentDto>(payment);
+
+        return paymentDto;
+      
 
 
 
-        throw new NotImplementedException();
+        
     }
 }

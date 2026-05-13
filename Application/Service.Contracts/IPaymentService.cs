@@ -15,7 +15,7 @@ public interface IPaymentService
    Task<IEnumerable<PaymentDto>> GetPaymentsByUserIdAsync(Guid userId);
 
    Task CreatePaymentAsync(PaymentForCreationDto paymentForCreation);
-   void DeletePayment(Guid paymentId);
+   Task DeletePayment(Guid paymentId);
 
     
 }

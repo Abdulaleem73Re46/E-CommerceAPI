@@ -37,10 +37,10 @@ public class OrderRepository : RepositoryBase<Order>, IOrderRepository
 
     public void UpdateOrder(Order Order)=>Update(Order);
 
-    // public void CreateOrder(Order Order)
-    // {
-    //     throw new NotImplementedException();
-    // }
+    public void CreateOrder(Order order)
+    {
+        Create(order);
+    }
 
     // public void DeleteOrder(Order Order)
     // {

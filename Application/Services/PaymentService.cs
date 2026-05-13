@@ -25,14 +25,19 @@ public sealed class PaymentService : IPaymentService
         throw new NotImplementedException();
     }
 
-    public void DeletePayment(Guid paymentId)
+    public async Task DeletePayment(Guid paymentId)
     {
-        throw new NotImplementedException();
+
+         var entity=await _repository.PaymentRepository.GetPaymentAsync(paymentId,false);
+        _repository.PaymentRepository.DeletePayment(entity);
+
     }
 
-    public Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId)
+    public async Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId)
     {
-        throw new NotImplementedException();
+       var pay=await _repository.PaymentRepository.GetPaymentByOrderIdAsync(orderId);
+       var entityToreturn=_mapper.Map<PaymentDto>(pay);
+       return entityToreturn;
     }
 
     public Task<IEnumerable<PaymentDto>> GetPaymentsByUserIdAsync(Guid userId)

@@ -16,6 +16,7 @@ Task<IEnumerable<Order>> GetByStatusAsync(string Orderstatus);
  // Task   AddAsync(Order Order);
     void  UpdateOrder(Order Order);
     void DeleteOrder(Order Order);
+    void CreateOrder(string userId,Order Order);
 //Task<bool> ExistsAsync(Guid id);
 
 }
