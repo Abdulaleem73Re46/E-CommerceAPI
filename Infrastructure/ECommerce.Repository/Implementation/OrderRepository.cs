@@ -34,8 +34,7 @@ public class OrderRepository : RepositoryBase<Order>, IOrderRepository
     .SingleOrDefaultAsync();
 
     public async Task<IEnumerable<Order>> GetUserOrdersAsync(string userId, bool trackChanges)=>await FindByCondition(o=>o.UserId.Equals(userId),trackChanges)
-    .OrderBy(o=>o.OrderDate)
-    .ToListAsync();
+    .OrderBy(o=>o.OrderDate).ToListAsync();
 
     public void UpdateOrder(Order Order)=>Update(Order);
 

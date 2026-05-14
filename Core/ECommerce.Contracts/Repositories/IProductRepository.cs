@@ -16,5 +16,7 @@ Task<Product> GetProductAsync(Guid ProductId,bool trackChanges);
     void DeleteProduct(Product Product);
     Task DeleteProductsByCategoryId(Guid Id);
 
+    Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(Guid id,bool trackChanges); 
+
 
 }

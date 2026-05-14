@@ -11,7 +11,7 @@ public interface IProductService
     Task<ProductDto?> GetProductByIdAsync(Guid productId);
 
 
-    Task<IEnumerable<ProductDto?>> GetProductsByAsync(bool trackChanges);
+    Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid CatId,bool trackChanges);
 
    Task<int> UpdateQuantityAsync(ProductDto productDto);
    Task  DeleteProduct(Guid Id);

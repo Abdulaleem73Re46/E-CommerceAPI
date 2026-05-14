@@ -45,8 +45,7 @@ public class PaymentRepository : RepositoryBase<Payment>, IPaymentRepository
         }
         
         await _repo.AddAsync(payment);
-        // Note: Don't return anything - this is async void effectively (Task)
-        // If you need to save changes, add this line:
+       
          await _repo.SaveChangesAsync();
     }
 

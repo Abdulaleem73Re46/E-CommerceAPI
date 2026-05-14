@@ -53,6 +53,11 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
        Update(Product);
     }
 
+  public async Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(Guid Id,bool trackChanges)
+    {
+        var prods=await FindByCondition(c=>c.CategoryId.Equals(Id),trackChanges).OrderBy(p=>p.Name).ToListAsync();
+  return prods;
 
+    }
 
 }

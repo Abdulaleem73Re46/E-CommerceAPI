@@ -55,13 +55,41 @@ _repository.ProductRepository.DeleteProduct(pro);
 
         return _mapper.Map<ProductDto>(product);
     }
-    public Task<IEnumerable<ProductDto?>> GetProductsByAsync(bool trackChanges)
+    public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid catId,bool trackChanges)
     {
-        throw new NotImplementedException();
+        var products=await _repository.ProductRepository.GetProductsByCategoryIdAsync(catId,trackChanges);
+        if (products is null )throw new Exception();
+
+      return _mapper.Map<IEnumerable<ProductDto>>(products);
+
+        
+          
     }
 
-    public Task<int> UpdateQuantityAsync(ProductDto productDto)
+    public async Task<int> UpdateQuantityAsync(ProductDto productDto)
     {
-        throw new NotImplementedException();
+      var product=await _repository.ProductRepository.GetProductAsync(productDto.ProductId,trackChanges:false);
+     if(product is null )throw new KeyNotFoundException($"Product with ID {productDto.ProductId} is not found ");
+   
+     product.StockQuantity=productDto.StockQuantity;
+     _repository.ProductRepository.UpdateProduct(product);
+  await    _repository.SaveAsync();
+  return product.StockQuantity;
+
+
+
     }
+
+public async Task<PaymentDto>   GetPaymentDtoAsync(Guid Id,bool trackChanges)
+    {
+        var payment=await _repository.PaymentRepository.GetPaymentAsync(Id,trackChanges);
+        var paydto=_mapper.Map<PaymentDto>(payment);
+        return paydto;
+
+
+
+
+    }
+
+
 }
