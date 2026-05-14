@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\Application\Service.Contracts\Service.Contracts.csproj" />
     <ProjectReference Include="..\..\Core\ECommerce.Contracts\ECommerce.Contracts.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ECommerce.Repository\ECommerce.Repository.csproj" />
+    <ProjectReference Include="..\ECommerce.Presentation\ECommerce.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

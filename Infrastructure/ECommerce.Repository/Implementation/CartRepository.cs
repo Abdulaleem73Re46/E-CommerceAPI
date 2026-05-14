@@ -52,7 +52,7 @@ public class CartRepository : RepositoryBase<Cart>, ICartRepository
 /// <returns></returns>
 public async Task<Cart?> GetCartWithItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).Include(c=>c.CartItems).ThenInclude(ci=>ci.Product).SingleOrDefaultAsync();
 
-public async Task<CartItem?> GetCartItemAsync(Guid cartid,Guid productId)=>await _repository.CartItems.FirstOrDefaultAsync(ci=>ci.CartId==cartid && ci.ProductId==productId);
+public async Task<CartItem> GetCartItemAsync(Guid cartid,Guid productId)=>await _repository.CartItems.FirstOrDefaultAsync(ci=>ci.CartId==cartid && ci.ProductId==productId);
 
 
 public void DeleteItem(CartItem cartItem)=>_repository.CartItems.Remove(cartItem);

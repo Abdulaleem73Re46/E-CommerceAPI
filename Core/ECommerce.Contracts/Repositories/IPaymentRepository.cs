@@ -13,6 +13,8 @@ public interface IPaymentRepository{
   //void  CreatePayment(Payment Payment);
    void  UpdatePayment(Payment Payment);
     void DeletePayment(Payment Payment);
+    Task<Payment> GetPaymentByOrderIdAsync(Guid id);
+    
 
 
 

@@ -14,8 +14,8 @@ public interface IProductService
     Task<IEnumerable<ProductDto?>> GetProductsByAsync(bool trackChanges);
 
    Task<int> UpdateQuantityAsync(ProductDto productDto);
-   void DeleteProduct(Guid Id);
-   void DeleteProductsByCategory(Guid categoryId);
+   Task  DeleteProduct(Guid Id);
+   Task DeleteProductsByCategory(Guid categoryId);
     
 
 

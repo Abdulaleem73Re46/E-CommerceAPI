@@ -50,25 +50,45 @@ public sealed class CartService : ICartService
 
     
 
-    public Task<bool> DeleteAllItemAsync(Guid cartId)
+    public async Task<bool> DeleteAllItemAsync(Guid cartId)
     {
-        throw new NotImplementedException();
+       var cart=await _repository.CartRepository.GetCartAsync(cartId,false);
+     if(cart is null)throw new KeyNotFoundException($"Cart with Id {cartId} is not found ");
+   foreach(var item in cart.CartItems)
+        {
+            
+_repository.CartRepository.DeleteItem(cart);
+        }
+
+
+
+await _repository.SaveAsync();
+return true;
     }
 
-    public  Task  DeleteCartByUserId(Guid userId)
+    public  async Task  DeleteCartByUserId(Guid userId)
     {
 
-        // var cart= _repository.CartRepository.GetByUserIdAsync(userId);
-        // if(cart is null)throw new Exception("Not Found");
+        var cart=await  _repository.CartRepository.GetByUserIdAsync(userId);
+        if(cart is null)throw new KeyNotFoundException($"Cart for UserId {userId} is not found ");
 
-        // _repository.CartRepository.DeleteItem(cart);
 
-        throw new NotImplementedException();
+        _repository.CartRepository.DeleteItem(cart);
+
+       
     }
 
-    public Task<bool> DeleteItemAsync(Guid CartId)
+    public async Task<bool> DeleteItemAsync(Guid CartId)
     {
-        throw new NotImplementedException();
+            var item=await _repository.CartRepository.GetCartAsync(CartId,trackChanges:false);
+            if(item is null)throw new KeyNotFoundException($"Cart with  {CartId} is not found ");
+     
+       _repository.CartRepository.DeleteItem(item);
+       await _repository.SaveAsync();
+       return true;
+
+
+       
     }
 
     public async Task<CartDto?> GetCartAsync(Guid CartId)
@@ -88,7 +108,7 @@ public sealed class CartService : ICartService
        return cartdto;
     }
 
-    public async Task<IEnumerable<CartItemDto?>> GetCartItemsByCartIdAsync(Guid CartId)
+    public async Task<IEnumerable<CartItemDto>> GetCartItemsByCartIdAsync(Guid CartId)
     {
       //var cart=_repository.CartRepository.GetCartAsync(CartId,false);
    // var cartitem=ca

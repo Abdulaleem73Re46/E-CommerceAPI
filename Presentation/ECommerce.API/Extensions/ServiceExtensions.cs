@@ -103,3 +103,25 @@ public static void ConfigureExceptionHandler(this WebApplication app)
 
 }
 
+
+
+
+// public class ExceptionMiddleWare
+// {
+    
+// private readonly RequestDelegate _next;
+// private readonly IWebHostEnvironment env;
+// public ExceptionMiddleWare(IWebHostEnvironment web)
+// {
+//     env=web;
+    
+// }
+
+
+
+
+
+
+
+// }
+

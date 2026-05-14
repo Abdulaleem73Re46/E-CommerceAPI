@@ -29,9 +29,6 @@ public class CategoryRepository : RepositoryBase<Category>, ICategoryRepository
         return await FindByCondition(c=>c.CategoryId.Equals(categoryId),false).Include(p=>p.Products).SingleOrDefaultAsync();
     }
 
+    //public async Task<IEnumerable<Product?>> GetProductsAsync(Guid CategoryId, bool trackChanges)=>await FindByCondition(c=>c.CategoryId.Equals(CategoryId),trackChanges).Include(p=>p.Products).ToListAsync();
    
-
-
-
-
 }

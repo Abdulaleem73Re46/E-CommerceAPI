@@ -1,5 +1,5 @@
 
-
+using  Core.Shared.DataTransferObjects;
 namespace Service.Contracts;
 
 

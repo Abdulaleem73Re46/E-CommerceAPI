@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using Core.Contracts;
+using Core.Entities;
 using Core.Shared.DataTransferObjects;
 using Service.Contracts;
 
@@ -20,23 +21,46 @@ public sealed class PaymentService : IPaymentService
         _mapper=mapper;
     }
 
-    public Task CreatePaymentAsync(PaymentForCreationDto paymentForCreation)
+    public async Task CreatePaymentAsync(PaymentForCreationDto paymentForCreation)
     {
-        throw new NotImplementedException();
+        var entityToSave=_mapper.Map<Payment>(paymentForCreation);
+        await _repository.PaymentRepository.AddAsync(entityToSave);
+        await _repository.SaveAsync();
+        
+        
     }
 
-    public void DeletePayment(Guid paymentId)
+    public async Task DeletePayment(Guid paymentId)
     {
-        throw new NotImplementedException();
+
+         var entity=await _repository.PaymentRepository.GetPaymentAsync(paymentId,false);
+        _repository.PaymentRepository.DeletePayment(entity);
+
     }
 
-    public Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId)
+    public async Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId)
     {
-        throw new NotImplementedException();
+       var pay=await _repository.PaymentRepository.GetPaymentByOrderIdAsync(orderId);
+       var entityToreturn=_mapper.Map<PaymentDto>(pay);
+       return entityToreturn;
     }
 
-    public Task<IEnumerable<PaymentDto>> GetPaymentsByUserIdAsync(Guid userId)
+    public async Task<IEnumerable<PaymentDto>> GetPaymentsByUserIdAsync(string  userId)
     {
-        throw new NotImplementedException();
+         var order=await _repository.OrderRepository.GetUserOrdersAsync(userId,false);
+         var payIds=order.Select(o=>o.OrderId);
+         
+    var payments=new List<Payment>();
+    foreach (var orderId in payIds )
+    {
+var payment=await _repository.PaymentRepository.GetPaymentByOrderIdAsync(orderId);
+if(payment!=null)
+    payments.Add(payment);
+        
+    }
+var payDtos=_mapper.Map<IEnumerable<PaymentDto>>(payments);
+return payDtos;
+    
+    
     }
 }

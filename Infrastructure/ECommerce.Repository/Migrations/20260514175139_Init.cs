@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace ECommerce.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -259,15 +257,17 @@ namespace ECommerce.Repository.Migrations
                 name: "CartItems",
                 columns: table => new
                 {
-                    CartItemId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     CartId = table.Column<Guid>(type: "TEXT", nullable: false),
                     ProductId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ProductId1 = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartItems", x => x.CartItemId);
+                    table.PrimaryKey("PK_CartItems", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CartItems_Carts_CartId",
                         column: x => x.CartId,
@@ -312,25 +312,6 @@ namespace ECommerce.Repository.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "Address", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[,]
-                {
-                    { "AAAAAAAA-BBBB-CCCC-DDDD-000000000001", 0, "123 Main Street, New York, NY 10001", "11111111-1111-1111-1111-111111111111", "john.doe@email.com", true, "John Doe", true, null, "JOHN.DOE@EMAIL.COM", "JOHN.DOE@EMAIL.COM", "AQAAAAIAAYagAAAAEP0Z0XG0bQn1HkxNVwOMj0vFhJYz0iM6w7ZWxHsiZ0XdHj8z0YwVPqP0Km0Pz0Vz0Q==", "123-456-7890", true, "SECURITYSTAMP000000000000000000001", false, "john.doe@email.com" },
-                    { "AAAAAAAA-BBBB-CCCC-DDDD-000000000002", 0, "456 Oak Avenue, Los Angeles, CA 90001", "22222222-2222-2222-2222-222222222222", "jane.smith@email.com", true, "Jane Smith", true, null, "JANE.SMITH@EMAIL.COM", "JANE.SMITH@EMAIL.COM", "AQAAAAIAAYagAAAAEP0Z0XG0bQn1HkxNVwOMj0vFhJYz0iM6w7ZWxHsiZ0XdHj8z0YwVPqP0Km0Pz0Vz0Q==", "098-765-4321", true, "SECURITYSTAMP000000000000000000002", false, "jane.smith@email.com" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Categories",
-                columns: new[] { "CategoryId", "CreatedAt", "Name" },
-                values: new object[,]
-                {
-                    { new Guid("a1888458-6436-4c23-93ef-21ec4cd96972"), new DateTime(2026, 5, 12, 18, 3, 40, 935, DateTimeKind.Utc).AddTicks(6357), "Books" },
-                    { new Guid("fa259fd7-771e-42f5-9774-0b0d96cb0ecd"), new DateTime(2026, 5, 12, 18, 3, 40, 935, DateTimeKind.Utc).AddTicks(6355), "Clothing" },
-                    { new Guid("fcd7872b-00db-47ed-b451-c27dbd9d92ec"), new DateTime(2026, 5, 12, 18, 3, 40, 935, DateTimeKind.Utc).AddTicks(6082), "Electronics" }
                 });
 
             migrationBuilder.CreateIndex(

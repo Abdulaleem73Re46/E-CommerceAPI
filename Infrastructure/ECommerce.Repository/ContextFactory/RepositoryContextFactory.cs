@@ -22,7 +22,7 @@ public class RepositoryContextFactory : IDesignTimeDbContextFactory<RepositoryCo
             .Build();
 
         var builder = new DbContextOptionsBuilder<RepositoryContext>();
-        var connectionString = config.GetConnectionString("SqlConnection") ?? "Data Source=ECommerce.db";
+        var connectionString = config.GetConnectionString("SqlConnection") ?? "Data Source=ECommercedb.db";
         
         builder.UseSqlite(connectionString, 
             m => m.MigrationsAssembly("ECommerce.Repository"));
