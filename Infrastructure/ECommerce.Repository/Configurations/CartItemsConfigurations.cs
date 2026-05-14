@@ -12,7 +12,7 @@ public class CartItemConfigurations : IEntityTypeConfiguration<CartItem>
     public void Configure(EntityTypeBuilder<CartItem> builder)
     {
         builder.ToTable("CartItems");
-        builder.HasKey(ct=>ct.CartItemId);
+        builder.HasKey(ct=>ct.Id);
         builder.Property(c=>c.Quantity).IsRequired().HasDefaultValue(1);
     builder.HasIndex(ci=>new{ci.CartId,ci.ProductId});
 

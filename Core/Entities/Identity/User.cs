@@ -10,14 +10,15 @@ namespace Core.Entities;
 public class User:IdentityUser
 {
    [Required]
-   public string Address{get;set;}
-   [MaxLength(50)]
-   [Required]
-   public string FullName{get;set;}
+    public string Address { get; set; } = string.Empty;
     
-
-   public ICollection<Order> Orders{get;set;} 
-public Cart Cart{get;set;} 
+    [MaxLength(50)]
+    [Required]
+    public string FullName { get; set; } = string.Empty;
+    
+    public ICollection<Order> Orders { get; set; } = new List<Order>();
+    
+    public Cart Cart { get; set; } = null!; 
 
 
 }

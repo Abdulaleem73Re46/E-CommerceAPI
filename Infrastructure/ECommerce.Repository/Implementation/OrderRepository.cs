@@ -6,8 +6,10 @@ namespace Repository;
 
 public class OrderRepository : RepositoryBase<Order>, IOrderRepository
 {
+        private readonly RepositoryContext _repo;
     public OrderRepository(RepositoryContext repository) : base(repository)
     {
+        _repo=repository;
     }
 
    // public async Task AddAsync(Order Order)=>await Create(order);
@@ -31,15 +33,27 @@ public class OrderRepository : RepositoryBase<Order>, IOrderRepository
     public async Task<Order?> GetOrderWithItemsAsync(Guid Id)=>await FindByCondition(o=>o.OrderId.Equals(Id),false).Include(oi=>oi.OrderItems)
     .SingleOrDefaultAsync();
 
-    public async Task<IEnumerable<Order>> GetUserOrdersAsync(Guid userId, bool trackChanges)=>await FindByCondition(o=>o.UserId.Equals(userId),trackChanges)
+    public async Task<IEnumerable<Order>> GetUserOrdersAsync(string userId, bool trackChanges)=>await FindByCondition(o=>o.UserId.Equals(userId),trackChanges)
     .OrderBy(o=>o.OrderDate)
     .ToListAsync();
 
     public void UpdateOrder(Order Order)=>Update(Order);
 
-    public void CreateOrder(Order order)
-    {
+    public void CreateOrder(string userId,Order order)
+    {  
+        order.UserId=userId;
+        
         Create(order);
+    }
+
+    public async Task<Order> GetUserOrderIdAsync(string userId, bool trackChanges)
+    {
+       
+       var order=await _repo.Orders.FindAsync(userId);
+       return order;
+
+
+       
     }
 
     // public void DeleteOrder(Order Order)

@@ -4,37 +4,50 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
-
-
 public class PaymentRepository : RepositoryBase<Payment>, IPaymentRepository
-{
+{ 
+    private readonly RepositoryContext _repo;
+    
     public PaymentRepository(RepositoryContext repository) : base(repository)
     {
+        _repo = repository;
     }
-
-   
 
     public void DeletePayment(Payment Payment)
     {
-       Delete(Payment);
+        Delete(Payment);
     }
 
     public async Task<Payment> GetPaymentAsync(Guid PaymentId, bool trackChanges)
     {
-        return await FindByCondition(p=>p.PaymentId.Equals(PaymentId),trackChanges)
-        .SingleOrDefaultAsync();
-
+        return await FindByCondition(p => p.PaymentId.Equals(PaymentId), trackChanges)
+            .SingleOrDefaultAsync();
+        
     }
 
     public async Task<IEnumerable<Payment>> GetPaymentsAsync(bool trackChanges)
     {
-    return await FindAll(trackChanges).OrderBy(p=>p.PayDate).ToListAsync();
+        return await FindAll(trackChanges).OrderBy(p => p.PayDate).ToListAsync();
     }
 
-  public  Task  AddAsync(Payment payment)
+    public async Task<Payment> GetPaymentByOrderIdAsync(Guid id)
     {
+        return await FindByCondition(p => p.OrderId.Equals(id), false)
+            .FirstOrDefaultAsync();
+    }
+
+    // This matches the interface - returns Task, not Task<Payment>
+    public async Task AddAsync(Payment payment)
+    {
+        if (payment == null)
+        {
+            throw new ArgumentNullException(nameof(payment));
+        }
         
-        throw new NotImplementedException();
+        await _repo.AddAsync(payment);
+        // Note: Don't return anything - this is async void effectively (Task)
+        // If you need to save changes, add this line:
+         await _repo.SaveChangesAsync();
     }
 
     public void UpdatePayment(Payment Payment)

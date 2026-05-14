@@ -22,21 +22,39 @@ public sealed class ProductService : IProductService
         _mapper=mapper;
     }
 
-    public void DeleteProduct(Guid Id)
+    public async Task DeleteProduct(Guid Id)
     {
-        throw new NotImplementedException();
+       var pro= await _repository.ProductRepository.GetProductAsync(Id,false);
+       if(pro is null)throw new Exception("Not found");
+_repository.ProductRepository.DeleteProduct(pro);
+      
+
+
+
     }
 
-    public void DeleteProductsByCategory(Guid categoryId)
+    public async Task DeleteProductsByCategory(Guid categoryId)
     {
-        throw new NotImplementedException();
+       var cate=await _repository.CategoryRepository.GetCategoryAsync(categoryId,false);
+       if(cate is null)throw new Exception("not Found");
+       
+       await _repository.ProductRepository.DeleteProductsByCategoryId(categoryId);
+       await _repository.SaveAsync();
+
+
     }
 
-    public Task<ProductDto?> GetProductByIdAsync(Guid productId)
+   public async Task<ProductDto?> GetProductByIdAsync(Guid productId)
     {
-        throw new NotImplementedException();
-    }
+        // Option 1: If product might not exist, throw an exception
+        var product = await _repository.ProductRepository.GetProductAsync(productId, false);
+        if (product == null)
+        {
+            throw new Exception($"Product with ID {productId} not found");
+        }
 
+        return _mapper.Map<ProductDto>(product);
+    }
     public Task<IEnumerable<ProductDto?>> GetProductsByAsync(bool trackChanges)
     {
         throw new NotImplementedException();

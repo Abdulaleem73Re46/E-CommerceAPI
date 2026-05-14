@@ -12,7 +12,7 @@ public interface IPaymentService
 {
     
    Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId);
-   Task<IEnumerable<PaymentDto>> GetPaymentsByUserIdAsync(Guid userId);
+   Task<IEnumerable<PaymentDto>> GetPaymentsByUserIdAsync(string userId);
 
    Task CreatePaymentAsync(PaymentForCreationDto paymentForCreation);
    Task DeletePayment(Guid paymentId);

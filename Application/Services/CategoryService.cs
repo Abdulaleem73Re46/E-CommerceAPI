@@ -40,10 +40,10 @@ private readonly IMapper _mapper;
 
     public async Task<IEnumerable<CategoryDto>> GetCategoriesAsync(bool trackChanges)
     {
-        var caties=await _repository.CategoryRepository.GetCategorysAsync(trackChanges);
-      if(caties is null)throw new Exception("Not Found ");
-      var catiesToReturn=_mapper.Map<IEnumerable<CategoryDto>>(caties);
-      return catiesToReturn;
+        var categoryes=await _repository.CategoryRepository.GetCategorysAsync(trackChanges);
+      if(categoryes is null)throw new Exception("Not Found ");
+      var categoryesToReturn=_mapper.Map<IEnumerable<CategoryDto>>(categoryes);
+      return categoryesToReturn;
 
     }
 
@@ -63,16 +63,15 @@ private readonly IMapper _mapper;
 
     public async Task UpdateCategory(CategoryForUpdateDto categoryForUpdateDto)
     {
-            // var cati=await _repository.CategoryRepository.GetCategoryAsync(categoryForUpdateDto.CategoryId,false);
-            
-            // _mapper.Map(categoryForUpdateDto,cati);
+            var category=await _repository.CategoryRepository.GetCategoryAsync(categoryForUpdateDto.CategoryId,false);
+               if (category == null)
+        throw new KeyNotFoundException($"Category with ID {categoryForUpdateDto.CategoryId} not found");
+            _mapper.Map(categoryForUpdateDto,category);
 
-            // await _repository.CategoryRepository.UpdateCategory()
-            throw new NotImplementedException();
+           _repository.CategoryRepository.UpdateCategory(category);
+           await _repository.SaveAsync();
+          
     }
 
-    void ICategoryService.UpdateCategory(CategoryForUpdateDto categoryForUpdateDto)
-    {
-        throw new NotImplementedException();
-    }
+   
 }

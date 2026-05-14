@@ -3,6 +3,7 @@
 using AutoMapper;
 using Core.Contracts;
 using Core.Entities;
+using Core.Enum.OrderStatus;
 using Core.Shared.DataTransferObjects;
 using Service.Contracts;
 
@@ -24,13 +25,19 @@ public sealed class OrderService : IOrderService
         
     }
 
-    public async Task<OrderForCreationDto> CreateOrderAsync(string userId,OrderDto order, bool trackChanges)
-    { 
-          var Orderentity=_mapper.Map<Order>(order);
-          _repository.OrderRepository.CreateOrder(userId,Orderentity);
-         await  _repository.SaveAsync();
-          var entityToReturn=_mapper.Map<OrderForCreationDto>(Orderentity);
-          return entityToReturn;
+public async Task<OrderForCreationDto> CreateOrderAsync(string userId, OrderDto order, bool trackChanges)
+{
+    var orderEntity = _mapper.Map<Order>(order);
+    orderEntity.UserId = userId;
+    orderEntity.OrderDate = DateTime.UtcNow;
+    orderEntity.Status = OrderStatus.Pending;
+    
+    _repository.OrderRepository.CreateOrder(userId, orderEntity);
+    await _repository.SaveAsync();
+    
+    var entityToReturn = _mapper.Map<OrderForCreationDto>(orderEntity);
+    return entityToReturn;
+
 
 
          
@@ -45,9 +52,11 @@ public sealed class OrderService : IOrderService
             return orderitems;
     }
 
-    public Task<IEnumerable<OrderDto>> GetAllOrdersAsync(bool trackChanges)
+    public async Task<IEnumerable<OrderDto>> GetAllOrdersAsync(bool trackChanges)
     {
-         throw new NotImplementedException();
+     var orders=await _repository.OrderRepository.GetAllAsync();
+     var orderDto=_mapper.Map<IEnumerable<OrderDto>>(orders);
+     return orderDto;
     }
 
     public async Task<OrderDto?> GetOrderByIdAsync(Guid OrderId, bool trackChanges)
@@ -59,7 +68,7 @@ public sealed class OrderService : IOrderService
 
     }
 
-    public async Task<IEnumerable<OrderDto>> GetOrdersByUserId(Guid userId, bool trackChanges)
+    public async Task<IEnumerable<OrderDto>> GetOrdersByUserId(string userId, bool trackChanges)
     {
           var order=await _repository.OrderRepository.GetUserOrdersAsync(userId,trackChanges);
           var orderDtos=_mapper.Map<IEnumerable<OrderDto>>(order);

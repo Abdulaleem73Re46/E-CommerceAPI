@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Core.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Infrastructure.Data;
+namespace Repository;
 
 
 public class RepositoryContext : IdentityDbContext<User>
@@ -27,6 +28,6 @@ public class RepositoryContext : IdentityDbContext<User>
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RepositoryContext).Assembly);   
         // Apply seed data
-        modelBuilder.Seed();
+       // modelBuilder.Seed();
     }
 }

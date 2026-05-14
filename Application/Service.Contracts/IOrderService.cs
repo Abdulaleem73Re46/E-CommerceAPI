@@ -8,11 +8,11 @@ namespace Service.Contracts;
 
 public interface IOrderService
 {
-    Task<OrderDto> GetOrderByIdAsync(Guid OrderId,bool trackChanges);
+    Task<OrderDto?> GetOrderByIdAsync(Guid OrderId,bool trackChanges);
 
 
     Task<IEnumerable<OrderDto>> GetAllOrdersAsync(bool trackChanges);
-    Task<IEnumerable<OrderDto>> GetOrdersByUserId(Guid userId,bool trackChanges);
+    Task<IEnumerable<OrderDto>> GetOrdersByUserId(string userId,bool trackChanges);
    
    Task<IEnumerable<OrderItemDto>> GetAllOrderItemsByOrderId(Guid orderId,bool trackChanges);
 

@@ -4,14 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Repository;
 
 #nullable disable
 
 namespace ECommerce.Repository.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20260512181721_InitialCreateData")]
-    partial class InitialCreateData
+    [Migration("20260514175139_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,8 +40,11 @@ namespace ECommerce.Repository.Migrations
 
             modelBuilder.Entity("Core.Entities.CartItem", b =>
                 {
-                    b.Property<Guid>("CartItemId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("AddedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CartId")
@@ -57,7 +61,10 @@ namespace ECommerce.Repository.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(1);
 
-                    b.HasKey("CartItemId");
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
@@ -84,26 +91,6 @@ namespace ECommerce.Repository.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = new Guid("c1a2b3c4-d5e6-4f70-8901-234567890abc"),
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Electronics"
-                        },
-                        new
-                        {
-                            CategoryId = new Guid("d2b3c4d5-e6f7-4a80-9012-345678901bcd"),
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Clothing"
-                        },
-                        new
-                        {
-                            CategoryId = new Guid("e3c4d5e6-f7a8-4b90-0123-456789012cde"),
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Books"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Order", b =>
@@ -130,40 +117,6 @@ namespace ECommerce.Repository.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderId = new Guid("1a2b3c4d-5e6f-4a70-8901-abcdef123456"),
-                            OrderDate = new DateTime(2025, 1, 15, 10, 30, 0, 0, DateTimeKind.Utc),
-                            Status = 4,
-                            TotalPrice = 724.98m,
-                            UserId = "a1b2c3d4-e5f6-4a70-8901-000000000001"
-                        },
-                        new
-                        {
-                            OrderId = new Guid("2b3c4d5e-6f7a-4b80-9012-bcdef1234567"),
-                            OrderDate = new DateTime(2025, 3, 20, 14, 45, 0, 0, DateTimeKind.Utc),
-                            Status = 1,
-                            TotalPrice = 1389.98m,
-                            UserId = "a1b2c3d4-e5f6-4a70-8901-000000000001"
-                        },
-                        new
-                        {
-                            OrderId = new Guid("3c4d5e6f-7a8b-4c90-0123-cdef12345678"),
-                            OrderDate = new DateTime(2025, 2, 10, 9, 15, 0, 0, DateTimeKind.Utc),
-                            Status = 4,
-                            TotalPrice = 114.98m,
-                            UserId = "b2c3d4e5-f6a7-4b80-9012-000000000002"
-                        },
-                        new
-                        {
-                            OrderId = new Guid("4d5e6f7a-8b9c-4d01-1234-def123456789"),
-                            OrderDate = new DateTime(2025, 5, 5, 16, 0, 0, 0, DateTimeKind.Utc),
-                            Status = 0,
-                            TotalPrice = 49.99m,
-                            UserId = "b2c3d4e5-f6a7-4b80-9012-000000000002"
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.OrderItem", b =>
@@ -191,64 +144,6 @@ namespace ECommerce.Repository.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            OrderItemId = new Guid("0a1b2c3d-0001-4a70-8901-000000000001"),
-                            OrderId = new Guid("1a2b3c4d-5e6f-4a70-8901-abcdef123456"),
-                            PriceAtPurchase = 699.99m,
-                            ProductId = new Guid("a1b2c3d4-e5f6-4a70-8901-1234567890ab"),
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            OrderItemId = new Guid("0a1b2c3d-0002-4a70-8901-000000000002"),
-                            OrderId = new Guid("1a2b3c4d-5e6f-4a70-8901-abcdef123456"),
-                            PriceAtPurchase = 24.99m,
-                            ProductId = new Guid("c3d4e5f6-a7b8-4c90-0123-3456789012cd"),
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            OrderItemId = new Guid("0a1b2c3d-0003-4a70-8901-000000000003"),
-                            OrderId = new Guid("2b3c4d5e-6f7a-4b80-9012-bcdef1234567"),
-                            PriceAtPurchase = 1299.99m,
-                            ProductId = new Guid("b2c3d4e5-f6a7-4b80-9012-2345678901bc"),
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            OrderItemId = new Guid("0a1b2c3d-0004-4a70-8901-000000000004"),
-                            OrderId = new Guid("2b3c4d5e-6f7a-4b80-9012-bcdef1234567"),
-                            PriceAtPurchase = 89.99m,
-                            ProductId = new Guid("d4e5f6a7-b8c9-4d01-1234-4567890123de"),
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            OrderItemId = new Guid("0a1b2c3d-0005-4a70-8901-000000000005"),
-                            OrderId = new Guid("3c4d5e6f-7a8b-4c90-0123-cdef12345678"),
-                            PriceAtPurchase = 24.99m,
-                            ProductId = new Guid("c3d4e5f6-a7b8-4c90-0123-3456789012cd"),
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            OrderItemId = new Guid("0a1b2c3d-0006-4a70-8901-000000000006"),
-                            OrderId = new Guid("3c4d5e6f-7a8b-4c90-0123-cdef12345678"),
-                            PriceAtPurchase = 49.99m,
-                            ProductId = new Guid("e5f6a7b8-c9d0-4e12-2345-5678901234ef"),
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            OrderItemId = new Guid("0a1b2c3d-0007-4a70-8901-000000000007"),
-                            OrderId = new Guid("4d5e6f7a-8b9c-4d01-1234-def123456789"),
-                            PriceAtPurchase = 49.99m,
-                            ProductId = new Guid("e5f6a7b8-c9d0-4e12-2345-5678901234ef"),
-                            Quantity = 1
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Payment", b =>
@@ -275,40 +170,6 @@ namespace ECommerce.Repository.Migrations
                         .IsUnique();
 
                     b.ToTable("Payments");
-
-                    b.HasData(
-                        new
-                        {
-                            PaymentId = new Guid("afcefe3a-5b81-4e95-b06a-111111111111"),
-                            OrderId = new Guid("1a2b3c4d-5e6f-4a70-8901-abcdef123456"),
-                            PayDate = new DateTime(2025, 1, 15, 10, 35, 0, 0, DateTimeKind.Utc),
-                            PayMethod = 0,
-                            PayStatus = 1
-                        },
-                        new
-                        {
-                            PaymentId = new Guid("bfcefe3a-5b81-4e95-b06a-222222222222"),
-                            OrderId = new Guid("2b3c4d5e-6f7a-4b80-9012-bcdef1234567"),
-                            PayDate = new DateTime(2025, 3, 20, 14, 50, 0, 0, DateTimeKind.Utc),
-                            PayMethod = 1,
-                            PayStatus = 1
-                        },
-                        new
-                        {
-                            PaymentId = new Guid("cfcefe3a-5b81-4e95-b06a-333333333333"),
-                            OrderId = new Guid("3c4d5e6f-7a8b-4c90-0123-cdef12345678"),
-                            PayDate = new DateTime(2025, 2, 10, 9, 20, 0, 0, DateTimeKind.Utc),
-                            PayMethod = 0,
-                            PayStatus = 1
-                        },
-                        new
-                        {
-                            PaymentId = new Guid("dfcefe3a-5b81-4e95-b06a-444444444444"),
-                            OrderId = new Guid("4d5e6f7a-8b9c-4d01-1234-def123456789"),
-                            PayDate = new DateTime(2025, 5, 5, 16, 5, 0, 0, DateTimeKind.Utc),
-                            PayMethod = 1,
-                            PayStatus = 0
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.Product", b =>
@@ -341,62 +202,6 @@ namespace ECommerce.Repository.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            ProductId = new Guid("a1b2c3d4-e5f6-4a70-8901-1234567890ab"),
-                            CategoryId = new Guid("c1a2b3c4-d5e6-4f70-8901-234567890abc"),
-                            Description = "Latest smartphone with advanced features and high-resolution camera",
-                            Name = "Smartphone X1",
-                            Price = 699.99m,
-                            StockQuantity = 50
-                        },
-                        new
-                        {
-                            ProductId = new Guid("b2c3d4e5-f6a7-4b80-9012-2345678901bc"),
-                            CategoryId = new Guid("c1a2b3c4-d5e6-4f70-8901-234567890abc"),
-                            Description = "Powerful laptop for professionals with 15-inch display and long battery life",
-                            Name = "Laptop Pro 15",
-                            Price = 1299.99m,
-                            StockQuantity = 25
-                        },
-                        new
-                        {
-                            ProductId = new Guid("c3d4e5f6-a7b8-4c90-0123-3456789012cd"),
-                            CategoryId = new Guid("d2b3c4d5-e6f7-4a80-9012-345678901bcd"),
-                            Description = "Comfortable 100% cotton t-shirt available in multiple colors",
-                            Name = "Cotton T-Shirt",
-                            Price = 24.99m,
-                            StockQuantity = 200
-                        },
-                        new
-                        {
-                            ProductId = new Guid("d4e5f6a7-b8c9-4d01-1234-4567890123de"),
-                            CategoryId = new Guid("d2b3c4d5-e6f7-4a80-9012-345678901bcd"),
-                            Description = "Premium quality designer jeans with modern fit and style",
-                            Name = "Designer Jeans",
-                            Price = 89.99m,
-                            StockQuantity = 75
-                        },
-                        new
-                        {
-                            ProductId = new Guid("e5f6a7b8-c9d0-4e12-2345-5678901234ef"),
-                            CategoryId = new Guid("e3c4d5e6-f7a8-4b90-0123-456789012cde"),
-                            Description = "Comprehensive guide to C# programming from basics to advanced topics",
-                            Name = "C# Programming Guide",
-                            Price = 49.99m,
-                            StockQuantity = 100
-                        },
-                        new
-                        {
-                            ProductId = new Guid("f6a7b8c9-d0e1-4f23-3456-6789012345fa"),
-                            CategoryId = new Guid("e3c4d5e6-f7a8-4b90-0123-456789012cde"),
-                            Description = "Complete guide to modern web development with ASP.NET Core",
-                            Name = "Web Development Mastery",
-                            Price = 39.99m,
-                            StockQuantity = 80
-                        });
                 });
 
             modelBuilder.Entity("Core.Entities.User", b =>
@@ -470,46 +275,6 @@ namespace ECommerce.Repository.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "a1b2c3d4-e5f6-4a70-8901-000000000001",
-                            AccessFailedCount = 0,
-                            Address = "123 Main Street, New York, NY 10001",
-                            ConcurrencyStamp = "a0b1c2d3-e4f5-6789-abcd-ef0123456789",
-                            Email = "john.doe@email.com",
-                            EmailConfirmed = true,
-                            FullName = "John Doe",
-                            LockoutEnabled = true,
-                            NormalizedEmail = "JOHN.DOE@EMAIL.COM",
-                            NormalizedUserName = "JOHN.DOE@EMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEP0Z0XG0bQn1HkxNVwOMj0vFhJYz0iM6w7ZWxHsiZ0XdHj8z0YwVPqP0Km0Pz0Vz0Q==",
-                            PhoneNumber = "123-456-7890",
-                            PhoneNumberConfirmed = true,
-                            SecurityStamp = "7QJZ0XG0BQN1HKXNVWOMJ0VFHJYZ0IM6W7ZWXHSIZ0XDHJ8Z0YWV",
-                            TwoFactorEnabled = false,
-                            UserName = "john.doe@email.com"
-                        },
-                        new
-                        {
-                            Id = "b2c3d4e5-f6a7-4b80-9012-000000000002",
-                            AccessFailedCount = 0,
-                            Address = "456 Oak Avenue, Los Angeles, CA 90001",
-                            ConcurrencyStamp = "b1c2d3e4-f5a6-7890-bcde-f12345678901",
-                            Email = "jane.smith@email.com",
-                            EmailConfirmed = true,
-                            FullName = "Jane Smith",
-                            LockoutEnabled = true,
-                            NormalizedEmail = "JANE.SMITH@EMAIL.COM",
-                            NormalizedUserName = "JANE.SMITH@EMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEP0Z0XG0bQn1HkxNVwOMj0vFhJYz0iM6w7ZWxHsiZ0XdHj8z0YwVPqP0Km0Pz0Vz0Q==",
-                            PhoneNumber = "098-765-4321",
-                            PhoneNumberConfirmed = true,
-                            SecurityStamp = "8RKZ1YH1CRP2ILYOWXPNK1VGKIZA1JN7X8AXYITJ1YEIK8A1ZXW",
-                            TwoFactorEnabled = false,
-                            UserName = "jane.smith@email.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
