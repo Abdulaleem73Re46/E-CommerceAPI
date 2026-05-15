@@ -25,7 +25,8 @@ public interface ICartService
       Task DecreaseQuantityAsync(UpdateCartItemQuantityDto cartDto);
      
 
-     
+     Task<CartItemDto> AddCartItemByCartIdAsync(Guid CartId,CartItemForCreation cartitemdto);
+
 
 
 
