@@ -18,6 +18,6 @@ public interface ICartRepository{
     Task<Cart?> GetCartWithItemsAsync(Guid cartId);
    //Task<IQueryable<CartItem>> GetCartItemsAsync(Guid cartId);
 
-   Task<CartItem> GetCartItemAsync(Guid cartid,Guid poductId);
+   Task<CartItem?> GetCartItemAsync(Guid cartid,Guid poductId);
 
 }
