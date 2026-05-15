@@ -8,7 +8,7 @@ public interface ICartRepository{
   Task<Cart> GetCartAsync(Guid CartId,bool trackChanges);
 
   Task<IEnumerable<Cart>> GetCartsAsync(bool trackChanges);
-  Task<Cart?> GetByUserIdAsync(Guid userId);
+  Task<Cart?> GetByUserIdAsync(string userId);
   //Task<Cart?> GetCartWithItemsAsync(Guid userId);// it does Include for CartItems And Products 
   void    AddAsync(Cart cart);
     void  UpdateCart(Cart cart);
@@ -19,5 +19,10 @@ public interface ICartRepository{
    //Task<IQueryable<CartItem>> GetCartItemsAsync(Guid cartId);
 
    Task<CartItem?> GetCartItemAsync(Guid cartid,Guid poductId);
+
+ Task<IEnumerable<CartItem>> GetCartItemsByCartIdAsync(Guid cartId);
+ Task AddCartItemAsync(CartItem cartItem);
+ Task UpdateCartItemAsync(CartItem cartItem);
+
 
 }

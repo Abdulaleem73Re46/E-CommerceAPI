@@ -36,11 +36,15 @@ public record CartItemDto
     public Guid CartItemId { get; init; }
     public Guid CartId { get; init; }
     public Guid ProductId { get; init; }
+    public decimal UnitPrice { get; init; }
     public int Quantity { get; init; }
+
 }
 
 public record CartItemForUpdateDto
 {
+
+  public Guid Id{get;init;}
     public int Quantity { get; init; }
    
 

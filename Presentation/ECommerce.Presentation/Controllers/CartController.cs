@@ -1,6 +1,8 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
+using Core.Shared.DataTransferObjects;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 
 namespace ECommerce.Presentation;
@@ -43,12 +45,12 @@ public async Task<IActionResult> GetCartItems(Guid cartId)
     }
 
 [HttpPost("{cartId:guid}/items")]
-public async Task<IActionResult> AddCartItem(Guid cartId, [FromBody] CartItemCreateDto cartItemDto)
+public async Task<IActionResult> AddCartItem(Guid cartId, [FromBody] CartItemForCreation cartItemDto)
 {
     if (cartItemDto.Quantity <= 0)
         return BadRequest("Quantity must be greater than 0");
     
-    var cartItem = await _service.CartService.AddCartItemAsync(cartId, cartItemDto);
+    var cartItem = await _service.CartService.AddCartItemByCartIdAsync(cartId, cartItemDto);
     return CreatedAtAction(nameof(GetCartItems), new { cartId }, cartItem);
 }
 

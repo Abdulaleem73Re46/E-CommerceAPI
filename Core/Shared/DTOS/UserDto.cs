@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Core.Shared.DataTransferObjects;
 
 
@@ -30,7 +32,7 @@ public record UserForRegisterDto
 
     public required string Email { get; init; }
     public required string Address { get; init; }
-[MaxLength(
+
     public required string Password { get; init; }
 }       
 

@@ -57,6 +57,26 @@ public async Task<CartItem> GetCartItemAsync(Guid cartid,Guid productId)=>await 
 
 public void DeleteItem(CartItem cartItem)=>_repository.CartItems.Remove(cartItem);
 
+    public async Task<Cart?> GetByUserIdAsync(string userId)=>await FindByCondition(c=>c.UserId.Equals(userId),false).SingleOrDefaultAsync();
+
+    
+
+    public async  Task<IEnumerable<CartItem>> GetCartItemsByCartIdAsync(Guid cartId)=> await _repository.CartItems.Where(c=>c.CartId==cartId).ToListAsync();
+
+
+
+    public async Task AddCartItemAsync(CartItem cartItem)
+    {
+       await _repository.CartItems.AddAsync(cartItem);
+        await _repository.SaveChangesAsync();
+    }
+
+    public async Task UpdateCartItemAsync(CartItem cartItem)
+    {
+        _repository.CartItems.Update(cartItem);
+        await _repository.SaveChangesAsync();
+    }
+
 
 
     //public async Task<IQueryable<Cart>> GetCartItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).SingleOrDefaultAsync();
