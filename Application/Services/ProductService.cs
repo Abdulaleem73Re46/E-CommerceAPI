@@ -92,4 +92,85 @@ public async Task<PaymentDto>   GetPaymentDtoAsync(Guid Id,bool trackChanges)
     }
 
 
+
+public async Task<ProductDto> CreateProductAsync(CreateProductDto productDto){
+
+
+
+_var productEntity=mapper.Map<Product>(productDto);
+
+productEntity.ProductId=Guid.NewGuid();
+await _repository.ProductRepository.CreateProduct(productEntity);
+await _repository.SaveAsync();
+
+return _mapper.Map<ProductDto>(productEntity);
+
+
+
+
+} 
+
+public async 
+Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto){
+
+
+var product=await _repository.ProductRepository.GetProductAsync(productId,false);
+if(product is null)throw new KeyNotFoundException($"Product with id {productId} not found") ;
+
+
+
+var productEntity=_mapper.Map<Product>(productDto);
+_repository.ProductRepository.UpdateProduct(product);
+    await _repository.SaveAsync();
+    
+    return _mapper.Map<ProductDto>(product);
+
+
+
+} 
+
+
+
+
+
+/*
+
+
+
+public record CreateProductDto
+{
+    public string Name { get; init; }
+    public string Description { get; init; }
+    public decimal Price { get; init; }
+    public int StockQuantity { get; init; }
+    public Guid? CategoryId { get; init; }
+}
+
+public record UpdateProductDto
+{
+    public string Name { get; init; }
+    public string Description { get; init; }
+    public decimal Price { get; init; }
+    public int StockQuantity { get; init; }
+    public Guid? CategoryId { get; init; }
+}
+
+
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
 }
