@@ -8,6 +8,18 @@ public record CartDto
     public Guid UserId { get; init; }
     public ICollection<CartItemDto?> CartItems { get; init; }
 }
+public record CartItemForCreation{
+
+public Guid ProductId{get;init;} 
+public int Quantity {get;init;} 
+
+
+
+
+
+
+} 
+
 
 public record CartForCreationDto
 {
