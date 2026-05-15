@@ -17,6 +17,8 @@ public interface IProductService
    Task  DeleteProduct(Guid Id);
    Task DeleteProductsByCategory(Guid categoryId);
     
+Task<ProductDto> CreateProductAsync(CreateProductDto productDto);
+Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto);
 
 
     
