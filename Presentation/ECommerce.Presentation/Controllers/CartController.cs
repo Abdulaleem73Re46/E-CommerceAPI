@@ -42,6 +42,15 @@ public async Task<IActionResult> GetCartItems(Guid cartId)
         return Ok(cartitems);
     }
 
+[HttpPost("{cartId:guid}/items")]
+public async Task<IActionResult> AddCartItem(Guid cartId, [FromBody] CartItemCreateDto cartItemDto)
+{
+    if (cartItemDto.Quantity <= 0)
+        return BadRequest("Quantity must be greater than 0");
+    
+    var cartItem = await _service.CartService.AddCartItemAsync(cartId, cartItemDto);
+    return CreatedAtAction(nameof(GetCartItems), new { cartId }, cartItem);
+}
 
 
 
