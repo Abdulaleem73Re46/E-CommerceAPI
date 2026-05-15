@@ -49,6 +49,55 @@ public sealed class CartService : ICartService
     }
 
     
+public async Task<CartItemDto> AddCartItemByCartIdAsync(Guid CartId, CartItemForCreationDto cartitemdto) {
+
+
+var cart=await _repository.CartRepository.GetCartAsync(CartId,false);
+if(cart is null) throw new KeyNotFoundException($"Cart with Id{cartId} is not found");
+
+var product=await _repository.ProductRepository.GetProductAsync(Cartitemdto.ProductId, false) ;
+
+
+if(product=null)throw new KeyNotFoundException($"Product with id{cartitemdto.ProductId}is not found");
+
+
+var productExist=cart.CartItems?.FirstOrDefault(ci=>ci.ProductId==cartitemdto.ProductId);
+if(productExist!=null){
+
+productExist.Quantity+=cartitemdto.Quantity;
+
+_repository.CartRepository.UpdateCart(cart);
+
+
+}
+
+else{
+
+var cartitem=new CartItem{
+
+Id=Guid.NewGuid(), 
+CartId=CartId, 
+ProductId=cartitemdto.ProductId,
+Quantity=cartitemdto.Quantity,
+UnitPrice=product.Price,
+
+
+} ;
+
+await _repository.CartRepository.AddAsync(cartitem);
+
+} 
+
+
+await _repository.SaveAsync();
+ var updatedItem = await _repository.CartRepository.GetCartItemAsync(cartId, cartItemDto.ProductId);
+    return _mapper.Map<CartItemDto>(updatedItem);
+
+
+} 
+
+
+
 
     public async Task<bool> DeleteAllItemAsync(Guid cartId)
     {
