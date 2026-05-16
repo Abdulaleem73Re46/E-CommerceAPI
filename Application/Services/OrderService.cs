@@ -25,23 +25,77 @@ public sealed class OrderService : IOrderService
         
     }
 
-public async Task<OrderForCreationDto> CreateOrderAsync(string userId, OrderDto order, bool trackChanges)
-{
-    var orderEntity = _mapper.Map<Order>(order);
-    orderEntity.UserId = userId;
-    orderEntity.OrderDate = DateTime.UtcNow;
-    orderEntity.Status = OrderStatus.Pending;
+// public async Task<OrderForCreationDto> CreateOrderAsync(string userId, OrderForCreationDto order, bool trackChanges)
+// {
+//     var orderEntity = _mapper.Map<Order>(order);
+//     orderEntity.UserId = userId;
+//     orderEntity.OrderDate = DateTime.UtcNow;
+//     orderEntity.Status = OrderStatus.Pending;
     
-    _repository.OrderRepository.CreateOrder(userId, orderEntity);
-    await _repository.SaveAsync();
+//     _repository.OrderRepository.CreateOrder(userId, orderEntity);
+//     await _repository.SaveAsync();
     
-    var entityToReturn = _mapper.Map<OrderForCreationDto>(orderEntity);
-    return entityToReturn;
+//     var entityToReturn = _mapper.Map<OrderForCreationDto>(orderEntity);
+//     return entityToReturn;
 
 
 
          
+//     }
+
+public async Task<OrderDto> CreateOrderAsync(string userId, OrderForCreationDto orderDto, bool trackChanges)
+{
+   
+    var orderEntity = new Order
+    {
+        OrderId = Guid.NewGuid(),
+        UserId = userId,
+        TotalPrice =0.0m,
+        OrderDate = DateTime.UtcNow,
+        Status = OrderStatus.Pending,
+        OrderItems = new List<OrderItem>()
+    };
+    
+    
+    foreach (var itemDto in orderDto.OrderItems)
+    {
+      
+        var product = await _repository.ProductRepository.GetProductAsync(itemDto.ProductId, false);
+        if (product == null)
+            throw new KeyNotFoundException($"Product with ID {itemDto.ProductId} not found");
+        
+        var orderItem = new OrderItem
+        {
+            OrderItemId = Guid.NewGuid(),
+            OrderId = orderEntity.OrderId,
+            ProductId = itemDto.ProductId,
+            Quantity = itemDto.Quantity,
+            PriceAtPurchase = product.Price
+        };
+        orderEntity.TotalPrice+=orderItem.PriceAtPurchase*orderItem.Quantity;
+
+        orderEntity.OrderItems.Add(orderItem);
+        
+        // Update product stock
+        product.StockQuantity -= itemDto.Quantity;
+        if (product.StockQuantity < 0)
+            throw new InvalidOperationException($"Insufficient stock for product {product.Name}");
+        
+        _repository.ProductRepository.UpdateProduct(product);
     }
+    
+    // Save order
+    _repository.OrderRepository.CreateOrder(userId, orderEntity);
+    await _repository.SaveAsync();
+    
+    // Return the created order
+    var entityToReturn = _mapper.Map<OrderDto>(orderEntity);
+    return entityToReturn;
+}
+
+
+
+
 
    
 

@@ -10,6 +10,7 @@ namespace ECommerce.Presentation;
 
 
 [Route("api/carts")]
+
 [ApiController]
  public class CartController : ControllerBase
 {
@@ -30,7 +31,7 @@ public async Task<IActionResult> GetCart(Guid cartId)
         return Ok(cart);
     }
     
-[HttpGet("user/{userId:string}")]
+[HttpGet("user/{userId}")]
 public async Task<IActionResult> GetCartByUserId(string userId)
     {
         var cart=await _service.CartService.GetCartByUserIdAsync(userId);

@@ -19,7 +19,7 @@ public interface IOrderService
    Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId,bool trackChanges);
 
 
-   Task<OrderForCreationDto> CreateOrderAsync(string userId,OrderDto order,bool trackChanges);
+   Task<OrderDto> CreateOrderAsync(string userId,OrderForCreationDto order,bool trackChanges);
 
    
 

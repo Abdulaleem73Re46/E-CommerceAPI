@@ -28,7 +28,7 @@ public class MappingProfile : Profile
         CreateMap<Order, OrderDto>().ReverseMap();
         CreateMap<OrderItem, OrderItemDto>().ReverseMap();
         CreateMap<OrderForCreationDto, Order>();
-        CreateMap<OrderItemForCreationDto, OrderItem>();
+      //  CreateMap<OrderItemForCreationDto, OrderItem>();
         
         // Payment mappings
         CreateMap<Payment, PaymentDto>().ReverseMap();
@@ -36,5 +36,16 @@ public class MappingProfile : Profile
         
         // User mappings
         CreateMap<User, UserDto>().ReverseMap();
+
+
+//CreateMap<OrderItem, OrderItemDto>();
+//CreateMap<OrderItemForCreationDto, OrderItem>();
+//CreateMap<OrderForCreationDto, Order>();
+
+//CreateMap<OrderForCreationDto, Order>();
+//CreateMap<OrderItemForCreationDto, OrderItem>();
+// CreateMap<Order, OrderDto>();
+
+
     }
 }

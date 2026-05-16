@@ -3,6 +3,7 @@
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using Core.Contracts;
+using Core.Entities;
 using Core.Shared.DataTransferObjects;
 using Service.Contracts;
 
@@ -27,6 +28,8 @@ public sealed class ProductService : IProductService
        var pro= await _repository.ProductRepository.GetProductAsync(Id,false);
        if(pro is null)throw new Exception("Not found");
 _repository.ProductRepository.DeleteProduct(pro);
+await _repository.SaveAsync();
+
       
 
 
@@ -80,16 +83,7 @@ _repository.ProductRepository.DeleteProduct(pro);
 
     }
 
-public async Task<PaymentDto>   GetPaymentDtoAsync(Guid Id,bool trackChanges)
-    {
-        var payment=await _repository.PaymentRepository.GetPaymentAsync(Id,trackChanges);
-        var paydto=_mapper.Map<PaymentDto>(payment);
-        return paydto;
 
-
-
-
-    }
 
 
 
@@ -97,10 +91,10 @@ public async Task<ProductDto> CreateProductAsync(CreateProductDto productDto){
 
 
 
-_var productEntity=mapper.Map<Product>(productDto);
+ var productEntity=_mapper.Map<Product>(productDto);
 
 productEntity.ProductId=Guid.NewGuid();
-await _repository.ProductRepository.CreateProduct(productEntity);
+ _repository.ProductRepository.CreateProduct(productEntity);
 await _repository.SaveAsync();
 
 return _mapper.Map<ProductDto>(productEntity);
@@ -110,8 +104,7 @@ return _mapper.Map<ProductDto>(productEntity);
 
 } 
 
-public async 
-Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto){
+public async   Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto){
 
 
 var product=await _repository.ProductRepository.GetProductAsync(productId,false);
@@ -120,10 +113,10 @@ if(product is null)throw new KeyNotFoundException($"Product with id {productId} 
 
 
 var productEntity=_mapper.Map<Product>(productDto);
-_repository.ProductRepository.UpdateProduct(product);
+_repository.ProductRepository.UpdateProduct(productEntity);
     await _repository.SaveAsync();
     
-    return _mapper.Map<ProductDto>(product);
+    return _mapper.Map<ProductDto>(productEntity);
 
 
 

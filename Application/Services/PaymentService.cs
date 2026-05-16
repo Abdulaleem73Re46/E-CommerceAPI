@@ -45,6 +45,16 @@ public sealed class PaymentService : IPaymentService
        return entityToreturn;
     }
 
+    public async Task<PaymentDto> GetPaymentDtoAsync(Guid Id, bool trackChanges)
+    {
+     var pay=await  _repository.PaymentRepository.GetPaymentAsync(Id,trackChanges);
+     var payDto=_mapper.Map<PaymentDto>(pay);
+        return payDto;
+    }
+
+
+
+
     public async Task<IEnumerable<PaymentDto>> GetPaymentsByUserIdAsync(string  userId)
     {
          var order=await _repository.OrderRepository.GetUserOrdersAsync(userId,false);

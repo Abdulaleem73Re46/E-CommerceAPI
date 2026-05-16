@@ -1,6 +1,8 @@
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 
 namespace ECommerce.Presentation;
@@ -28,7 +30,7 @@ public async Task<IActionResult> GetPayment(Guid PaymentId)
         return Ok(Payment);
     }
     
-[HttpGet("user/{userId:string}")]
+[HttpGet("user/{userId}")]
 public async Task<IActionResult> GetPaymentByUserId(string userId)
     {
         var Payment=await _service.PaymentService.GetPaymentsByUserIdAsync(userId);

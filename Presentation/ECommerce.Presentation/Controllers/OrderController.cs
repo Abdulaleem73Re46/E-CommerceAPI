@@ -22,10 +22,16 @@ public class OrderController : ControllerBase
         _service=service;
 
     }
-[HttpGet("{orderId:guid}")]
-public async Task<IActionResult> GetOrder(Guid orderId)
+[HttpGet("{orderId}")]
+public async Task<IActionResult> GetOrder(string orderId)
     {
-       var or=await _service.OrderService.GetOrderByIdAsync(orderId,false);
+
+        if (!Guid.TryParse(orderId, out var guid))
+    {
+        return BadRequest("Invalid GUID format");
+    }
+
+       var or=await _service.OrderService.GetOrderByIdAsync(guid,false);
        return Ok(or);
 
         
@@ -33,5 +39,46 @@ public async Task<IActionResult> GetOrder(Guid orderId)
 
     }
 
+
+[HttpGet("orders")]
+    public async Task<IActionResult> GetAllOrders()
+    {
+        var orders=await _service.OrderService.GetAllOrdersAsync(false);
+        return Ok(orders);
+    }
+
+// [HttpPost("create/userId")]
+ 
+// public async Task<IActionResult> CreateOrder(string userId,[FromBody] OrderForCreationDto order)
+//     {
+//         var createdOrder=await _service.OrderService.CreateOrderAsync(userId,order,false);
+//         return CreatedAtAction(nameof(createdOrder), createdOrder);
+//     }
+
+
+
+    [HttpPost("create/{userId}")]  // Changed from "create/userId" to "create/{userId}"
+public async Task<IActionResult> CreateOrder(string userId, [FromBody] OrderForCreationDto order)
+{
+    if (order == null)
+        return BadRequest("Order data is required");
+    
+    if (order.OrderItems == null || !order.OrderItems.Any())
+        return BadRequest("Order must contain at least one item");
+    
+    try
+    {
+        var createdOrder = await _service.OrderService.CreateOrderAsync(userId, order, false);
+        return CreatedAtAction(nameof(GetOrder),new {OrderId=createdOrder.OrderId}, createdOrder);
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return NotFound(ex.Message);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
 
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Repository;
 using ECommerce.Presentation;
 using Microsoft.AspNetCore.HttpOverrides;
+using System.Text.Json.Serialization;
 
 
 
@@ -18,7 +19,11 @@ builder.Services.AddControllers(config=>
 {
     config.RespectBrowserAcceptHeader=true;
 }).AddXmlDataContractSerializerFormatters()
-.AddApplicationPart(typeof(ECommerce.Presentation.AssemblyReference).Assembly);
+.AddApplicationPart(typeof(ECommerce.Presentation.AssemblyReference).Assembly).AddJsonOptions(options =>
+{
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+});
 builder.Services.AddDbContext<RepositoryContext>(opt =>
  opt.UseSqlite(builder.Configuration.GetConnectionString("SqlConnection"),
  op => op.MigrationsAssembly("ECommerce.Repository"))
