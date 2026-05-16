@@ -12,10 +12,7 @@ public class MappingProfile : Profile
         CreateMap<CategoryForUpdateDto, Category>();
         
         // Product mappings
-        CreateMap<Product, ProductDto>()
-            .ForMember(dest => dest.Name, 
-                opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : string.Empty))
-            .ReverseMap();
+        CreateMap<Product, ProductDto>().ReverseMap();
         CreateMap<CreateProductDto, Product>();
         CreateMap<UpdateProductDto, Product>();
         
