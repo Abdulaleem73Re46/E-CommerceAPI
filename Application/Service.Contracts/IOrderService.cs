@@ -22,7 +22,8 @@ public interface IOrderService
    Task<OrderDto> CreateOrderAsync(string userId,OrderForCreationDto order,bool trackChanges);
 
    
-
+   Task<bool> DeleteOrderByIdAsync(Guid orderId);
+   
 
 
 

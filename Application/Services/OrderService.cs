@@ -93,11 +93,15 @@ public async Task<OrderDto> CreateOrderAsync(string userId, OrderForCreationDto 
     return entityToReturn;
 }
 
+    public async Task<bool> DeleteOrderByIdAsync(Guid orderId)
+    {var order=await _repository.OrderRepository.GetByIdAsync(orderId,false);
+    if(order is null)throw new KeyNotFoundException($"order with id {orderId} not found in database");
 
-
-
-
-   
+    _repository.OrderRepository.DeleteOrder(order);
+    return true;
+    
+        
+    }
 
     public async Task<IEnumerable<OrderItemDto>> GetAllOrderItemsByOrderId(Guid orderId, bool trackChanges)
     {

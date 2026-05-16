@@ -81,4 +81,23 @@ public async Task<IActionResult> CreateOrder(string userId, [FromBody] OrderForC
     }
 }
 
+
+   [HttpDelete("delete/{orderId}")]
+   public async Task<IActionResult> DeleteOrderAsync(Guid orderId)
+    {
+
+        var order=await _service.OrderService.DeleteOrderByIdAsync(orderId);
+
+
+     return NoContent();
+
+
+
+    }
+
+    
+
+
+
+
 }

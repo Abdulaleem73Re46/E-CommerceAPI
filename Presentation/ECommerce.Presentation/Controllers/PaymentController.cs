@@ -23,7 +23,7 @@ namespace ECommerce.Presentation;
 
 
 
-[HttpGet("PaymentId:guid")]
+[HttpGet("{PaymentId:guid}")]
 public async Task<IActionResult> GetPayment(Guid PaymentId)
     {
         var Payment=await _service.PaymentService.GetPaymentDtoAsync(PaymentId,trackChanges:false);

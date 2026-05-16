@@ -24,7 +24,7 @@ namespace ECommerce.Presentation;
 
 
 
-[HttpGet("cartId:guid")]
+[HttpGet("{cartId:guid}")]
 public async Task<IActionResult> GetCart(Guid cartId)
     {
         var cart=await _service.CartService.GetCartAsync(cartId);
