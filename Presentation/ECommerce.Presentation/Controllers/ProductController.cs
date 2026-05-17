@@ -3,6 +3,7 @@
 
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 
@@ -11,6 +12,7 @@ namespace ECommerce.Presentation;
 
 [Route("api/products")]
 [ApiController]
+[Authorize]
 public class ProductController : ControllerBase
 {
 
@@ -77,3 +79,4 @@ public ProductController(IServiceManager service)
 //D2B3C4D5-E6F7-4A80-9012-345678901BCD
 //E3C4D5E6-F7A8-4B90-0123-456789012CDE
 //C1A2B3C4-D5E6-4F70-8901-234567890ABC
+//http://localhost:5276/api/products/products/C1A2B3C4-D5E6-4F70-8901-234567890ABC

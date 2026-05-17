@@ -33,7 +33,9 @@ public class MappingProfile : Profile
         
         // User mappings
         CreateMap<User, UserDto>().ReverseMap();
-
+        CreateMap<User,UserForRegisterDto>();
+        CreateMap<User,UserLoginDto>();
+        CreateMap<User,UserForUpdateDto>();
 
 //CreateMap<OrderItem, OrderItemDto>();
 //CreateMap<OrderItemForCreationDto, OrderItem>();

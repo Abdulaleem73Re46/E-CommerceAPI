@@ -1,6 +1,9 @@
 using AutoMapper;
 using Core.Contracts;
-    using Service.Contracts;
+using Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Service.Contracts;
 
     namespace Service;
     
@@ -21,9 +24,10 @@ using Core.Contracts;
 
     private readonly Lazy<IPaymentService> _paymentService;
 
+private readonly Lazy<IAuthenticationService> _Authentication;
 
 
-    public ServiceManager(IRepositoryManager repository,IMapper mapper)
+    public ServiceManager(IRepositoryManager repository,IMapper mapper,UserManager<User>  user,IConfiguration configuration)
     {
 
     _categoryService=new Lazy<ICategoryService>(()=>new CategoryService(repository,mapper));
@@ -31,6 +35,8 @@ using Core.Contracts;
     _cartService=new Lazy<ICartService>(()=>new CartService(repository,mapper));
     _orderService=new Lazy<IOrderService>(()=>new OrderService(repository,mapper));
     _paymentService=new Lazy<IPaymentService>(()=>new PaymentService(repository,mapper));
+    _Authentication=new Lazy<IAuthenticationService>(()=>new AuthenticationService(mapper,user,configuration));
+    
         
     }
 
@@ -51,4 +57,6 @@ using Core.Contracts;
         public IPaymentService PaymentService =>_paymentService.Value;
 
         public IOrderService OrderService =>_orderService.Value;
-    }
+
+    public IAuthenticationService AuthenticationService => _Authentication.Value;
+}

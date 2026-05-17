@@ -10,6 +10,12 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Diagnostics;
 using Core.Entities.Exceptions;
 using Core.Entities.ErrorDetails;
+using Microsoft.AspNetCore.StaticAssets;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Core.Entities;
 namespace API.Extensions;
 
 
@@ -35,6 +41,49 @@ public static void ConfigureCors(this IServiceCollection services)
     }
 
 
+
+
+public static void AddConfigurationJWT(this IServiceCollection services,IConfiguration configuration)
+    {
+        
+    var JwtSettings=configuration.GetSection("JwtSettings");
+   var key=Environment.GetEnvironmentVariable("SERCETKEY");
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme=JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(opt =>
+        {
+            opt.TokenValidationParameters=new TokenValidationParameters
+            {
+              ValidateIssuer=true,
+              ValidIssuer=JwtSettings["Issuer"],
+
+              ValidateAudience=true,
+              ValidAudience=JwtSettings["Audience"],
+
+              ValidateIssuerSigningKey=true,
+              IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key??throw new Exception())),
+              ValidateLifetime=true,
+              ClockSkew=TimeSpan.Zero};
+              }); }
+
+
+public static void ConfigureIdentity(this IServiceCollection services)
+    {
+        var builder = services.AddIdentity<User, IdentityRole>(o =>
+        {
+            o.Password.RequireDigit=true;
+            o.Password.RequireLowercase=false;
+            o.Password.RequireUppercase=false;
+            o.Password.RequireNonAlphanumeric=false;
+            o.Password.RequiredLength=8;
+            o.User.RequireUniqueEmail=true;
+
+        })
+        .AddEntityFrameworkStores<RepositoryContext>()
+        .AddDefaultTokenProviders();
+        }
 
 
 }
@@ -76,19 +125,7 @@ public static void ConfigureExceptionHandler(this WebApplication app)
 
 
 
-             }  
-
-
-
-
-
-         }) ;  
-
-
-
-
-
-        });
+             } }) ;   });
 
 
 

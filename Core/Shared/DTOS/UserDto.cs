@@ -14,15 +14,20 @@ public record UserDto
 }
 
 public record UserForRegisterDto
-{
+{   
     public required string FullName { get; init; }
 
 [EmailAddress(ErrorMessage="Invalid Email Address ") ] 
     public required string Email { get; init; }
-    public required string Address { get; init; }
-[DataType(DataType.Password)] 
 
-    public required  string Password { get; init; }
+    public required string Address { get; init; }
+
+[DataType(DataType.Password)]
+[StringLength(100,ErrorMessage="The password must be at characters long and more than 8 ",MinimumLength =8)] 
+ public required  string Password { get; init; }
+
+     public ICollection<string>? Roles{get;init;}
+     
 }
 
  public record UserForUpdateDto
@@ -38,7 +43,9 @@ public record UserForRegisterDto
 
 public record UserLoginDto{
 
+[Required(ErrorMessage ="User Name is required")]
+public  string UserName{get;init;} 
+[Required(ErrorMessage ="User Name is required")]
+public  string Password{get;init;}
 
-public required string UserName{get;init;} 
-public required string Password{get;init;}
 } 
