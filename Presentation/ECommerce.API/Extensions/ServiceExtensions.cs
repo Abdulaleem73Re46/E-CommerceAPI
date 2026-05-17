@@ -47,7 +47,7 @@ public static void AddConfigurationJWT(this IServiceCollection services,IConfigu
     {
         
     var JwtSettings=configuration.GetSection("JwtSettings");
-   var key=Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SERCETKEY"));
+   var key=Environment.GetEnvironmentVariable("SERCETKEY");
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
@@ -63,7 +63,7 @@ public static void AddConfigurationJWT(this IServiceCollection services,IConfigu
               ValidAudience=JwtSettings["Audience"],
 
               ValidateIssuerSigningKey=true,
-              IssuerSigningKey=new SymmetricSecurityKey(key),
+              IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key??throw new Exception())),
               ValidateLifetime=true,
               ClockSkew=TimeSpan.Zero};
               }); }

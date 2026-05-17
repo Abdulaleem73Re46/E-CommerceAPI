@@ -31,8 +31,13 @@ builder.Services.AddDbContext<RepositoryContext>(opt =>
 );
 builder.Services.ConfigureServiceManager(); 
 builder.Services.ConfigureRepositoryManager();
+builder.Services.AddScoped<ValidationFilterAttribute>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.ConfigureCors();
+builder.Services.AddConfigurationJWT(builder.Configuration);
+
+builder.Services.ConfigureIdentity();
+
 // builder.Services.ConfigureExceptionHandler();
 
 var app = builder.Build();
@@ -51,6 +56,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 //app.UseHttpsRedirection();
 app.UseCors("Policy");
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

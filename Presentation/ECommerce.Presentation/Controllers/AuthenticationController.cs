@@ -22,6 +22,7 @@ public AuthenticationController(IServiceManager service)
 
 
 [HttpPost("signin")]
+[ServiceFilter(typeof(ValidationFilterAttribute))]
 public async Task<IActionResult> SignInUser([FromBody] UserForRegisterDto forRegisterDto)
     {
       var createduser=await _service.AuthenticationService.RegisterUser(forRegisterDto);
@@ -40,6 +41,7 @@ return StatusCode(201);
 
     
     [HttpPost("login")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> LogInUser([FromBody] UserLoginDto userLoginDto)
     {
         if(!await _service.AuthenticationService.ValidateUser(userLoginDto))
