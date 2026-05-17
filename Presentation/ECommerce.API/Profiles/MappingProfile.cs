@@ -32,18 +32,51 @@ public class MappingProfile : Profile
         CreateMap<PaymentForCreationDto, Payment>();
         
         // User mappings
-        CreateMap<User, UserDto>().ReverseMap();
-        CreateMap<User,UserForRegisterDto>();
-        CreateMap<User,UserLoginDto>();
-        CreateMap<User,UserForUpdateDto>();
+        // CreateMap<User, UserDto>().ForMember(dest=>dest.UserId,opt=>opt.MapFrom(src=>src.Id)).ReverseMap();
+        // CreateMap<UserForRegisterDto,User>().ForMember(dest=>dest.Id,opt=>opt.MapFrom(src=>Guid.NewGuid().ToString()));
 
-//CreateMap<OrderItem, OrderItemDto>();
-//CreateMap<OrderItemForCreationDto, OrderItem>();
-//CreateMap<OrderForCreationDto, Order>();
+        // CreateMap<UserLoginDto,User>();
+        // CreateMap<UserForUpdateDto,User>().ReverseMap();
 
-//CreateMap<OrderForCreationDto, Order>();
-//CreateMap<OrderItemForCreationDto, OrderItem>();
-// CreateMap<Order, OrderDto>();
+
+
+
+
+
+        CreateMap<UserForRegisterDto, User>()
+            .ForMember(dest => dest.UserName, 
+                opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Id, 
+                opt => opt.MapFrom(src => Guid.NewGuid().ToString()))
+            .ForMember(dest => dest.SecurityStamp, 
+                opt => opt.MapFrom(src => Guid.NewGuid().ToString()))
+            .ForMember(dest => dest.ConcurrencyStamp, 
+                opt => opt.MapFrom(src => Guid.NewGuid().ToString()))
+            .ForMember(dest => dest.EmailConfirmed, 
+                opt => opt.MapFrom(src => true))
+            .ForMember(dest => dest.PhoneNumberConfirmed, 
+                opt => opt.MapFrom(src => false))
+            .ForMember(dest => dest.TwoFactorEnabled, 
+                opt => opt.MapFrom(src => false))
+            .ForMember(dest => dest.LockoutEnabled, 
+                opt => opt.MapFrom(src => true))
+            .ForMember(dest => dest.AccessFailedCount, 
+                opt => opt.MapFrom(src => 0));
+        
+        CreateMap<User, UserDto>()
+            .ForMember(dest => dest.UserId,
+                opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.UserName,
+                opt => opt.MapFrom(src => src.UserName))
+            .ForMember(dest => dest.Email,
+                opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.FullName,
+                opt => opt.MapFrom(src => src.FullName))
+            .ForMember(dest => dest.Address,
+                opt => opt.MapFrom(src => src.Address))
+            .ForMember(dest => dest.PhoneNumber,
+                opt => opt.MapFrom(src => src.PhoneNumber));
+
 
 
     }

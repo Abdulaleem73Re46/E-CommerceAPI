@@ -7,10 +7,17 @@ namespace Core.Shared.DataTransferObjects;
 
 public record UserDto
 {
-    public Guid UserId { get; init; }
+    public string UserId { get; init; }
     public string FullName { get; init; }
     public string Email { get; init; }
     public string Address { get; init; }
+    public string Password{get;init;}
+    public string UserName{get;init;}
+    public string PhoneNumber{get;init;}
+
+
+    public ICollection<string> Roles{get;set;} = new List<string>();
+
 }
 
 public record UserForRegisterDto
@@ -19,10 +26,11 @@ public record UserForRegisterDto
 
 [EmailAddress(ErrorMessage="Invalid Email Address ") ] 
     public required string Email { get; init; }
-
+  public required string UserName{get;init;}
+  public required string PhoneNumber{get;init;}
     public required string Address { get; init; }
 
-[DataType(DataType.Password)]
+//[DataType(DataType.Password)]
 [StringLength(100,ErrorMessage="The password must be at characters long and more than 8 ",MinimumLength =8)] 
  public required  string Password { get; init; }
 
@@ -32,13 +40,14 @@ public record UserForRegisterDto
 
  public record UserForUpdateDto
 {
+    
     public required string FullName { get; init; }
 [EmailAddress(ErrorMessage="Invalid Email")] 
 
     public required string Email { get; init; }
     public required string Address { get; init; }
-
     public required string Password { get; init; }
+
 }       
 
 public record UserLoginDto{

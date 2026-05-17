@@ -14,6 +14,9 @@ public interface IAuthenticationService
 
    Task<bool> ValidateUser(UserLoginDto userLoginDto);
    Task<string> CreateToken();
+  Task<UserDto> GetLoggedInUserAsync();
+   
+   Task<UserDto> GetUserByUserNameAsync(string username);
 
 
 

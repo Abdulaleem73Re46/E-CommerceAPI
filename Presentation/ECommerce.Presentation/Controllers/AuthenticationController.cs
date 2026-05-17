@@ -35,7 +35,8 @@ public async Task<IActionResult> SignInUser([FromBody] UserForRegisterDto forReg
             }
             return BadRequest(ModelState);
         }
-return StatusCode(201);
+          var token=await _service.AuthenticationService.CreateToken();
+return Ok(new {Token =token});
     }
 
 
@@ -45,12 +46,17 @@ return StatusCode(201);
     public async Task<IActionResult> LogInUser([FromBody] UserLoginDto userLoginDto)
     {
         if(!await _service.AuthenticationService.ValidateUser(userLoginDto))
-        {
+        {  Console.WriteLine($"this is the {userLoginDto.UserName} and {userLoginDto.Password}");
             return Unauthorized();
         }
    
    var token=await _service.AuthenticationService.CreateToken();
-   return Ok(new {Token=token});
+ var user=await _service.AuthenticationService.GetUserByUserNameAsync(userLoginDto.UserName);
+
+
+
+
+   return Ok(new {Token=token,User=user});
 
 
     }

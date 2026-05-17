@@ -10,6 +10,7 @@ using Core.Shared.DataTransferObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using Service.Contracts;
 
 namespace Service;
@@ -40,14 +41,18 @@ public sealed class AuthenticationService : IAuthenticationService
 
 
     public async Task<bool> ValidateUser(UserLoginDto userLoginDto)
-    {
+    {      
+        Console.WriteLine("at the start....");
           user=await _user.FindByNameAsync(userLoginDto.UserName);
-         var result=(user !=null && await _user.CheckPasswordAsync(user,userLoginDto.Password));
-        if (!result)
-        {
+           Console.WriteLine("after FindByName....");
+          var result=await _user.CheckPasswordAsync(user,userLoginDto.Password);
+         
+        if (!result && user==null)
+        {    Console.WriteLine("in the  if scope....");
             // to put the Logger messagge here
             return result;
         }
+         Console.WriteLine("Out the if Scope....");
         return result;
     }
 
@@ -68,12 +73,16 @@ public sealed class AuthenticationService : IAuthenticationService
     public async Task<IdentityResult> RegisterUser(UserForRegisterDto userForRegister)
     {
          var userEntity=_mapper.Map<User>(userForRegister);
-         var createduserOrResult=await _user.CreateAsync(userEntity,userEntity.PasswordHash);
+         var createduserOrResult=await _user.CreateAsync(userEntity,userForRegister.Password);
 
-        if (createduserOrResult.Succeeded)
+        if (createduserOrResult.Succeeded && userForRegister.Roles!= null && userForRegister.Roles.Any())
         {
             await _user.AddToRolesAsync(userEntity,userForRegister.Roles);
 
+        }
+        else if (createduserOrResult.Succeeded)
+        {
+            await _user.AddToRoleAsync(userEntity,"User");
         }
 
   return createduserOrResult;
@@ -130,7 +139,31 @@ private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredenti
 
 
 
+public async Task<UserDto> GetLoggedInUserAsync()
+{
+    if (user == null)
+        throw new InvalidOperationException("No user is logged in. Call ValidateUser first.");
+    
+    var userDto = _mapper.Map<UserDto>(user);
+    var roles = await _user.GetRolesAsync(user);
+    userDto.Roles = roles.ToList();
+    
+    return userDto;
+}
 
 
+    public async Task<UserDto>  GetUserByUserNameAsync(string username)
+    {
+        var user=await _user.FindByNameAsync(username);
+         if(user is null)throw new KeyNotFoundException($"User with UserName {username} not found in database");
+
+        var userDto= _mapper.Map<UserDto>(user);
+        return userDto;
+
+
+
+    }
+
+   
 
 }   
