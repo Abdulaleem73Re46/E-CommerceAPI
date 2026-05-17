@@ -13,6 +13,7 @@ public interface IServiceManager
  IPaymentService PaymentService{get;}
  IOrderService OrderService{get;}   
 
+IAuthenticationService AuthenticationService{get;}
 
 
 

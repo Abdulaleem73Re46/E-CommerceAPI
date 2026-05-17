@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Diagnostics;
 using Core.Entities.Exceptions;
 using Core.Entities.ErrorDetails;
+using Microsoft.AspNetCore.StaticAssets;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 namespace API.Extensions;
 
 
@@ -34,6 +37,36 @@ public static void ConfigureCors(this IServiceCollection services)
 
     }
 
+
+
+
+public static void AddConfigurationJWT(this IServiceCollection services,IConfiguration configuration)
+    {
+        
+    var JwtSettings=configuration.GetSection("JwtSettings");
+   var key=Environment.GetEnvironmentVariable("SERCETKEY");
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme=JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(opt =>
+        {
+            opt.TokenValidationParameters=new TokenValidationParameters
+            {
+                
+
+
+            };
+
+
+
+        })
+
+
+
+
+
+    }
 
 
 
@@ -76,19 +109,7 @@ public static void ConfigureExceptionHandler(this WebApplication app)
 
 
 
-             }  
-
-
-
-
-
-         }) ;  
-
-
-
-
-
-        });
+             } }) ;   });
 
 
 
