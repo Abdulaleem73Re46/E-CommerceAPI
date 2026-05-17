@@ -13,6 +13,9 @@ using Core.Entities.ErrorDetails;
 using Microsoft.AspNetCore.StaticAssets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Core.Entities;
 namespace API.Extensions;
 
 
@@ -44,7 +47,7 @@ public static void AddConfigurationJWT(this IServiceCollection services,IConfigu
     {
         
     var JwtSettings=configuration.GetSection("JwtSettings");
-   var key=Environment.GetEnvironmentVariable("SERCETKEY");
+   var key=Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SERCETKEY"));
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
@@ -53,21 +56,34 @@ public static void AddConfigurationJWT(this IServiceCollection services,IConfigu
         {
             opt.TokenValidationParameters=new TokenValidationParameters
             {
-                
+              ValidateIssuer=true,
+              ValidIssuer=JwtSettings["Issuer"],
+
+              ValidateAudience=true,
+              ValidAudience=JwtSettings["Audience"],
+
+              ValidateIssuerSigningKey=true,
+              IssuerSigningKey=new SymmetricSecurityKey(key),
+              ValidateLifetime=true,
+              ClockSkew=TimeSpan.Zero};
+              }); }
 
 
-            };
-
-
+public static void ConfigureIdentity(this IServiceCollection services)
+    {
+        var builder = services.AddIdentity<User, IdentityRole>(o =>
+        {
+            o.Password.RequireDigit=true;
+            o.Password.RequireLowercase=false;
+            o.Password.RequireUppercase=false;
+            o.Password.RequireNonAlphanumeric=false;
+            o.Password.RequiredLength=8;
+            o.User.RequireUniqueEmail=true;
 
         })
-
-
-
-
-
-    }
-
+        .AddEntityFrameworkStores<RepositoryContext>()
+        .AddDefaultTokenProviders();
+        }
 
 
 }
