@@ -1,8 +1,5 @@
-
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using Core.Entities;
@@ -10,160 +7,147 @@ using Core.Shared.DataTransferObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
 using Service.Contracts;
 
 namespace Service;
 
-
-
-
-
 public sealed class AuthenticationService : IAuthenticationService
 {
-     private readonly IMapper _mapper;
-     private readonly IConfiguration _configuration;
-     private readonly UserManager<User> _user;
+    private readonly IMapper _mapper;
+    private readonly IConfiguration _configuration;
+    private readonly UserManager<User> _userManager;  // ✅ تغيير الاسم ليكون واضحاً
+    private User? _currentUser;
 
-  private User? user; // to read the claims from it  
-
-
-     public AuthenticationService(IMapper mapper,UserManager<User> user,IConfiguration configuration)
+    public AuthenticationService(IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
     {
-        
-    _mapper=mapper;
-    _user=user;
-    _configuration=configuration;
-
-
+        _mapper = mapper;
+        _userManager = userManager;  // ✅ UserManager
+        _configuration = configuration;
     }
-     
-
 
     public async Task<bool> ValidateUser(UserLoginDto userLoginDto)
-    {      
-        Console.WriteLine("at the start....");
-          user=await _user.FindByNameAsync(userLoginDto.UserName);
-           Console.WriteLine("after FindByName....");
-          var result=await _user.CheckPasswordAsync(user,userLoginDto.Password);
-         
-        if (!result && user==null)
-        {    Console.WriteLine("in the  if scope....");
-            // to put the Logger messagge here
-            return result;
+    {
+        Console.WriteLine("Validating user...");
+        _currentUser = await _userManager.FindByNameAsync(userLoginDto.UserName);
+        
+        if (_currentUser == null)
+        {
+            Console.WriteLine("User not found");
+            return false;
         }
-         Console.WriteLine("Out the if Scope....");
+        
+        var result = await _userManager.CheckPasswordAsync(_currentUser, userLoginDto.Password);
+        Console.WriteLine($"Password check result: {result}");
         return result;
     }
 
     public async Task<string> CreateToken()
     {
-  var Credentials=GetSigningCredentials();
-  var claims= await GetClaimsAsync();
-  var tokenOptions=GenerateTokenOptions(Credentials,claims);
-  
-  var Jwt=new JwtSecurityTokenHandler().WriteToken(tokenOptions); //Responsible for Generate,Read,Check,Transform JWT Tokens 
-
-   return Jwt;
-
-
-       
+        if (_currentUser == null)
+            throw new InvalidOperationException("User must be validated first. Call ValidateUser() before CreateToken().");
+        
+        var credentials = GetSigningCredentials();
+        var claims = await GetClaimsAsync();
+        var tokenOptions = GenerateTokenOptions(credentials, claims);
+        
+        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
     }
 
     public async Task<IdentityResult> RegisterUser(UserForRegisterDto userForRegister)
     {
-         var userEntity=_mapper.Map<User>(userForRegister);
-         var createduserOrResult=await _user.CreateAsync(userEntity,userForRegister.Password);
+        var userEntity = _mapper.Map<User>(userForRegister);
+        var result = await _userManager.CreateAsync(userEntity, userForRegister.Password);
 
-        if (createduserOrResult.Succeeded && userForRegister.Roles!= null && userForRegister.Roles.Any())
+        if (result.Succeeded && userForRegister.Roles != null && userForRegister.Roles.Any())
         {
-            await _user.AddToRolesAsync(userEntity,userForRegister.Roles);
-
+            await _userManager.AddToRolesAsync(userEntity, userForRegister.Roles);
         }
-        else if (createduserOrResult.Succeeded)
+        else if (result.Succeeded)
         {
-            await _user.AddToRoleAsync(userEntity,"User");
+            await _userManager.AddToRoleAsync(userEntity, "User");
         }
 
-  return createduserOrResult;
-
-
+        return result;
     }
-
-
-
 
     private SigningCredentials GetSigningCredentials()
     {
-        var key=Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRETKEY"));
-        var secret=new SymmetricSecurityKey(key);
-        return new SigningCredentials(secret,SecurityAlgorithms.HmacSha256);
+        // ✅ محاولة قراءة المفتاح من عدة مصادر
+        var secretKey = _configuration["JwtSettings:Key"] ??      // من appsettings.json
+                       _configuration["Jwt:Key"] ??               // من Jwt:Key
+                       Environment.GetEnvironmentVariable("SECRETKEY") ??  // من Environment Variables
+                       "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!"; // ✅ fallback آمن للتطوير
+        
+        if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
+        {
+            throw new InvalidOperationException("JWT Secret Key is missing or too short. Please provide a key with at least 32 characters.");
+        }
+        
+        var key = Encoding.UTF8.GetBytes(secretKey);
+        var secret = new SymmetricSecurityKey(key);
+        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
-
 
     private async Task<List<Claim>> GetClaimsAsync()
     {
-        var claims=new List<Claim>
+        if (_currentUser == null)
+            throw new InvalidOperationException("User is not initialized. Call ValidateUser() first.");
+        
+        var claims = new List<Claim>
         {
-          new Claim(ClaimTypes.Name,user.UserName)  
-
+            new Claim(ClaimTypes.NameIdentifier, _currentUser.Id),
+            new Claim(ClaimTypes.Name, _currentUser.UserName ?? ""),
+            new Claim(ClaimTypes.Email, _currentUser.Email ?? "")
         };
-    
-    var Roles=await _user.GetRolesAsync(user);
-
-    foreach(var role in Roles)
+        
+        var roles = await _userManager.GetRolesAsync(_currentUser);
+        foreach (var role in roles)
         {
-            claims.Add(new Claim(ClaimTypes.Role,role));
-
+            claims.Add(new Claim(ClaimTypes.Role, role));
         }
-
-return claims;
-
+        
+        return claims;
     }
 
-private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
+    private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
     {
-     var jwtSettings=_configuration.GetSection("JwtSettings");
-     var tokenOptions=new JwtSecurityToken
-     (
-         issuer:jwtSettings["Issuer"],
-         audience:jwtSettings["Audience"],
-         claims:claims,
-         expires:DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["ExpireInMinutes"])),
-
-         signingCredentials:signingCredentials
-     );
-     return tokenOptions;
-
+        var jwtSettings = _configuration.GetSection("JwtSettings");
+        
+        // ✅ قيم افتراضية إذا كانت الإعدادات غير موجودة
+        var issuer = jwtSettings["Issuer"] ?? "https://localhost:5276";
+        var audience = jwtSettings["Audience"] ?? "https://localhost:5276";
+        var expireInMinutes = Convert.ToDouble(jwtSettings["ExpireInMinutes"] ?? "60");
+        
+        var tokenOptions = new JwtSecurityToken(
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(expireInMinutes),
+            signingCredentials: signingCredentials
+        );
+        
+        return tokenOptions;
     }
 
-
-
-public async Task<UserDto> GetLoggedInUserAsync()
-{
-    if (user == null)
-        throw new InvalidOperationException("No user is logged in. Call ValidateUser first.");
-    
-    var userDto = _mapper.Map<UserDto>(user);
-    var roles = await _user.GetRolesAsync(user);
-    userDto.Roles = roles.ToList();
-    
-    return userDto;
-}
-
-
-    public async Task<UserDto>  GetUserByUserNameAsync(string username)
+    public async Task<UserDto> GetLoggedInUserAsync()
     {
-        var user=await _user.FindByNameAsync(username);
-         if(user is null)throw new KeyNotFoundException($"User with UserName {username} not found in database");
-
-        var userDto= _mapper.Map<UserDto>(user);
+        if (_currentUser == null)
+            throw new InvalidOperationException("No user is logged in. Call ValidateUser first.");
+        
+        var userDto = _mapper.Map<UserDto>(_currentUser);
+        var roles = await _userManager.GetRolesAsync(_currentUser);
+        userDto.Roles = roles.ToList();
+        
         return userDto;
-
-
-
     }
 
-   
+    public async Task<UserDto> GetUserByUserNameAsync(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null)
+            throw new KeyNotFoundException($"User with UserName {username} not found in database");
 
-}   
+        var userDto = _mapper.Map<UserDto>(user);
+        return userDto;
+    }
+}

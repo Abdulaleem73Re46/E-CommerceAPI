@@ -183,3 +183,10 @@ StoreSystem.sln
         ├── ServiceExtensions.cs (تسجيل المستودعات، الخدمات، AutoMapper، Identity، JWT)
         └── Middleware/
             └── ExceptionHandlingMiddleware.cs
+
+
+
+
+ {
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImFjOWI2NzMzLWNkOGItNDg2Yi05NDcwLWViNmZhOTkxYzJjZCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBaG1lZDIyIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiQWhtZWRAZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3NzkxMTI3ODksImlzcyI6IkFiZHVsYWxlZW0gQWxwYXRvb2wiLCJhdWQiOiJNeUV4Y2VsbGVuY2VzVXNlcnMifQ.VsG5MIAAv_1vcYcq8yUXvOntAwWNOfDr3gfwms0rxWI"
+}           

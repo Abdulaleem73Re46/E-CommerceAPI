@@ -1,3 +1,31 @@
 
 
-GET  http://localhost:5276/api/orders/orders
+
+GET   http://localhost:5276/api/products/products/C1A2B3C4-D5E6-4F70-8901-234567890ABC
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjhhZGZlNTc1LTAxMWEtNDI3Zi1hM2M3LTEzOTUxY2VkYjNiMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBTGF3MjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJBbGF3QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImFkbWluIiwiZXhwIjoxNzc5MTE1ODQzLCJpc3MiOiJBYmR1bGFsZWVtIEFscGF0b29sIiwiYXVkIjoiTXlFeGNlbGxlbmNlc1VzZXJzIn0.EwlMT7X4Emt_f_psxiz-D8W4_K5EaziPOYKdf-0EcRU
+
+
+
+
+#  {
+        
+#         "name": "Samasi",
+#         "description": "Powerful laptop for professionals with 15-inch display and long battery life",
+#         "price": 2299.99,
+#         "stockQuantity": 30,
+#         "categoryId": "c1a2b3c4-d5e6-4f70-8901-234567890abc",
+    
+#     }
+
+# {
+
+# "UserName":"ALaw22",
+# "Password":"666666666666"
+
+
+# }
+
+
+
+   
