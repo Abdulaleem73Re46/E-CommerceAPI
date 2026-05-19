@@ -37,6 +37,16 @@ builder.Services.ConfigureCors();
 builder.Services.AddConfigurationJWT(builder.Configuration);
 
 builder.Services.ConfigureIdentity();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => 
+        policy.RequireRole("admin"));
+    
+    options.AddPolicy("UserOrAdmin", policy => 
+        policy.RequireRole("User", "Admin"));
+});
+
+// ✅ إضافة سياسة مخصصة للمنتجات
 
 // builder.Services.ConfigureExceptionHandler();
 
@@ -57,9 +67,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 //app.UseHttpsRedirection();
 app.UseCors("Policy");
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

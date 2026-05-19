@@ -65,11 +65,6 @@ public ProductController(IServiceManager service)
 
      return CreatedAtAction(nameof(GetProduct),new {productId=createdproduct.ProductId},createdproduct);
 
-   
-
-
-
-
   }
 
 
