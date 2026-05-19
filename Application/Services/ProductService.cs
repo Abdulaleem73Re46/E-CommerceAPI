@@ -89,16 +89,21 @@ await _repository.SaveAsync();
 
 public async Task<ProductDto> CreateProductAsync(CreateProductDto productDto){
 
- 
+     Console.WriteLine(" in creating....");
 
     
  var productEntity=_mapper.Map<Product>(productDto);
-
+ Console.WriteLine("after mapping....");
 productEntity.ProductId=Guid.NewGuid();
  _repository.ProductRepository.CreateProduct(productEntity);
+  Console.WriteLine("after creating in repo ....");
 await _repository.SaveAsync();
+ Console.WriteLine("after saving in service layer....");
+  
+  
 
 return _mapper.Map<ProductDto>(productEntity);
+
 
 
 

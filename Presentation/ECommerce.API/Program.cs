@@ -4,6 +4,8 @@ using Repository;
 using ECommerce.Presentation;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
+using System.Text.Json;
+using Microsoft.AspNetCore.Diagnostics;
 
 
 
@@ -52,6 +54,28 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
+
+app.UseExceptionHandler(exceptionHandlerApp =>
+{
+    exceptionHandlerApp.Run(async context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/json";
+        
+        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var exception = exceptionHandlerPathFeature?.Error;
+        
+        var response = new
+        {
+            StatusCode = context.Response.StatusCode,
+            Message = exception?.Message ?? "An error occurred while processing your request.",
+            // Only include stack trace in development
+            Detail = app.Environment.IsDevelopment() ? exception?.StackTrace : null
+        };
+        
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+    });
+});
 // Configure the HTTP request pipeline.
 
 //app.UseHttpsRedirection();

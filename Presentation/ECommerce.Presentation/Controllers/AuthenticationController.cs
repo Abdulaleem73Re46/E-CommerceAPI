@@ -21,7 +21,7 @@ public AuthenticationController(IServiceManager service)
 }
 
 
-[HttpPost("signin")]
+
 [ServiceFilter(typeof(ValidationFilterAttribute))]
 [HttpPost("register")]
 public async Task<IActionResult> SignInUser(UserForRegisterDto forRegisterDto)
