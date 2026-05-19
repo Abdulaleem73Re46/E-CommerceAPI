@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Core.Entities;
+using System.Security.Claims;
 
 namespace API.Extensions;
 
@@ -37,42 +38,30 @@ public static class ServiceExtensions
     public static void AddConfigurationJWT(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtSettings = configuration.GetSection("JwtSettings");
-        
-        // ✅ تصحيح الخطأ الإملائي وإضافة fallback
-        var key = Environment.GetEnvironmentVariable("SECRETKEY") ??   // تصحيح: SECRETKEY
-                  jwtSettings["Key"] ?? 
-                  configuration["Jwt:Key"] ??
-                  "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
-        
-        if (string.IsNullOrEmpty(key) || key.Length < 32)
+    var secretKey = jwtSettings["Key"];
+    
+    if (string.IsNullOrEmpty(secretKey))
+        throw new InvalidOperationException("JWT Key is missing in appsettings.json");
+
+    services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(opt =>
+    {
+        opt.TokenValidationParameters = new TokenValidationParameters
         {
-            throw new InvalidOperationException("JWT Secret Key is missing or too short. Please provide a key with at least 32 characters.");
-        }
-        
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(opt =>
-        {
-            opt.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = jwtSettings["Issuer"] ?? "https://localhost:5276",
-                
-                ValidateAudience = true,
-                ValidAudience = jwtSettings["Audience"] ?? "https://localhost:5276",
-                
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-                
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero,
-                
-                // ✅ مهم جداً: تحديد نوع الدور
-                RoleClaimType = System.Security.Claims.ClaimTypes.Role
-            };
+            ValidateIssuer = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidateAudience = true,
+            ValidAudience = jwtSettings["Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            RoleClaimType = ClaimTypes.Role
+        };
             
             // ✅ منع إعادة التوجيه إلى صفحة Login
             opt.Events = new JwtBearerEvents

@@ -18,6 +18,10 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "environmentVariables": {
+      "ASPNETCORE_ENVIRONMENT": "Development",
+      "SECRETKEY": "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!"
     }
   }
 }

@@ -70,23 +70,16 @@ public sealed class AuthenticationService : IAuthenticationService
         return result;
     }
 
-    private SigningCredentials GetSigningCredentials()
-    {
-        // ✅ محاولة قراءة المفتاح من عدة مصادر
-        var secretKey = _configuration["JwtSettings:Key"] ??      // من appsettings.json
-                       _configuration["Jwt:Key"] ??               // من Jwt:Key
-                       Environment.GetEnvironmentVariable("SECRETKEY") ??  // من Environment Variables
-                       "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!"; // ✅ fallback آمن للتطوير
-        
-        if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
-        {
-            throw new InvalidOperationException("JWT Secret Key is missing or too short. Please provide a key with at least 32 characters.");
-        }
-        
-        var key = Encoding.UTF8.GetBytes(secretKey);
-        var secret = new SymmetricSecurityKey(key);
-        return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-    }
+   private SigningCredentials GetSigningCredentials()
+{
+    var secretKey = _configuration["JwtSettings:Key"];
+    if (string.IsNullOrEmpty(secretKey))
+        throw new InvalidOperationException("JWT Key is missing in appsettings.json");
+    
+    var key = Encoding.UTF8.GetBytes(secretKey);
+    var secret = new SymmetricSecurityKey(key);
+    return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+}
 
     private async Task<List<Claim>> GetClaimsAsync()
     {
