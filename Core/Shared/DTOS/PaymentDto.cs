@@ -15,5 +15,7 @@ public record PaymentDto
 
 public record PaymentForCreationDto
 {
+     public required decimal Aomunt{get;init;}
     public PaymentMethod PaymentMethod { get; init; }
+    
 }

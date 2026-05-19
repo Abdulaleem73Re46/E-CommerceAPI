@@ -15,6 +15,10 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Core.Entities;
 using System.Security.Claims;
+<<<<<<< HEAD
+=======
+using System.Text.Json;
+>>>>>>> 9efd85e50f987e4293c4535f1171a1ce25504d06
 
 namespace API.Extensions;
 
@@ -36,13 +40,28 @@ public static class ServiceExtensions
     }
 
     public static void AddConfigurationJWT(this IServiceCollection services, IConfiguration configuration)
+{
+    var jwtSettings = configuration.GetSection("JwtSettings");
+    
+    var key = Environment.GetEnvironmentVariable("SECRETKEY") ??
+              jwtSettings["Key"] ?? 
+              configuration["Jwt:Key"] ??
+              "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
+    
+    if (string.IsNullOrEmpty(key) || key.Length < 32)
     {
+<<<<<<< HEAD
         var jwtSettings = configuration.GetSection("JwtSettings");
     var secretKey = jwtSettings["Key"];
     
     if (string.IsNullOrEmpty(secretKey))
         throw new InvalidOperationException("JWT Key is missing in appsettings.json");
 
+=======
+        throw new InvalidOperationException("JWT Secret Key is missing or too short.");
+    }
+    
+>>>>>>> 9efd85e50f987e4293c4535f1171a1ce25504d06
     services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -50,6 +69,7 @@ public static class ServiceExtensions
     })
     .AddJwtBearer(opt =>
     {
+<<<<<<< HEAD
         opt.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -62,37 +82,76 @@ public static class ServiceExtensions
             ClockSkew = TimeSpan.Zero,
             RoleClaimType = ClaimTypes.Role
         };
+=======
+        opt.RequireHttpsMetadata = false; // Add this for development
+        opt.SaveToken = true; // Add this
+        
+        opt.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtSettings["Issuer"] ?? "https://localhost:5276",
+>>>>>>> 9efd85e50f987e4293c4535f1171a1ce25504d06
             
-            // ✅ منع إعادة التوجيه إلى صفحة Login
-            opt.Events = new JwtBearerEvents
+            ValidateAudience = true,
+            ValidAudience = jwtSettings["Audience"] ?? "https://localhost:5276",
+            
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            
+            RoleClaimType = ClaimTypes.Role
+        };
+        
+        // 🔑 CRITICAL FIX - This prevents redirect to login page
+        opt.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
             {
-                OnChallenge = context =>
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync(JsonSerializer.Serialize(new 
+                { 
+                    error = "Authentication failed", 
+                    message = context.Exception.Message 
+                }));
+            },
+            OnChallenge = context =>
+            {
+                // ✅ This prevents the default redirect behavior
+                context.HandleResponse();
+                
+                if (!context.Response.HasStarted)
                 {
-                    context.HandleResponse();
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.StatusCode = 401;
                     context.Response.ContentType = "application/json";
-                    var result = System.Text.Json.JsonSerializer.Serialize(new 
+                    
+                    var result = JsonSerializer.Serialize(new 
                     { 
                         error = "Unauthorized", 
-                        message = "Invalid or missing token" 
+                        message = "Invalid or missing token. Please provide a valid JWT token in the Authorization header."
                     });
-                    return context.Response.WriteAsync(result);
-                },
-                OnForbidden = context =>
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    context.Response.ContentType = "application/json";
-                    var result = System.Text.Json.JsonSerializer.Serialize(new 
-                    { 
-                        error = "Forbidden", 
-                        message = "You don't have permission to access this resource" 
-                    });
+                    
                     return context.Response.WriteAsync(result);
                 }
-            };
-        });
-    }
-
+                
+                return Task.CompletedTask;
+            },
+            OnForbidden = context =>
+            {
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize(new 
+                { 
+                    error = "Forbidden", 
+                    message = "You don't have permission to access this resource" 
+                });
+                return context.Response.WriteAsync(result);
+            }
+        };
+    });
+}
     public static void ConfigureIdentity(this IServiceCollection services)
     {
         var builder = services.AddIdentity<User, IdentityRole>(o =>
@@ -108,17 +167,18 @@ public static class ServiceExtensions
         .AddDefaultTokenProviders();
     }
 }
-
-public static class ExceptionMiddleWareExtension
+public static class ExceptionMiddlewareExtensions
 {
     public static void ConfigureExceptionHandler(this WebApplication app)
     {
+        // ✅ Change this - don't use UseExceptionHandler with empty config
         app.UseExceptionHandler(appError =>
         {
             appError.Run(async context =>
             {
                 context.Response.ContentType = "application/json";
                 var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                
                 if (contextFeature != null)
                 {
                     context.Response.StatusCode = contextFeature.Error switch

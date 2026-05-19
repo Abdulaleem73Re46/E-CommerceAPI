@@ -11,7 +11,8 @@ namespace ECommerce.Presentation;
 
 
 [Route("api/products")]
-[ApiController]
+//[ApiController]
+
 
 public class ProductController : ControllerBase
 {
@@ -47,28 +48,24 @@ public ProductController(IServiceManager service)
 
 
 
-[Authorize(Roles = "admin")]   
+//[Authorize(Roles = "ADMIN")]   
     [HttpPost("create")]
     public async Task<IActionResult>  CreateProduct([FromBody] CreateProductDto productDto)
   {
-    if (!productDto.CategoryId.HasValue)
-    {
-      return BadRequest("category Id is required ");
+    Console.WriteLine("TTTTTTTTTTT....");
+    // if (!productDto.CategoryId.HasValue)
+    // {
+    //   return BadRequest("category Id is required ");
 
-    }
+    // }
 
-     var category=await _service.CategoryService.CategoryAsync(productDto.CategoryId.Value,trackChanges:false);
-     if(category is null) throw new KeyNotFoundException($"category with Id {productDto.CategoryId} not found ");
+     //var category=await _service.CategoryService.CategoryAsync(productDto.CategoryId.Value,trackChanges:false);
+     //if(category is null) throw new KeyNotFoundException($"category with Id {productDto.CategoryId} not found ");
        
     
     var createdproduct= await _service.ProductService.CreateProductAsync(productDto);
-
+ Console.WriteLine("00000000000....");
      return CreatedAtAction(nameof(GetProduct),new {productId=createdproduct.ProductId},createdproduct);
-
-   
-
-
-
 
   }
 

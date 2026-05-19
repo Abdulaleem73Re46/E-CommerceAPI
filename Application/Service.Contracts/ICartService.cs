@@ -34,6 +34,7 @@ Task<CartItemDto> UpdateCartItemByCartIdAsync(Guid CartId,CartItemForUpdateDto c
    Task<CartItemDto> GetCartItemByCartIdAsync(Guid CartId,Guid productId);
    Task AddCartItemAsync(Guid CartId,CartItemForCreation cartitemdto);
 
+  // Task TransformToOrderAsync(Guid CartId,Guid Id);
 
-    
+   //Task<bool> Confimed();    
 }

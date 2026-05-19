@@ -16,6 +16,8 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
+*.txt
+*.png
 
 # NuGet packages
 packages/

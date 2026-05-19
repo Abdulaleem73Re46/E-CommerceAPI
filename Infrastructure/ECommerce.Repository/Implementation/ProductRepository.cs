@@ -14,7 +14,11 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
         _repo=repository;
     }
 
-    public void CreateProduct(Product Product)=>Create(Product);
+  
+    public void CreateProduct(Product Product){
+         Console.WriteLine("inside repo....");
+        Create(Product);
+        }
 
 
     public void DeleteProduct(Product Product)
