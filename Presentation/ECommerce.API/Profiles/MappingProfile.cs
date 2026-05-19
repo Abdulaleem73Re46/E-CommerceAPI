@@ -44,8 +44,7 @@ public class MappingProfile : Profile
 
 
         CreateMap<UserForRegisterDto, User>()
-            .ForMember(dest => dest.UserName, 
-                opt => opt.MapFrom(src => src.Email))
+           
             .ForMember(dest => dest.Id, 
                 opt => opt.MapFrom(src => Guid.NewGuid().ToString()))
             .ForMember(dest => dest.SecurityStamp, 

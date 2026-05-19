@@ -263,8 +263,43 @@ return _mapper.Map<CartItemDto>(cartitem);
        await _repository.CartRepository.AddCartItemAsync(cartItem);
        await _repository.SaveAsync();   
     }
+    public  async Task<OrderForCreationDto> TransformToOrderAsync(string userId,Guid CartId)
+    {
+     var cart=await _repository.CartRepository.GetByUserIdAsync(userId);
+
+     if(cart is null ) throw new KeyNotFoundException("not found");
+     var cartitem=await _repository.CartRepository.GetCartItemsByCartIdAsync(CartId);
+        if(cartitem is null ) throw new KeyNotFoundException("have no items to add ");
+     
+  var orderitems=new List<OrderItemForCreationDto>();
+
+  foreach(var item in cartitem)
+        {
+        var it=new OrderItemForCreationDto
+        {ProductId=item.ProductId,
+        Quantity=item.Quantity };
+
+
+        orderitems.Add(it);
+
+        }
+        
+        
+        var order=new OrderForCreationDto
+        {
+            OrderItems=orderitems
+        };
+        
+    return order;
 
 
 
-    
+
+        
+        }
+
+
+
+
+
 }
