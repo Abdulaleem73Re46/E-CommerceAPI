@@ -11,7 +11,7 @@ namespace ECommerce.Presentation;
 
 
 [Route("api/products")]
-//[ApiController]
+[ApiController]
 
 
 public class ProductController : ControllerBase
