@@ -15,10 +15,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Core.Entities;
 using System.Security.Claims;
-<<<<<<< HEAD
-=======
 using System.Text.Json;
->>>>>>> 9efd85e50f987e4293c4535f1171a1ce25504d06
 
 namespace API.Extensions;
 
@@ -39,72 +36,45 @@ public static class ServiceExtensions
         });
     }
 
-    public static void AddConfigurationJWT(this IServiceCollection services, IConfiguration configuration)
+  public static void AddConfigurationJWT(this IServiceCollection services, IConfiguration configuration)
 {
     var jwtSettings = configuration.GetSection("JwtSettings");
     
+    // Get the secret key (environment variable > appsettings)
     var key = Environment.GetEnvironmentVariable("SECRETKEY") ??
-              jwtSettings["Key"] ?? 
+              jwtSettings["Key"] ??
               configuration["Jwt:Key"] ??
               "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
     
     if (string.IsNullOrEmpty(key) || key.Length < 32)
-    {
-<<<<<<< HEAD
-        var jwtSettings = configuration.GetSection("JwtSettings");
-    var secretKey = jwtSettings["Key"];
-    
-    if (string.IsNullOrEmpty(secretKey))
-        throw new InvalidOperationException("JWT Key is missing in appsettings.json");
-
-=======
         throw new InvalidOperationException("JWT Secret Key is missing or too short.");
-    }
-    
->>>>>>> 9efd85e50f987e4293c4535f1171a1ce25504d06
+
     services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+          options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(opt =>
     {
-<<<<<<< HEAD
-        opt.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidateAudience = true,
-            ValidAudience = jwtSettings["Audience"],
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            RoleClaimType = ClaimTypes.Role
-        };
-=======
-        opt.RequireHttpsMetadata = false; // Add this for development
-        opt.SaveToken = true; // Add this
-        
         opt.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = jwtSettings["Issuer"] ?? "https://localhost:5276",
->>>>>>> 9efd85e50f987e4293c4535f1171a1ce25504d06
-            
             ValidateAudience = true,
             ValidAudience = jwtSettings["Audience"] ?? "https://localhost:5276",
-            
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
-            
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
-            
             RoleClaimType = ClaimTypes.Role
         };
         
-        // 🔑 CRITICAL FIX - This prevents redirect to login page
+        opt.RequireHttpsMetadata = false;   // For development
+        opt.SaveToken = true;
+        
+        // Custom error handling (prevents redirect to login page)
         opt.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
@@ -119,23 +89,18 @@ public static class ServiceExtensions
             },
             OnChallenge = context =>
             {
-                // ✅ This prevents the default redirect behavior
                 context.HandleResponse();
-                
                 if (!context.Response.HasStarted)
                 {
                     context.Response.StatusCode = 401;
                     context.Response.ContentType = "application/json";
-                    
                     var result = JsonSerializer.Serialize(new 
                     { 
                         error = "Unauthorized", 
                         message = "Invalid or missing token. Please provide a valid JWT token in the Authorization header."
                     });
-                    
                     return context.Response.WriteAsync(result);
                 }
-                
                 return Task.CompletedTask;
             },
             OnForbidden = context =>
@@ -152,20 +117,36 @@ public static class ServiceExtensions
         };
     });
 }
-    public static void ConfigureIdentity(this IServiceCollection services)
+
+   public static void ConfigureIdentity(this IServiceCollection services)
+{
+    var builder = services.AddIdentity<User, IdentityRole>(o =>
     {
-        var builder = services.AddIdentity<User, IdentityRole>(o =>
+        o.Password.RequireDigit = true;
+        o.Password.RequireLowercase = false;
+        o.Password.RequireUppercase = false;
+        o.Password.RequireNonAlphanumeric = false;
+        o.Password.RequiredLength = 8;
+        o.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<RepositoryContext>()
+    .AddDefaultTokenProviders();
+
+    services.ConfigureApplicationCookie(options =>
+    {
+        options.Events.OnRedirectToLogin = context =>
         {
-            o.Password.RequireDigit = true;
-            o.Password.RequireLowercase = false;
-            o.Password.RequireUppercase = false;
-            o.Password.RequireNonAlphanumeric = false;
-            o.Password.RequiredLength = 8;
-            o.User.RequireUniqueEmail = true;
-        })
-        .AddEntityFrameworkStores<RepositoryContext>()
-        .AddDefaultTokenProviders();
-    }
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
+
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+        };
+    });
+}
 }
 public static class ExceptionMiddlewareExtensions
 {

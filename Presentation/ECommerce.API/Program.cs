@@ -45,7 +45,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("admin"));
     
     options.AddPolicy("UserOrAdmin", policy => 
-        policy.RequireRole("User", "Admin"));
+        policy.RequireRole("user", "admin"));
 });
 
 // ✅ إضافة سياسة مخصصة للمنتجات

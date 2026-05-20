@@ -4,6 +4,7 @@ using AutoMapper;
 using Core.Contracts;
 using Core.Entities;
 using Core.Enum.OrderStatus;
+using Core.Enum.PaymentStatus;
 using Core.Shared.DataTransferObjects;
 using Service.Contracts;
 
@@ -16,32 +17,114 @@ public sealed class OrderService : IOrderService
 
    private readonly IRepositoryManager _repository;
    private readonly IMapper _mapper;
-
-    public OrderService(IRepositoryManager repository,IMapper mapper)
+private readonly IPaymentGateway _payment;
+    public OrderService(IRepositoryManager repository,IPaymentGateway paymentGateway,IMapper mapper)
     {
         
         _repository=repository;
         _mapper=mapper;
+        _payment=paymentGateway;
         
     }
 
-// public async Task<OrderForCreationDto> CreateOrderAsync(string userId, OrderForCreationDto order, bool trackChanges)
-// {
-//     var orderEntity = _mapper.Map<Order>(order);
-//     orderEntity.UserId = userId;
-//     orderEntity.OrderDate = DateTime.UtcNow;
-//     orderEntity.Status = OrderStatus.Pending;
+    // public async Task<bool> CheckPayBeforeCreateOrder(PaymentForCreationDto paymentForCreationDto,Guid orderId)
+    // {
+    //    var order=await _repository.OrderRepository.GetByIdAsync(orderId,trackChanges:false);
+    //    if(order is null)throw new KeyNotFoundException("not found ");
+        
+        
+      
+
+    // }
+
+    public Task<bool> CheckPayBeforeCreateOrder(PaymentForCreationDto paymentForCreationDto)
+    {
+        throw new NotImplementedException();
+    }
+
+    // public async Task<OrderForCreationDto> CreateOrderAsync(string userId, OrderForCreationDto order, bool trackChanges)
+    // {
+    //     var orderEntity = _mapper.Map<Order>(order);
+    //     orderEntity.UserId = userId;
+    //     orderEntity.OrderDate = DateTime.UtcNow;
+    //     orderEntity.Status = OrderStatus.Pending;
+
+    //     _repository.OrderRepository.CreateOrder(userId, orderEntity);
+    //     await _repository.SaveAsync();
+
+    //     var entityToReturn = _mapper.Map<OrderForCreationDto>(orderEntity);
+    //     return entityToReturn;
+
+
+
+
+    //     }
+
+    public async Task<OrderDto> CreateOrderAfterPaymentAsync(string userId,Guid cartId,ProcessPaymentDto processPaymentDto)
+    {
+        var cart=await _repository.CartRepository.GetCartWithItemsAsync(cartId);
+        if(cart==null || !cart.CartItems.Any())
+        {
+            throw new InvalidOperationException("cart is empty");
+
+        }
+
+decimal total=cart.CartItems.Sum(i=>i.Quantity*i.UnitPrice);
+
+var paymentResult=await _payment.ChargeAsync(total,processPaymentDto.paymentMethod);
+if(!paymentResult.Succeeded)throw new Exception();
+var payment=new Payment
+{
+    PaymentId=Guid.NewGuid(),
+    Amount=total,
+    PayMethod=processPaymentDto.paymentMethod,
+    PayStatus=PaymentStatus.Success,
+    PayDate=DateTime.UtcNow,
     
-//     _repository.OrderRepository.CreateOrder(userId, orderEntity);
-//     await _repository.SaveAsync();
     
-//     var entityToReturn = _mapper.Map<OrderForCreationDto>(orderEntity);
-//     return entityToReturn;
+};
+
+
+await _repository.PaymentRepository.AddAsync(payment);
+await _repository.SaveAsync();
+var order=new Order
+{
+  OrderId=Guid.NewGuid(),
+  UserId=userId,
+  TotalPrice=total,
+  OrderDate=DateTime.UtcNow,
+  Status=OrderStatus.Confirmed,
+  PaymentId=payment.PaymentId,
+  OrderItems=cart.CartItems.Select(item=> new OrderItem
+  {
+      OrderItemId=Guid.NewGuid(),
+      ProductId=item.ProductId,
+      Quantity=item.Quantity,
+      PriceAtPurchase=item.UnitPrice
+  }).ToList() 
+
+};
+_repository.OrderRepository.CreateOrder(userId,order);
+
+foreach(var pro in cart.CartItems)
+        {
+            var product=await _repository.ProductRepository.GetProductAsync(pro.ProductId,trackChanges:false);
+            product.StockQuantity-=pro.Quantity;
+            _repository.ProductRepository.UpdateProduct(product);
+
+        }
+         // Complete this ,Add ClearCart(caerId) to CartRepos
+       // _repository.CartRepository.DeleteItem(car)
 
 
 
-         
-//     }
+
+
+
+
+    }
+
+
 
 public async Task<OrderDto> CreateOrderAsync(string userId, OrderForCreationDto orderDto, bool trackChanges)
 {
@@ -55,7 +138,9 @@ public async Task<OrderDto> CreateOrderAsync(string userId, OrderForCreationDto 
         Status = OrderStatus.Pending,
         OrderItems = new List<OrderItem>()
     };
-    
+     
+    orderEntity.TotalPrice=orderEntity.OrderItems.Sum(i=>i.Quantity*i.PriceAtPurchase);
+     
     
     foreach (var itemDto in orderDto.OrderItems)
     {
@@ -72,7 +157,7 @@ public async Task<OrderDto> CreateOrderAsync(string userId, OrderForCreationDto 
             Quantity = itemDto.Quantity,
             PriceAtPurchase = product.Price
         };
-        orderEntity.TotalPrice+=orderItem.PriceAtPurchase*orderItem.Quantity;
+        // orderEntity.TotalPrice+=orderItem.PriceAtPurchase*orderItem.Quantity;
 
         orderEntity.OrderItems.Add(orderItem);
         
@@ -140,11 +225,9 @@ public async Task<OrderDto> CreateOrderAsync(string userId, OrderForCreationDto 
 
         var paymentDto=_mapper.Map<PaymentDto>(payment);
 
-        return paymentDto;
-      
+        return paymentDto;}
 
 
 
         
-    }
 }

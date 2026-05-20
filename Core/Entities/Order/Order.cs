@@ -14,7 +14,9 @@ public class Order
     
     [Required]
     public string UserId { get; set; } = string.Empty;
-    
+     
+      public Guid PaymentId { get; set; }
+
     [Required]
     [Column(TypeName = "decimal(18,2)")]
     public decimal TotalPrice { get; set; }
@@ -29,6 +31,9 @@ public class Order
     
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     
+      
+   
+     [ForeignKey(nameof(OrderId))]
     public Payment Payment { get; set; } = null!;
 
 }

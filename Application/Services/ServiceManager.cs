@@ -25,15 +25,15 @@ using Service.Contracts;
     private readonly Lazy<IPaymentService> _paymentService;
 
 private readonly Lazy<IAuthenticationService> _Authentication;
+private readonly Lazy<IPaymentGateway> _paymentGateway;
 
-
-    public ServiceManager(IRepositoryManager repository,IMapper mapper,UserManager<User>  user,IConfiguration configuration)
+    public ServiceManager(IRepositoryManager repository,IMapper mapper,IPaymentGateway paymentGateway,UserManager<User>  user,IConfiguration configuration)
     {
 
     _categoryService=new Lazy<ICategoryService>(()=>new CategoryService(repository,mapper));
     _productService=new Lazy<IProductService>(()=>new ProductService(repository,mapper));
     _cartService=new Lazy<ICartService>(()=>new CartService(repository,mapper));
-    _orderService=new Lazy<IOrderService>(()=>new OrderService(repository,mapper));
+    _orderService=new Lazy<IOrderService>(()=>new OrderService(repository,paymentGateway,mapper));
     _paymentService=new Lazy<IPaymentService>(()=>new PaymentService(repository,mapper));
     _Authentication=new Lazy<IAuthenticationService>(()=>new AuthenticationService(mapper,user,configuration));
     
@@ -59,4 +59,9 @@ private readonly Lazy<IAuthenticationService> _Authentication;
         public IOrderService OrderService =>_orderService.Value;
 
     public IAuthenticationService AuthenticationService => _Authentication.Value;
+    
+
+    
+
+    public IPaymentGateway paymentGateway => _paymentGateway.Value;
 }

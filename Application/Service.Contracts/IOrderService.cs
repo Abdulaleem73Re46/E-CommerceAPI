@@ -24,6 +24,7 @@ public interface IOrderService
    
    Task<bool> DeleteOrderByIdAsync(Guid orderId);
    
+  Task<bool> CheckPayBeforeCreateOrder(PaymentForCreationDto paymentForCreationDto);
 
 
 

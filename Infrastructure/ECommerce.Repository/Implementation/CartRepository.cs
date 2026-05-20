@@ -77,6 +77,12 @@ public void DeleteItem(CartItem cartItem)=>_repository.CartItems.Remove(cartItem
         await _repository.SaveChangesAsync();
     }
 
+    public void RemoveItems(CartItem cartItem)
+    {
+       _repository.Remove(cartItem);
+
+    }
+
 
 
     //public async Task<IQueryable<Cart>> GetCartItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).SingleOrDefaultAsync();

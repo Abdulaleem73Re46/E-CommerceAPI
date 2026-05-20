@@ -3,14 +3,16 @@
 using AutoMapper;
 using Core.Contracts;
 using Core.Entities;
+using Core.Enum.PaymentMethod;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Externals;
 using Service.Contracts;
 
 namespace Service;
 
 
 
-public sealed class PaymentService : IPaymentService
+public sealed class PaymentService : IPaymentService,IPaymentGateway
 {
 
     private readonly IRepositoryManager _repository;
@@ -19,6 +21,18 @@ public sealed class PaymentService : IPaymentService
     {
         _repository=repository;
         _mapper=mapper;
+    }
+
+    public async Task<PaymentResult> ChargeAsync(decimal amount, PaymentMethod paymentMethod, CancellationToken token=default)
+    {
+         await Task.Delay(2000,token);
+        if (amount <= 0)
+        {
+            return PaymentResult.Failed("Invalid Amount payment");
+
+        }
+        return amount<1000?PaymentResult.Success(transactionId:Guid.NewGuid().ToString()):PaymentResult.Failed("Insufficient Funds");
+        
     }
 
     public async Task CreatePaymentAsync(PaymentForCreationDto paymentForCreation)

@@ -23,6 +23,8 @@ public interface ICartRepository{
  Task<IEnumerable<CartItem>> GetCartItemsByCartIdAsync(Guid cartId);
  Task AddCartItemAsync(CartItem cartItem);
  Task UpdateCartItemAsync(CartItem cartItem);
+ void  RemoveItems(CartItem cartItem);
+
 
 
 }

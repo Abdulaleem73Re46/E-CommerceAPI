@@ -289,6 +289,13 @@ return _mapper.Map<CartItemDto>(cartitem);
         {
             OrderItems=orderitems
         };
+
+foreach(var item in cartitem)
+        {
+            _repository.CartRepository.RemoveItems(item);
+        }
+
+
         
     return order;
 

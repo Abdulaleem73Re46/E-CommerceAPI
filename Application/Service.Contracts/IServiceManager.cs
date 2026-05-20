@@ -14,6 +14,7 @@ public interface IServiceManager
  IOrderService OrderService{get;}   
 
 IAuthenticationService AuthenticationService{get;}
+IPaymentGateway paymentGateway{get;}
 
 
 

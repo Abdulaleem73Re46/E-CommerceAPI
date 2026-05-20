@@ -48,7 +48,7 @@ public ProductController(IServiceManager service)
 
 
 
-//[Authorize(Roles = "ADMIN")]   
+[Authorize(Roles = "admin")]   
     [HttpPost("create")]
     public async Task<IActionResult>  CreateProduct([FromBody] CreateProductDto productDto)
   {
@@ -73,7 +73,7 @@ public ProductController(IServiceManager service)
 
 
 }
-//D2B3C4D5-E6F7-4A80-9012-345678901BCD
+//D2B3C4D5-E6F7-4A80-9012-345678901BCD      care
 //E3C4D5E6-F7A8-4B90-0123-456789012CDE
 //C1A2B3C4-D5E6-4F70-8901-234567890ABC
 //http://localhost:5276/api/products/products/C1A2B3C4-D5E6-4F70-8901-234567890ABC
