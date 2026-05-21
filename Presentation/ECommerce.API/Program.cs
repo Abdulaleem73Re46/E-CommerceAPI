@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
+using Service.Contracts;
+using Service;
 
 
 
@@ -45,10 +47,9 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("admin"));
     
     options.AddPolicy("UserOrAdmin", policy => 
-        policy.RequireRole("User", "Admin"));
+        policy.RequireRole("user", "admin"));
 });
 
-// ✅ إضافة سياسة مخصصة للمنتجات
 
 // builder.Services.ConfigureExceptionHandler();
 
@@ -69,14 +70,14 @@ app.UseExceptionHandler(exceptionHandlerApp =>
         {
             StatusCode = context.Response.StatusCode,
             Message = exception?.Message ?? "An error occurred while processing your request.",
-            // Only include stack trace in development
+        
             Detail = app.Environment.IsDevelopment() ? exception?.StackTrace : null
         };
         
         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
     });
 });
-// Configure the HTTP request pipeline.
+
 
 //app.UseHttpsRedirection();
 

@@ -40,10 +40,7 @@ public static class ServiceExtensions
 {
     var jwtSettings = configuration.GetSection("JwtSettings");
     
-    var key = Environment.GetEnvironmentVariable("SECRETKEY") ??
-              jwtSettings["Key"] ?? 
-              configuration["Jwt:Key"] ??
-              "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
+    var key = Environment.GetEnvironmentVariable("SECRETKEY") ;
     
     if (string.IsNullOrEmpty(key) || key.Length < 32)
     {
@@ -54,11 +51,12 @@ public static class ServiceExtensions
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme=JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(opt =>
     {
-        opt.RequireHttpsMetadata = false; // Add this for development
-        opt.SaveToken = true; // Add this
+        opt.RequireHttpsMetadata = false; 
+        opt.SaveToken = true; 
         
         opt.TokenValidationParameters = new TokenValidationParameters
         {
@@ -77,7 +75,7 @@ public static class ServiceExtensions
             RoleClaimType = ClaimTypes.Role
         };
         
-        // 🔑 CRITICAL FIX - This prevents redirect to login page
+    
         opt.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
@@ -92,7 +90,7 @@ public static class ServiceExtensions
             },
             OnChallenge = context =>
             {
-                // ✅ This prevents the default redirect behavior
+            
                 context.HandleResponse();
                 
                 if (!context.Response.HasStarted)
@@ -144,7 +142,6 @@ public static class ExceptionMiddlewareExtensions
 {
     public static void ConfigureExceptionHandler(this WebApplication app)
     {
-        // ✅ Change this - don't use UseExceptionHandler with empty config
         app.UseExceptionHandler(appError =>
         {
             appError.Run(async context =>

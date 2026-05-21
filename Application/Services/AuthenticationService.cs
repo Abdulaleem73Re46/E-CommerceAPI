@@ -15,13 +15,13 @@ public sealed class AuthenticationService : IAuthenticationService
 {
     private readonly IMapper _mapper;
     private readonly IConfiguration _configuration;
-    private readonly UserManager<User> _userManager;  // ✅ تغيير الاسم ليكون واضحاً
+    private readonly UserManager<User> _userManager;  
     private User? _currentUser;
 
     public AuthenticationService(IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
     {
         _mapper = mapper;
-        _userManager = userManager;  // ✅ UserManager
+        _userManager = userManager; 
         _configuration = configuration;
     }
 
@@ -72,11 +72,7 @@ public sealed class AuthenticationService : IAuthenticationService
 
     private SigningCredentials GetSigningCredentials()
     {
-        // ✅ محاولة قراءة المفتاح من عدة مصادر
-        var secretKey = _configuration["JwtSettings:Key"] ??      // من appsettings.json
-                       _configuration["Jwt:Key"] ??               // من Jwt:Key
-                       Environment.GetEnvironmentVariable("SECRETKEY") ??  // من Environment Variables
-                       "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!"; // ✅ fallback آمن للتطوير
+        var secretKey = Environment.GetEnvironmentVariable("SECRETKEY"); 
         
         if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
         {
@@ -91,13 +87,13 @@ public sealed class AuthenticationService : IAuthenticationService
     private async Task<List<Claim>> GetClaimsAsync()
     {
         if (_currentUser == null)
-            throw new InvalidOperationException("User is not initialized. Call ValidateUser() first.");
+            throw new InvalidOperationException("User is not initialized. Call ValidateUser first.");
         
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, _currentUser.Id),
-            new Claim(ClaimTypes.Name, _currentUser.UserName ?? ""),
-            new Claim(ClaimTypes.Email, _currentUser.Email ?? "")
+            new Claim(ClaimTypes.Name, _currentUser.UserName ?? "")
+         
         };
         
         var roles = await _userManager.GetRolesAsync(_currentUser);
@@ -113,7 +109,7 @@ public sealed class AuthenticationService : IAuthenticationService
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");
         
-        // ✅ قيم افتراضية إذا كانت الإعدادات غير موجودة
+    
         var issuer = jwtSettings["Issuer"] ?? "https://localhost:5276";
         var audience = jwtSettings["Audience"] ?? "https://localhost:5276";
         var expireInMinutes = Convert.ToDouble(jwtSettings["ExpireInMinutes"] ?? "60");

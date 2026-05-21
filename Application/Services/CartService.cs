@@ -17,10 +17,12 @@ public sealed class CartService : ICartService
 
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
+   
     public CartService(IRepositoryManager repository,IMapper mapper)
     {
         _repository=repository;
         _mapper=mapper;
+      
     }
 
 //     public async Task<CartItemDto> AddCartItemAsync(Guid cartId, CartItemForCreation cartItemDto)
@@ -101,7 +103,7 @@ public sealed class CartService : ICartService
         }
         else
         {
-            _repository.CartRepository.DeleteItem(item);
+            _repository.CartRepository.DeleteCartItem(item);
 
 
         }
@@ -129,6 +131,7 @@ _repository.CartRepository.DeleteItem(cart);
 
 await _repository.SaveAsync();
 return true;
+
     }
 
     public  async Task  DeleteCartByUserId(string  userId)
@@ -289,19 +292,20 @@ return _mapper.Map<CartItemDto>(cartitem);
         {
             OrderItems=orderitems
         };
+
+foreach(var item in cartitem){
+
+_repository.CartRepository.DeleteCartItem(item);
+}
+
+
+// await .CreateOrderAsync(userId,order,trackChanges:true);
+
+    return order;  }
+
+
         
-    return order;
-
-
-
-
-        
-        }
-
-
-        
-
-
+   
 
 
 

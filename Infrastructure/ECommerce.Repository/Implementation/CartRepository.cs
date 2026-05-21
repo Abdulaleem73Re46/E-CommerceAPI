@@ -55,7 +55,7 @@ public async Task<Cart?> GetCartWithItemsAsync(Guid cartId)=> await FindByCondit
 public async Task<CartItem> GetCartItemAsync(Guid cartid,Guid productId)=>await _repository.CartItems.FirstOrDefaultAsync(ci=>ci.CartId==cartid && ci.ProductId==productId);
 
 
-public void DeleteItem(CartItem cartItem)=>_repository.CartItems.Remove(cartItem);
+public void DeleteCartItem(CartItem cartItem)=>_repository.CartItems.Remove(cartItem);
 
     public async Task<Cart?> GetByUserIdAsync(string userId)=>await FindByCondition(c=>c.UserId.Equals(userId),false).SingleOrDefaultAsync();
 

@@ -48,7 +48,7 @@ public ProductController(IServiceManager service)
 
 
 
-//[Authorize(Roles = "ADMIN")]   
+    [Authorize(Roles = "admin")]   
     [HttpPost("create")]
     public async Task<IActionResult>  CreateProduct([FromBody] CreateProductDto productDto)
   {
