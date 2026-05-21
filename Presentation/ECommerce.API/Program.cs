@@ -47,10 +47,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("UserOrAdmin", policy => 
         policy.RequireRole("User", "Admin"));
 });
-
-// ✅ إضافة سياسة مخصصة للمنتجات
-
-// builder.Services.ConfigureExceptionHandler();
+ builder.Services.ConfigureExceptionHandler();
 
 var app = builder.Build();
 
