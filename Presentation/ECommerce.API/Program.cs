@@ -44,14 +44,18 @@ builder.Services.ConfigureIdentity();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => 
-        policy.RequireRole("admin"));
+        policy.RequireRole("Admin"));
     
     options.AddPolicy("UserOrAdmin", policy => 
         policy.RequireRole("user", "admin"));
 });
+<<<<<<< HEAD
 
 
 // builder.Services.ConfigureExceptionHandler();
+=======
+ builder.Services.ConfigureExceptionHandler();
+>>>>>>> 795713ba7cb958457e2fae7f9c9e03f5181159cd
 
 var app = builder.Build();
 
@@ -90,6 +94,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 
 //app.UseHttpsRedirection();
+app.UseRouting();
 app.UseCors("Policy");
 app.UseAuthentication();
 app.UseAuthorization();
