@@ -42,7 +42,7 @@ builder.Services.ConfigureIdentity();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => 
-        policy.RequireRole("admin"));
+        policy.RequireRole("Admin"));
     
     options.AddPolicy("UserOrAdmin", policy => 
         policy.RequireRole("User", "Admin"));
@@ -86,6 +86,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 
 //app.UseHttpsRedirection();
+app.UseRouting();
 app.UseCors("Policy");
 app.UseAuthentication();
 app.UseAuthorization();
