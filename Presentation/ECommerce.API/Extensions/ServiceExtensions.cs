@@ -40,10 +40,7 @@ public static class ServiceExtensions
 {
     var jwtSettings = configuration.GetSection("JwtSettings");
     
-    var key = Environment.GetEnvironmentVariable("SECRETKEY") ??
-              jwtSettings["Key"] ?? 
-              configuration["Jwt:Key"] ??
-              "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
+    var key = "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
     
     if (string.IsNullOrEmpty(key) || key.Length < 32)
     {
