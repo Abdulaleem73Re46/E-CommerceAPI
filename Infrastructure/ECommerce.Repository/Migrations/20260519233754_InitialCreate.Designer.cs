@@ -113,6 +113,12 @@ namespace ECommerce.Repository.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("TEXT");
+                   
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("TEXT");
+
+
 
                     b.HasKey("OrderId");
 
@@ -152,9 +158,6 @@ namespace ECommerce.Repository.Migrations
                 {
                     b.Property<Guid>("PaymentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("OrderId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("PayDate")

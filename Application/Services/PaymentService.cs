@@ -12,28 +12,19 @@ namespace Service;
 
 
 
-public sealed class PaymentService : IPaymentService,IPaymentGateway
+public sealed class PaymentService : IPaymentService
 {
 
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
+    
     public PaymentService(IRepositoryManager repository,IMapper mapper)
     {
         _repository=repository;
         _mapper=mapper;
     }
 
-    public async Task<PaymentResult> ChargeAsync(decimal amount, PaymentMethod paymentMethod, CancellationToken token=default)
-    {
-         await Task.Delay(2000,token);
-        if (amount <= 0)
-        {
-            return PaymentResult.Failed("Invalid Amount payment");
-
-        }
-        return amount<1000?PaymentResult.Success(transactionId:Guid.NewGuid().ToString()):PaymentResult.Failed("Insufficient Funds");
-        
-    }
+    
 
     public async Task CreatePaymentAsync(PaymentForCreationDto paymentForCreation)
     {
@@ -52,12 +43,12 @@ public sealed class PaymentService : IPaymentService,IPaymentGateway
 
     }
 
-    public async Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId)
-    {
-       var pay=await _repository.PaymentRepository.GetPaymentByOrderIdAsync(orderId);
-       var entityToreturn=_mapper.Map<PaymentDto>(pay);
-       return entityToreturn;
-    }
+    // public async Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId)
+    // {
+    //    var pay=await _repository.PaymentRepository.GetPaymentByOrderIdAsync(orderId);
+    //    var entityToreturn=_mapper.Map<PaymentDto>(pay);
+    //    return entityToreturn;
+    // }
 
     public async Task<PaymentDto> GetPaymentDtoAsync(Guid Id, bool trackChanges)
     {
@@ -77,7 +68,7 @@ public sealed class PaymentService : IPaymentService,IPaymentGateway
     var payments=new List<Payment>();
     foreach (var orderId in payIds )
     {
-var payment=await _repository.PaymentRepository.GetPaymentByOrderIdAsync(orderId);
+var payment=await _repository.OrderRepository.GetPaymentByOrderId(orderId);
 if(payment!=null)
     payments.Add(payment);
         
@@ -85,6 +76,7 @@ if(payment!=null)
 var payDtos=_mapper.Map<IEnumerable<PaymentDto>>(payments);
 return payDtos;
     
+
     
     }
 

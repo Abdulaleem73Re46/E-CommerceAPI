@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using Core.Shared.DataTransferObjects;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 
@@ -45,6 +46,20 @@ public async Task<IActionResult> GetCartItems(Guid cartId)
         return Ok(cartitems);
     }
 
+[HttpPost("{userId}")]
+
+ public async  Task<IActionResult> CreateCart(string userId)
+    {
+        
+     var cart=await _service.CartService.CreateCart(userId);
+       return CreatedAtAction(nameof(GetCart),new {CartId=cart.CartId}, cart);
+
+
+
+    }
+
+
+
 [HttpPost("{cartId:guid}/items")]
 public async Task<IActionResult> AddCartItem(Guid cartId, [FromBody] CartItemForCreation cartItemDto)
 {
@@ -56,7 +71,24 @@ public async Task<IActionResult> AddCartItem(Guid cartId, [FromBody] CartItemFor
 }
 
 
+// public async Task<IActionResult> UpdateCart(CartForUpdateDto cartForUpdateDto)
 
+
+
+[HttpPatch("{cartItemId:guid}")]
+public async Task<IActionResult> UpdateByPatchCart(Guid cartId,Guid cartItemId,[FromBody] JsonPatchDocument<CartItemForUpdateDto> jsonPatch)
+    {
+        
+    if (jsonPatch is null) return BadRequest("patch obj is null");
+    var result=await _service.CartService.GetCartItemForPatch(cartId,cartItemId,track:true);
+    jsonPatch.ApplyTo(result.cartItemForPatchUpdate);
+    
+    await _service.CartService.SaveChangesForPatch(result.cartItemForPatchUpdate,result.CartItemEntity);
+
+
+return NoContent();
+    }
+    
 
 }
 

@@ -27,40 +27,7 @@ private readonly IPaymentGateway _payment;
         
     }
 
-    // public async Task<bool> CheckPayBeforeCreateOrder(PaymentForCreationDto paymentForCreationDto,Guid orderId)
-    // {
-    //    var order=await _repository.OrderRepository.GetByIdAsync(orderId,trackChanges:false);
-    //    if(order is null)throw new KeyNotFoundException("not found ");
-        
-        
-      
-
-    // }
-
-    public Task<bool> CheckPayBeforeCreateOrder(PaymentForCreationDto paymentForCreationDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    // public async Task<OrderForCreationDto> CreateOrderAsync(string userId, OrderForCreationDto order, bool trackChanges)
-    // {
-    //     var orderEntity = _mapper.Map<Order>(order);
-    //     orderEntity.UserId = userId;
-    //     orderEntity.OrderDate = DateTime.UtcNow;
-    //     orderEntity.Status = OrderStatus.Pending;
-
-    //     _repository.OrderRepository.CreateOrder(userId, orderEntity);
-    //     await _repository.SaveAsync();
-
-    //     var entityToReturn = _mapper.Map<OrderForCreationDto>(orderEntity);
-    //     return entityToReturn;
-
-
-
-
-    //     }
-
-    public async Task<OrderDto> CreateOrderAfterPaymentAsync(string userId,Guid cartId,ProcessPaymentDto processPaymentDto)
+    public async Task<OrderDto> CreateOrderAfterPaymentAsync(string userId,Guid cartId,ProcessPaymentForCreation processPaymentDto)
     {
         var cart=await _repository.CartRepository.GetCartWithItemsAsync(cartId);
         if(cart==null || !cart.CartItems.Any())
@@ -72,17 +39,16 @@ private readonly IPaymentGateway _payment;
 decimal total=cart.CartItems.Sum(i=>i.Quantity*i.UnitPrice);
 
 var paymentResult=await _payment.ChargeAsync(total,processPaymentDto.paymentMethod);
-if(!paymentResult.Succeeded)throw new Exception();
+if(!paymentResult.Succeeded) throw new Exception();
 var payment=new Payment
 {
     PaymentId=Guid.NewGuid(),
     Amount=total,
+    
     PayMethod=processPaymentDto.paymentMethod,
     PayStatus=PaymentStatus.Success,
-    PayDate=DateTime.UtcNow,
-    
-    
-};
+    PayDate=DateTime.UtcNow};
+
 
 
 await _repository.PaymentRepository.AddAsync(payment);
@@ -104,6 +70,7 @@ var order=new Order
   }).ToList() 
 
 };
+
 _repository.OrderRepository.CreateOrder(userId,order);
 
 foreach(var pro in cart.CartItems)
@@ -113,17 +80,31 @@ foreach(var pro in cart.CartItems)
             _repository.ProductRepository.UpdateProduct(product);
 
         }
-         // Complete this ,Add ClearCart(caerId) to CartRepos
-       // _repository.CartRepository.DeleteItem(car)
+        
+         await ClearCartItem(cartId);
+
+       await   _repository.SaveAsync();
 
 
+       return _mapper.Map<OrderDto>(order);
+    }
 
 
+private async Task ClearCartItem(Guid cartId)
+    {
+        
+      var cartItems=await _repository.CartRepository.GetCartItemsByCartIdAsync(cartId);
 
+    foreach (var item in cartItems)
+        {
+            
+      _repository.CartRepository.RemoveItems(item);
+
+    }
+//await _repository.SaveAsync();
 
 
     }
-
 
 
 public async Task<OrderDto> CreateOrderAsync(string userId, OrderForCreationDto orderDto, bool trackChanges)
@@ -227,7 +208,17 @@ public async Task<OrderDto> CreateOrderAsync(string userId, OrderForCreationDto 
 
         return paymentDto;}
 
+public async Task<PaymentDto> GetPaymentDtoAsync(Guid orderId)
+    {
+        var order=await _repository.OrderRepository.GetByIdAsync(orderId,false);
+       var payment=await _repository.PaymentRepository.GetPaymentAsync(order.PaymentId,trackChanges:false);
+       return _mapper.Map<PaymentDto>(payment);
+       
 
+
+
+
+    }
 
         
 }

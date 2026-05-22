@@ -83,6 +83,25 @@ public void DeleteItem(CartItem cartItem)=>_repository.CartItems.Remove(cartItem
 
     }
 
+    public async Task<CartItem> GetCartItemByIdAsync(Guid cartid, Guid cartItemId, bool track)
+    {
+      // await FindByCondition(c=>c.CartId.Equals(cartid),track).Include(ci=>ci).SingleOrDefaultAsync();
+return await _repository.CartItems.Where(ci=>ci.CartId==cartid && ci.Id==cartItemId).SingleOrDefaultAsync();
+
+    }
+
+    public void  CreateCartToUser(Cart cart)
+    {
+       
+       Create(cart);
+       
+        
+
+
+    }
+
+
+
 
 
     //public async Task<IQueryable<Cart>> GetCartItemsAsync(Guid cartId)=> await FindByCondition(c=>c.CartId.Equals(cartId),false).SingleOrDefaultAsync();

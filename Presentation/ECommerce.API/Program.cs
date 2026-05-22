@@ -6,6 +6,13 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Frozen;
+using Service.Contracts;
+using Core.Shared.Externals;
+using Service;
 
 
 
@@ -20,6 +27,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(config=>
 {
     config.RespectBrowserAcceptHeader=true;
+    config.InputFormatters.Insert(0,GetJsonPatchInputFormatter());
 }).AddXmlDataContractSerializerFormatters()
 .AddApplicationPart(typeof(ECommerce.Presentation.AssemblyReference).Assembly).AddJsonOptions(options =>
 {
@@ -50,7 +58,14 @@ builder.Services.AddAuthorization(options =>
 
 // ✅ إضافة سياسة مخصصة للمنتجات
 
-// builder.Services.ConfigureExceptionHandler();
+//
+NewtonsoftJsonInputFormatter GetJsonPatchInputFormatter()=>
+new ServiceCollection().AddMvc().AddNewtonsoftJson().Services.BuildServiceProvider().GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters.OfType<NewtonsoftJsonInputFormatter>().First();
+
+
+builder.Services.AddScoped<IPaymentGateway,MockPayment>();
+
+
 
 var app = builder.Build();
 

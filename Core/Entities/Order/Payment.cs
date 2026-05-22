@@ -24,6 +24,6 @@ public decimal Amount {get;set;}
     [Required]
     public PaymentStatus PayStatus { get; set; }
     
-    [ForeignKey("OrderId")]
+  
     public Order Order { get; set; } = null!;
 }

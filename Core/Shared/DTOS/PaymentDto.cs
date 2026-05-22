@@ -38,3 +38,16 @@ public string CVV{get;set;}
 
 
 }
+
+
+
+public record ProcessPaymentForCreation
+{
+   public PaymentMethod paymentMethod{get;set;}
+   public string CardNumber{get;set;} 
+   public string CVV{get;set;}
+   
+
+
+
+}

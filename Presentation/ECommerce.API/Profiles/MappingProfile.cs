@@ -10,15 +10,15 @@ public class MappingProfile : Profile
         CreateMap<Category, CategoryDto>().ReverseMap();
         CreateMap<CategoryForCreationDto, Category>();
         CreateMap<CategoryForUpdateDto, Category>();
-        
+        CreateMap<CartItemForUpdateDto,CartItem>();
         // Product mappings
         CreateMap<Product, ProductDto>().ReverseMap();
         CreateMap<CreateProductDto, Product>();
         CreateMap<UpdateProductDto, Product>();
         
         // Cart mappings
-        CreateMap<Cart, CartDto>().ReverseMap();
-        CreateMap<CartItem, CartItemDto>().ReverseMap(); //            .ForMember(dest => dest.Name, 
+        CreateMap<CartDto, Cart>().ReverseMap();
+        CreateMap<CartItemDto,CartItem >().ReverseMap(); //            .ForMember(dest => dest.Name, 
                // opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
         
         // Order mappings

@@ -30,11 +30,11 @@ public class PaymentRepository : RepositoryBase<Payment>, IPaymentRepository
         return await FindAll(trackChanges).OrderBy(p => p.PayDate).ToListAsync();
     }
 
-    public async Task<Payment> GetPaymentByOrderIdAsync(Guid id)
-    {
-        return await FindByCondition(p => p.OrderId.Equals(id), false)
-            .FirstOrDefaultAsync();
-    }
+    // public async Task<Payment> GetPaymentByOrderIdAsync(Guid id)
+    // {
+    //     return await FindByCondition(p => p.Equals(id), false)
+    //         .FirstOrDefaultAsync();
+    // }
 
     // This matches the interface - returns Task, not Task<Payment>
     public async Task AddAsync(Payment payment)

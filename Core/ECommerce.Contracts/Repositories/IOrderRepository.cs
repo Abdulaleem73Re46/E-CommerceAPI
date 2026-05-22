@@ -19,7 +19,7 @@ Task<IEnumerable<Order>> GetByStatusAsync(string Orderstatus);
     void  UpdateOrder(Order Order);
     void DeleteOrder(Order Order);
     void CreateOrder(string userId,Order Order);
-
+Task<Payment> GetPaymentByOrderId(Guid OrderId);
   
 //Task<bool> ExistsAsync(Guid id);
 

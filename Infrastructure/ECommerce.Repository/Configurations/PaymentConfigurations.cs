@@ -11,9 +11,10 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
     {
         builder.HasKey(p => p.PaymentId);
         
-        builder.HasOne(p => p.Order)
-            .WithOne(o => o.Payment)
-            .HasForeignKey<Payment>(p => p.OrderId);
+        // builder.HasOne(p => p.Order)
+        //     .WithOne(o => o.Payment);
+            
+
 
 
         builder.Property(p=>p.PayMethod).HasConversion<string>();

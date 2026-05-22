@@ -26,5 +26,7 @@ public interface ICartRepository{
  void  RemoveItems(CartItem cartItem);
 
 
+Task<CartItem> GetCartItemByIdAsync(Guid cartid,Guid cartItemId,bool track );
+void  CreateCartToUser(Cart cart);
 
 }

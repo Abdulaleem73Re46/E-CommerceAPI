@@ -21,12 +21,12 @@ public interface IOrderService
 
    Task<OrderDto> CreateOrderAsync(string userId,OrderForCreationDto order,bool trackChanges);
 
-   
+   Task<OrderDto> CreateOrderAfterPaymentAsync(string userId,Guid cartId,ProcessPaymentForCreation processPaymentDto);
    Task<bool> DeleteOrderByIdAsync(Guid orderId);
    
-  Task<bool> CheckPayBeforeCreateOrder(PaymentForCreationDto paymentForCreationDto);
 
 
+  Task<PaymentDto>    GetPaymentDtoAsync(Guid orderId);
 
 
    

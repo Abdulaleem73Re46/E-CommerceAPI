@@ -22,8 +22,12 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasForeignKey(o => o.UserId);
         builder.Property(o=>o.Status).HasConversion<string>();
             
-        builder.HasOne(o => o.Payment)
-            .WithOne(p => p.Order)
-            .HasForeignKey<Payment>(p => p.OrderId);
+        // builder.HasOne(o => o.Payment)
+        //     .WithOne(p => p.Order)
+        //     .HasForeignKey<Payment>(p => p.OrderId);
+        builder.HasOne(o=>o.Payment)
+        .WithOne(p=>p.Order)
+        .HasForeignKey<Order>(p=>p.PaymentId);
+        
     }
 }

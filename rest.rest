@@ -1,17 +1,53 @@
 
 
 
-POST http://localhost:5276/api/products/create
+# POST http://localhost:5276/api/products/create
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQzZmVkMmZhLTU5Y2QtNGZhYS1iYTgwLWExYTY4MjYwZmY1ZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ1c2VyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IkFiZHVyYWhtYW5AZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3NzkyNDA5NjQsImlzcyI6IkFiZHVsYWxlZW0gQWxwYXRvb2wiLCJhdWQiOiJNeUV4Y2VsbGVuY2VzVXNlcnMifQ.FZye6iiCWJ0-dk29BQwP-NLpwiU0ojo-pWsmaMULurc
+
+# {
+#   "name": "Samaung",
+#   "description": "Nice phone",
+#   "price": 100,
+#   "stockQuantity": 10,
+#   "categoryId": "D2B3C4D5-E6F7-4A80-9012-345678901BCD"
+# }
+
+
+
+
+# POST   http://localhost:5276/api/carts/0adcad45-ffe7-4157-821b-8fed21196481/items
+# Content-Type: application/json
+
+# {
+
+# "ProductId":"5EE11F4F-DD20-4EB7-A9CC-82C6A347BAB7",
+# "Quantity":"2"
+
+
+
+# }
+
+
+
+
+
+
+
+
+
+
+POST http://localhost:5276/api/orders/createAndpay/aa7caf17-d8fa-4be1-bae3-63fec87d622b
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQzZmVkMmZhLTU5Y2QtNGZhYS1iYTgwLWExYTY4MjYwZmY1ZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ1c2VyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IkFiZHVyYWhtYW5AZ21haWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3NzkyNDA5NjQsImlzcyI6IkFiZHVsYWxlZW0gQWxwYXRvb2wiLCJhdWQiOiJNeUV4Y2VsbGVuY2VzVXNlcnMifQ.FZye6iiCWJ0-dk29BQwP-NLpwiU0ojo-pWsmaMULurc
 
 {
-  "name": "Samaung",
-  "description": "Nice phone",
-  "price": 100,
-  "stockQuantity": 10,
-  "categoryId": "D2B3C4D5-E6F7-4A80-9012-345678901BCD"
+ "paymentMethod":"Wallet",
+ "CardNumber":"0000005555522522",
+ "CVV":"xbbxbxbbb00000xxx"
+
 }
+
+
 
 
 

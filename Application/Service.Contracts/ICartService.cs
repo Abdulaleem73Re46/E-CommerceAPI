@@ -34,6 +34,12 @@ Task<CartItemDto> UpdateCartItemByCartIdAsync(Guid CartId,CartItemForUpdateDto c
    Task<CartItemDto> GetCartItemByCartIdAsync(Guid CartId,Guid productId);
    Task AddCartItemAsync(Guid CartId,CartItemForCreation cartitemdto);
 
+   Task<(CartItemForUpdateDto cartItemForPatchUpdate,CartItem CartItemEntity)> GetCartItemForPatch(Guid CartId,Guid cartItemId,bool track);
+   Task SaveChangesForPatch(CartItemForUpdateDto cartItemForUpdateDto,CartItem cartItem);  
+
+Task<CartDto> CreateCart(string userId);
+
+    
   // Task TransformToOrderAsync(Guid CartId,Guid Id);
 
    //Task<bool> Confimed();    

@@ -232,15 +232,37 @@ return _mapper.Map<CartItemDto>(cartitem);
 
     public async Task<CartItemDto> UpdateCartItemByCartIdAsync(Guid CartId, CartItemForUpdateDto cartitemdto)
     {
-       var Items=await _repository.CartRepository.GetCartItemsByCartIdAsync(CartId);
-  var cartitem=Items.FirstOrDefault(ci=>ci.Id==cartitemdto.Id);
-    if(cartitem is null)throw new KeyNotFoundException($"User with Id {cartitemdto.Id} not found");
+//        var Items=await _repository.CartRepository.GetCartItemsByCartIdAsync(CartId);
+//   var cartitem=Items.FirstOrDefault(c));
+//     if(cartitem is null)throw new KeyNotFoundException($"User with Id {} not found");
 
-cartitem.Quantity=cartitemdto.Quantity;
-await _repository.SaveAsync();
-return _mapper.Map<CartItemDto>(cartitem);
+// cartitem.Quantity=cartitemdto.Quantity;
+// await _repository.SaveAsync();
+// return _mapper.Map<CartItemDto>(cartitem);
+throw new NotImplementedException();
 
     }
+
+
+   public async Task<CartDto> CreateCart(string userId)
+    {
+       var cart=new Cart
+       {  CartId=Guid.NewGuid(),
+           UserId=userId
+       };
+         
+     _repository.CartRepository.CreateCartToUser(cart);
+
+await _repository.SaveAsync();
+
+
+    return _mapper.Map<CartDto>(cart);
+
+     
+
+    }
+
+
 
    public async  Task  AddCartItemAsync(Guid CartId, CartItemForCreation cartitemdto)
     {
@@ -251,14 +273,14 @@ return _mapper.Map<CartItemDto>(cartitem);
         if(product is null)throw new KeyNotFoundException($"Product with Id {cartitemdto.ProductId} not found");
 
         var cartItem=new CartItem
-        {
+           {
             Id=Guid.NewGuid(),
             CartId=CartId,
             ProductId=cartitemdto.ProductId,
             Quantity=cartitemdto.Quantity,
             UnitPrice=product.Price,
             AddedAt=DateTime.UtcNow
-        };
+            };
 
        await _repository.CartRepository.AddCartItemAsync(cartItem);
        await _repository.SaveAsync();   
@@ -305,11 +327,28 @@ foreach(var item in cartitem)
         
         }
 
+    public async Task<(CartItemForUpdateDto cartItemForPatchUpdate, CartItem CartItemEntity)> GetCartItemForPatch(Guid CartId,Guid cartItemId ,bool track)
+    {
+        var cart= await _repository.CartRepository.GetCartAsync(CartId,track);
 
-        
+      if(cart is null)throw new Exception();
+
+      var cartitem=await _repository.CartRepository.GetCartItemByIdAsync(CartId,cartItemId,track);
+
+       if(cartitem is null)throw new Exception();
+  
+  var  cartItemToPatch=_mapper.Map<CartItemForUpdateDto>(cartitem);
+  return (cartItemToPatch,cartitem);
 
 
+           
 
 
+    }
 
+    public async  Task  SaveChangesForPatch(CartItemForUpdateDto cartItemForUpdateDto, CartItem cartItem)
+    {
+        _mapper.Map(cartItemForUpdateDto,cartItem);
+        await _repository.SaveAsync();
+    }
 }

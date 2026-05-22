@@ -82,6 +82,26 @@ public async Task<IActionResult> CreateOrder(string userId, [FromBody] OrderForC
 }
 
 
+
+
+[HttpPost("createAndpay/{userId}")]
+   public async Task<IActionResult> CreateOrderByPay(string userId,[FromBody] ProcessPaymentForCreation processPaymentDto)
+    {
+
+        var cart=await _service.CartService.GetCartByUserIdAsync(userId);
+        if(cart is null)
+           return BadRequest();
+
+        var order=await _service.OrderService.CreateOrderAfterPaymentAsync(userId,cart.CartId,processPaymentDto);
+
+        return CreatedAtAction(nameof(GetOrder),new{OrderId=order.OrderId},order);
+
+
+    }
+
+
+
+
    [HttpDelete("delete/{orderId}")]
    public async Task<IActionResult> DeleteOrderAsync(Guid orderId)
     {

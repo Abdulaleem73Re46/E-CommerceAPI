@@ -596,14 +596,17 @@ public static class SeedData
             {
                 OrderId = Guid.Parse("1a2b3c4d-5e6f-4a70-8901-abcdef123456"),
                 UserId = "a1b2c3d4-e5f6-4a70-8901-000000000001",  // ✅ Fixed: matches User 1
+                PaymentId=Guid.Parse("afcefe3a-5b81-4e95-b06a-111111111111"),
                 TotalPrice = 724.98m,
                 OrderDate = new DateTime(2025, 1, 15, 10, 30, 0, DateTimeKind.Utc),
+
                 Status = OrderStatus.Delivered
             },
             new Order
             {
                 OrderId = Guid.Parse("2b3c4d5e-6f7a-4b80-9012-bcdef1234567"),
                 UserId = "a1b2c3d4-e5f6-4a70-8901-000000000001",  // ✅ Fixed: matches User 1
+                PaymentId=Guid.Parse("bfcefe3a-5b81-4e95-b06a-222222222222"),
                 TotalPrice = 1389.98m,
                 OrderDate = new DateTime(2025, 3, 20, 14, 45, 0, DateTimeKind.Utc),
                 Status = OrderStatus.Confirmed
@@ -611,7 +614,8 @@ public static class SeedData
             new Order
             {
                 OrderId = Guid.Parse("3c4d5e6f-7a8b-4c90-0123-cdef12345678"),
-                UserId = "b2c3d4e5-f6a7-4b80-9012-000000000002",  // ✅ Fixed: matches User 2
+                UserId = "b2c3d4e5-f6a7-4b80-9012-000000000002",  // ✅ Fixed: matches User 2\
+                PaymentId=Guid.Parse("cfcefe3a-5b81-4e95-b06a-333333333333"),
                 TotalPrice = 114.98m,
                 OrderDate = new DateTime(2025, 2, 10, 9, 15, 0, DateTimeKind.Utc),
                 Status = OrderStatus.Delivered
@@ -620,6 +624,7 @@ public static class SeedData
             {
                 OrderId = Guid.Parse("4d5e6f7a-8b9c-4d01-1234-def123456789"),
                 UserId = "b2c3d4e5-f6a7-4b80-9012-000000000002",  // ✅ Fixed: matches User 2
+                PaymentId=Guid.Parse("dfcefe3a-5b81-4e95-b06a-444444444444"),
                 TotalPrice = 49.99m,
                 OrderDate = new DateTime(2025, 5, 5, 16, 0, 0, DateTimeKind.Utc),
                 Status = OrderStatus.Pending
@@ -701,7 +706,7 @@ public static class SeedData
             new Payment
             {
                 PaymentId = Guid.Parse("afcefe3a-5b81-4e95-b06a-111111111111"),
-                OrderId = Guid.Parse("1a2b3c4d-5e6f-4a70-8901-abcdef123456"),
+                
                 PayMethod = PaymentMethod.CreditCard,
                 PayDate = new DateTime(2025, 1, 15, 10, 35, 0, DateTimeKind.Utc),
                 PayStatus = PaymentStatus.Success
@@ -709,7 +714,7 @@ public static class SeedData
             new Payment
             {
                 PaymentId = Guid.Parse("bfcefe3a-5b81-4e95-b06a-222222222222"),
-                OrderId = Guid.Parse("2b3c4d5e-6f7a-4b80-9012-bcdef1234567"),
+              
                 PayMethod = PaymentMethod.Wallet,
                 PayDate = new DateTime(2025, 3, 20, 14, 50, 0, DateTimeKind.Utc),
                 PayStatus = PaymentStatus.Success
@@ -717,7 +722,7 @@ public static class SeedData
             new Payment
             {
                 PaymentId = Guid.Parse("cfcefe3a-5b81-4e95-b06a-333333333333"),
-                OrderId = Guid.Parse("3c4d5e6f-7a8b-4c90-0123-cdef12345678"),
+                
                 PayMethod = PaymentMethod.CreditCard,
                 PayDate = new DateTime(2025, 2, 10, 9, 20, 0, DateTimeKind.Utc),
                 PayStatus = PaymentStatus.Success
@@ -725,7 +730,7 @@ public static class SeedData
             new Payment
             {
                 PaymentId = Guid.Parse("dfcefe3a-5b81-4e95-b06a-444444444444"),
-                OrderId = Guid.Parse("4d5e6f7a-8b9c-4d01-1234-def123456789"),
+          
                 PayMethod = PaymentMethod.Wallet,
                 PayDate = new DateTime(2025, 5, 5, 16, 5, 0, DateTimeKind.Utc),
                 PayStatus = PaymentStatus.Pending

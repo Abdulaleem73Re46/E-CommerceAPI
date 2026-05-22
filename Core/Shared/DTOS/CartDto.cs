@@ -1,3 +1,4 @@
+using System.Data;
 using Core.Entities;
 
 namespace Core.Shared.DataTransferObjects;
@@ -29,6 +30,8 @@ public record CartForCreationDto
 public record CartForUpdateDto
 {
     public string UserId { get; init; }
+    public int Quantity{get;init;}
+
 }
 
 public record CartItemDto
@@ -44,8 +47,18 @@ public record CartItemDto
 public record CartItemForUpdateDto
 {
 
-  public Guid Id{get;init;}
-    public int Quantity { get; init; }
+ 
+    public int? Quantity { get; init; }
+   
+
+}
+
+
+public record CartItemForUpdateDt2
+{
+
+ public Guid Id{get;init;}
+    public int? Quantity { get; init; }
    
 
 }
