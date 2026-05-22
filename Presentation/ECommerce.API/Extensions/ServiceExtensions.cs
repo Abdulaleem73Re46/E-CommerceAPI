@@ -39,13 +39,9 @@ public static class ServiceExtensions
     public static void AddConfigurationJWT(this IServiceCollection services, IConfiguration configuration)
 {
     var jwtSettings = configuration.GetSection("JwtSettings");
-    
-<<<<<<< HEAD
-    var key = Environment.GetEnvironmentVariable("SECRETKEY") ;
-=======
-    var key = "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
->>>>>>> 795713ba7cb958457e2fae7f9c9e03f5181159cd
-    
+    var key=jwtSettings["Key"];
+
+
     if (string.IsNullOrEmpty(key) || key.Length < 32)
     {
         throw new InvalidOperationException("JWT Secret Key is missing or too short.");
@@ -55,7 +51,7 @@ public static class ServiceExtensions
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme=JwtBearerDefaults.AuthenticationScheme;
+       
     })
     .AddJwtBearer(opt =>
     {
@@ -65,10 +61,10 @@ public static class ServiceExtensions
         opt.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = jwtSettings["Issuer"] ?? "https://localhost:5276",
+            ValidIssuer = jwtSettings["Issuer"],
             
             ValidateAudience = true,
-            ValidAudience = jwtSettings["Audience"] ?? "https://localhost:5276",
+            ValidAudience = jwtSettings["Audience"],
             
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
@@ -129,7 +125,7 @@ public static class ServiceExtensions
 }
     public static void ConfigureIdentity(this IServiceCollection services)
     {
-        var builder = services.AddIdentity<User, IdentityRole>(o =>
+        var builder = services.AddIdentityCore<User>(o =>
         {
             o.Password.RequireDigit = true;
             o.Password.RequireLowercase = false;
@@ -137,7 +133,7 @@ public static class ServiceExtensions
             o.Password.RequireNonAlphanumeric = false;
             o.Password.RequiredLength = 8;
             o.User.RequireUniqueEmail = true;
-        })
+        }).AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<RepositoryContext>()
         .AddDefaultTokenProviders();
     }

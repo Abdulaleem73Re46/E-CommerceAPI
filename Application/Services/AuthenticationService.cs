@@ -4,6 +4,7 @@ using System.Text;
 using AutoMapper;
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -35,8 +36,9 @@ public sealed class AuthenticationService : IAuthenticationService
             Console.WriteLine("User not found");
             return false;
         }
-        
+    
         var result = await _userManager.CheckPasswordAsync(_currentUser, userLoginDto.Password);
+
         Console.WriteLine($"Password check result: {result}");
         return result;
     }
@@ -47,56 +49,63 @@ public sealed class AuthenticationService : IAuthenticationService
             throw new InvalidOperationException("User must be validated first. Call ValidateUser() before CreateToken().");
         
         var credentials = GetSigningCredentials();
-        var claims = await GetClaimsAsync();
+        var claims = await GetClaimsAsync(_currentUser);
         var tokenOptions = GenerateTokenOptions(credentials, claims);
         
         return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
     }
 
-    public async Task<IdentityResult> RegisterUser(UserForRegisterDto userForRegister)
-    {
-        var userEntity = _mapper.Map<User>(userForRegister);
-        var result = await _userManager.CreateAsync(userEntity, userForRegister.Password);
+    // public async Task<IdentityResult> RegisterUser(UserForRegisterDto userForRegister)
+    // {
+    //     var userEntity = _mapper.Map<User>(userForRegister);
 
-        if (result.Succeeded && userForRegister.Roles != null && userForRegister.Roles.Any())
-        {
-            await _userManager.AddToRolesAsync(userEntity, userForRegister.Roles);
-        }
-        else if (result.Succeeded)
-        {
-            await _userManager.AddToRoleAsync(userEntity, "User");
-        }
+    //     var result = await _userManager.CreateAsync(userEntity, userForRegister.Password);
 
-        return result;
-    }
+    //     if (result.Succeeded && userForRegister.Roles != null && userForRegister.Roles.Any())
+    //     {
+    //         await _userManager.AddToRolesAsync(userEntity, userForRegister.Roles);
+    //     }
+    //     else if (result.Succeeded)
+    //     {
+    //         await _userManager.AddToRoleAsync(userEntity, "User");
+    //     }
+
+    //     return result;
+    // }
+    
 
     private SigningCredentials GetSigningCredentials()
     {
-        var secretKey = Environment.GetEnvironmentVariable("SECRETKEY"); 
-        
-        if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
-        {
-            throw new InvalidOperationException("JWT Secret Key is missing or too short. Please provide a key with at least 32 characters.");
-        }
+        //var secretKey = Environment.GetEnvironmentVariable("SECRETKEY"); 
+          //var secretKey = "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
+          var section=_configuration.GetSection("JwtSettings");
+          var secretKey=section["Key"];
+          
+
+        // if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
+        // {
+        //     throw new InvalidOperationException("JWT Secret Key is missing or too short. Please provide a key with at least 32 characters.");
+        // }
         
         var key = Encoding.UTF8.GetBytes(secretKey);
         var secret = new SymmetricSecurityKey(key);
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
 
-    private async Task<List<Claim>> GetClaimsAsync()
+    private async Task<List<Claim>> GetClaimsAsync(User user)
     {
-        if (_currentUser == null)
-            throw new InvalidOperationException("User is not initialized. Call ValidateUser first.");
+        // if (user == null)
+        //     throw new InvalidOperationException("User is not initialized. Call ValidateUser first.");
         
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, _currentUser.Id),
-            new Claim(ClaimTypes.Name, _currentUser.UserName ?? "")
+            new Claim(ClaimTypes.NameIdentifier,user.Id),
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Email,user.Email)
          
         };
         
-        var roles = await _userManager.GetRolesAsync(_currentUser);
+        var roles = await _userManager.GetRolesAsync(user);
         foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
@@ -110,15 +119,15 @@ public sealed class AuthenticationService : IAuthenticationService
         var jwtSettings = _configuration.GetSection("JwtSettings");
         
     
-        var issuer = jwtSettings["Issuer"] ?? "https://localhost:5276";
-        var audience = jwtSettings["Audience"] ?? "https://localhost:5276";
-        var expireInMinutes = Convert.ToDouble(jwtSettings["ExpireInMinutes"] ?? "60");
+        var issuer = jwtSettings["Issuer"] ;
+        var audience = jwtSettings["Audience"];
+        var expireInMinutes = Convert.ToDouble(jwtSettings["ExpireInMinutes"]);
         
         var tokenOptions = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(expireInMinutes),
+            expires: DateTime.UtcNow.AddMinutes(expireInMinutes),
             signingCredentials: signingCredentials
         );
         
@@ -146,4 +155,71 @@ public sealed class AuthenticationService : IAuthenticationService
         var userDto = _mapper.Map<UserDto>(user);
         return userDto;
     }
+
+    public async Task<AuthResponse> ResgisterUserAsync(UserForRegisterDto userForRegisterDto)
+    {      
+           var userEntity=_mapper.Map<User>(userForRegisterDto);
+           var result=await _userManager.CreateAsync(userEntity,userForRegisterDto.Password);
+        if (!result.Succeeded)
+        {
+            return new AuthResponse
+            {
+                Succeeded=false,
+                Errors=result.Errors.Select(e=>e.Description)
+            };}
+        if (result.Succeeded && userForRegisterDto.Roles != null && userForRegisterDto.Roles.Any())
+        {
+            await _userManager.AddToRolesAsync(userEntity, userForRegisterDto.Roles);
+        }
+        // if (result.Succeeded)
+        // {
+        //       await _userManager.AddToRoleAsync(userEntity, "user");
+        // }
+
+
+
+        var token=await CreateTokenAsync(userEntity);
+        return new AuthResponse
+        {
+            Succeeded=true,
+            Token=token
+            
+        };   
+            
+    }
+
+public async Task<string>  CreateTokenAsync(User user)
+    {
+         if (user == null)
+            throw new InvalidOperationException("User must be validated first. Call ValidateUser() before CreateToken().");
+        
+        var credentials = GetSigningCredentials();
+        var claims = await GetClaimsAsync(user);
+        var tokenOptions = GenerateTokenOptions(credentials, claims);
+        
+        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+
+    }
+
+
+
 }
+
+
+
+
+
+
+// Key
+// Issuer
+// Audience
+// ExpireInMinutes
+
+
+
+
+
+
+
+

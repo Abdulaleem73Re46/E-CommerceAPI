@@ -28,6 +28,9 @@ builder.Services.AddControllers(config=>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
 });
+
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<RepositoryContext>(opt =>
  opt.UseSqlite(builder.Configuration.GetConnectionString("SqlConnection"),
  op => op.MigrationsAssembly("ECommerce.Repository"))
@@ -41,23 +44,19 @@ builder.Services.ConfigureCors();
 builder.Services.AddConfigurationJWT(builder.Configuration);
 
 builder.Services.ConfigureIdentity();
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy => 
-        policy.RequireRole("Admin"));
-    
-    options.AddPolicy("UserOrAdmin", policy => 
-        policy.RequireRole("user", "admin"));
-});
-<<<<<<< HEAD
+builder.Services.AddAuthorization();
 
+;
 
-// builder.Services.ConfigureExceptionHandler();
-=======
- builder.Services.ConfigureExceptionHandler();
->>>>>>> 795713ba7cb958457e2fae7f9c9e03f5181159cd
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}   
+
 
 
 app.UseExceptionHandler(exceptionHandlerApp =>

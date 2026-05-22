@@ -48,7 +48,7 @@ public ProductController(IServiceManager service)
 
 
 
-    [Authorize(Roles = "admin")]   
+    [Authorize(Roles= "admin")]   
     [HttpPost("create")]
     public async Task<IActionResult>  CreateProduct([FromBody] CreateProductDto productDto)
   {
@@ -69,7 +69,12 @@ public ProductController(IServiceManager service)
 
   }
 
-
+[Authorize(Roles ="admin")]
+[HttpGet("test")]
+public IActionResult GetTest()
+  {
+    return Ok("Okey ");
+  }
 
 
 }

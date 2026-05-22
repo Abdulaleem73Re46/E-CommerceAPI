@@ -2,10 +2,10 @@
 
 POST   http://localhost:5276/api/products/create
 Content-Type:application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjFjMTNjZmZhLWUwZmMtNDUzMS04NzkwLTU4MjZlMDE0Y2NkMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJiYmJiYjIyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3NzkzODI4MzksImlzcyI6IkFiZHVsYWxlZW0gQWxwYXRvb2wiLCJhdWQiOiJNeUV4Y2VsbGVuY2VzVXNlcnMifQ.3cpq4P6NdnmvdVteZ9A7nYbNg554_z0AOQhgMwEtdkA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6Ijg3NzliYTdhLWIwNjUtNGVkZi04MjBhLTNhMTg5NzM2MDllZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ3ZXVyaXlld3Vyb2V3dSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IlNvc29ld3lydWl3eXdldWlOb2h0cnRAZ2FtaWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3Nzk0ODUyMjMsImlzcyI6IkFiZHVsYWxlZW0gQWxwYXRvb2wiLCJhdWQiOiJNeUV4Y2VsbGVuY2VzVXNlcnMifQ.HbpUW7UlWINchqksH5_5iCKi_Rl0tLwP-JYqjNEC9Yk 
 
 { 
-    "Name": "Samasi",
+    "Name": "Sosoasi",
     "Description": "Powerful laptop for professionals with 15-inch display and long battery life",
     "Price": 2299.99,
     "StockQuantity": 30,
@@ -13,19 +13,24 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hc
      }
 
 
-# POST http://localhost:5276/api/users/login
+# POST http://localhost:5276/api/users/register
 # Content-Type: application/json
 
-# {
-#     "UserName": "bbbbb22",
-   
-#     "Password": "78722887878788799"
+# { 
+#     "FullName":"yttyueeeehewuhrwuh ",
+#     "Email":"SosoewyruiwyweuiNohtrt@gamil.com",
+#     "UserName": "weuriyewuroewu",
+#     "Address":"Tokyo",
+#    "PhoneNumber":"0987747477477678543234567787",
+#     "Password": "74108952000000323230096385278787676",
+#    "Roles":["admin"]
 # }
 
 
 
-
-
+# GET http://localhost:5276/api/products/test
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6Ijg3NzliYTdhLWIwNjUtNGVkZi04MjBhLTNhMTg5NzM2MDllZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ3ZXVyaXlld3Vyb2V3dSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6IlNvc29ld3lydWl3eXdldWlOb2h0cnRAZ2FtaWwuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE3Nzk0ODUyMjMsImlzcyI6IkFiZHVsYWxlZW0gQWxwYXRvb2wiLCJhdWQiOiJNeUV4Y2VsbGVuY2VzVXNlcnMifQ.HbpUW7UlWINchqksH5_5iCKi_Rl0tLwP-JYqjNEC9Yk 
 
 
 
@@ -36,7 +41,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hc
 
 #  {
         
-#         "name": "Samasi",
+#         "name": "Sosoasi",
 #         "description": "Powerful laptop for professionals with 15-inch display and long battery life",
 #         "price": 2299.99,
 #         "stockQuantity": 30,
