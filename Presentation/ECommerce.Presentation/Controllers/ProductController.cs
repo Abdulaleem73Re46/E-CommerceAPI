@@ -11,7 +11,7 @@ namespace ECommerce.Presentation;
 
 
 [Route("api/products")]
-//[ApiController]
+[ApiController]
 
 
 public class ProductController : ControllerBase
@@ -48,7 +48,7 @@ public ProductController(IServiceManager service)
 
 
 
-[Authorize(Roles = "admin")]   
+
     [HttpPost("create")]
     public async Task<IActionResult>  CreateProduct([FromBody] CreateProductDto productDto)
   {
@@ -69,7 +69,12 @@ public ProductController(IServiceManager service)
 
   }
 
-
+[Authorize(Roles ="admin")]
+[HttpGet("test")]
+public IActionResult GetTest()
+  {
+    return Ok("Okey ");
+  }
 
 
 }

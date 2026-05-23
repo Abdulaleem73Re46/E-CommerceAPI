@@ -6,12 +6,16 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
+
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Frozen;
 using Service.Contracts;
 using Core.Shared.Externals;
+
+using Service.Contracts;
+
 using Service;
 
 
@@ -34,6 +38,9 @@ builder.Services.AddControllers(config=>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
 });
+
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddDbContext<RepositoryContext>(opt =>
  opt.UseSqlite(builder.Configuration.GetConnectionString("SqlConnection"),
  op => op.MigrationsAssembly("ECommerce.Repository"))
@@ -47,6 +54,7 @@ builder.Services.ConfigureCors();
 builder.Services.AddConfigurationJWT(builder.Configuration);
 
 builder.Services.ConfigureIdentity();
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => 
@@ -56,9 +64,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("user", "admin"));
 });
 
-// ✅ إضافة سياسة مخصصة للمنتجات
 
-//
 NewtonsoftJsonInputFormatter GetJsonPatchInputFormatter()=>
 new ServiceCollection().AddMvc().AddNewtonsoftJson().Services.BuildServiceProvider().GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters.OfType<NewtonsoftJsonInputFormatter>().First();
 
@@ -68,6 +74,13 @@ builder.Services.AddScoped<IPaymentGateway,MockPayment>();
 
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}   
+
 
 
 app.UseExceptionHandler(exceptionHandlerApp =>
@@ -84,14 +97,14 @@ app.UseExceptionHandler(exceptionHandlerApp =>
         {
             StatusCode = context.Response.StatusCode,
             Message = exception?.Message ?? "An error occurred while processing your request.",
-            // Only include stack trace in development
+        
             Detail = app.Environment.IsDevelopment() ? exception?.StackTrace : null
         };
         
         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
     });
 });
-// Configure the HTTP request pipeline.
+
 
 //app.UseHttpsRedirection();
 
@@ -104,6 +117,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 
 //app.UseHttpsRedirection();
+app.UseRouting();
 app.UseCors("Policy");
 app.UseAuthentication();
 app.UseAuthorization();

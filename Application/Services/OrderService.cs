@@ -24,7 +24,10 @@ private readonly IPaymentGateway _payment;
         
         _repository=repository;
         _mapper=mapper;
+
         _payment=paymentGateway;
+
+
         
     }
 

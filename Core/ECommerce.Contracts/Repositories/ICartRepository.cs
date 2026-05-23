@@ -14,7 +14,7 @@ public interface ICartRepository{
     void  UpdateCart(Cart cart);
     //Task<bool> ExistsAsync(Guid userId);// if the user has Cart
     void   DeleteItem(Cart cart);
-    void DeleteItem(CartItem cartItem);
+    void DeleteCartItem(CartItem cartItem);
     Task<Cart?> GetCartWithItemsAsync(Guid cartId);
    //Task<IQueryable<CartItem>> GetCartItemsAsync(Guid cartId);
 

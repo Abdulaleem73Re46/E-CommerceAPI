@@ -26,29 +26,29 @@ public AuthenticationController(IServiceManager service)
 [HttpPost("register")]
 public async Task<IActionResult> SignInUser(UserForRegisterDto forRegisterDto)
 {
-    var result = await _service.AuthenticationService.RegisterUser(forRegisterDto);
+    var result = await _service.AuthenticationService.ResgisterUserAsync(forRegisterDto);
     
     if (!result.Succeeded)
     {
         return BadRequest(result.Errors);
     }
  
-    var loginDto = new UserLoginDto 
-    { 
-        UserName = forRegisterDto.UserName, 
-        Password = forRegisterDto.Password 
-    };
+    // var loginDto = new UserLoginDto 
+    // { 
+    //     UserName = forRegisterDto.UserName, 
+    //     Password = forRegisterDto.Password 
+    // };
     
-    var isValid = await _service.AuthenticationService.ValidateUser(loginDto);
+    // var isValid = await _service.AuthenticationService.ValidateUser(loginDto);
     
-    if (!isValid)
-    {
-        return Unauthorized();
-    }
+    // if (!isValid)
+    // {
+    //     return Unauthorized();
+    // }
   
-    var token = await _service.AuthenticationService.CreateToken();
+    // var token = await _service.AuthenticationService.CreateToken();
     
-    return Ok(new { Token = token });
+    return Ok(new {Result=result});
 }
 
 

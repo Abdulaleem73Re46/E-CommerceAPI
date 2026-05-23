@@ -39,13 +39,10 @@ public static class ServiceExtensions
   public static void AddConfigurationJWT(this IServiceCollection services, IConfiguration configuration)
 {
     var jwtSettings = configuration.GetSection("JwtSettings");
-    
-    // Get the secret key (environment variable > appsettings)
-    var key = Environment.GetEnvironmentVariable("SECRETKEY") ??
-              jwtSettings["Key"] ??
-              configuration["Jwt:Key"] ??
-              "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
-    
+    var key=jwtSettings["Key"];
+
+
+
     if (string.IsNullOrEmpty(key) || key.Length < 32)
         throw new InvalidOperationException("JWT Secret Key is missing or too short.");
 
@@ -53,17 +50,22 @@ public static class ServiceExtensions
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-          options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+
     })
     .AddJwtBearer(opt =>
     {
+        opt.RequireHttpsMetadata = false; 
+        opt.SaveToken = true; 
+        
         opt.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = jwtSettings["Issuer"] ?? "https://localhost:5276",
+            ValidIssuer = jwtSettings["Issuer"],
+            
             ValidateAudience = true,
-            ValidAudience = jwtSettings["Audience"] ?? "https://localhost:5276",
+            ValidAudience = jwtSettings["Audience"],
+            
+
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
             ValidateLifetime = true,
@@ -71,10 +73,13 @@ public static class ServiceExtensions
             RoleClaimType = ClaimTypes.Role
         };
         
-        opt.RequireHttpsMetadata = false;   // For development
+//        opt.RequireHttpsMetadata = false;   // For development
         opt.SaveToken = true;
         
         // Custom error handling (prevents redirect to login page)
+
+    
+
         opt.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
@@ -89,6 +94,7 @@ public static class ServiceExtensions
             },
             OnChallenge = context =>
             {
+
                 context.HandleResponse();
                 if (!context.Response.HasStarted)
                 {
@@ -120,7 +126,7 @@ public static class ServiceExtensions
 
    public static void ConfigureIdentity(this IServiceCollection services)
 {
-    var builder = services.AddIdentity<User, IdentityRole>(o =>
+    var builder = services.AddIdentityCore<User>(o =>
     {
         o.Password.RequireDigit = true;
         o.Password.RequireLowercase = false;
@@ -128,7 +134,7 @@ public static class ServiceExtensions
         o.Password.RequireNonAlphanumeric = false;
         o.Password.RequiredLength = 8;
         o.User.RequireUniqueEmail = true;
-    })
+    }).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<RepositoryContext>()
     .AddDefaultTokenProviders();
 
@@ -147,12 +153,15 @@ public static class ServiceExtensions
         };
     });
 }
-}
+
+   
+    }
+
+
 public static class ExceptionMiddlewareExtensions
 {
     public static void ConfigureExceptionHandler(this WebApplication app)
     {
-        // ✅ Change this - don't use UseExceptionHandler with empty config
         app.UseExceptionHandler(appError =>
         {
             appError.Run(async context =>

@@ -12,12 +12,12 @@ public class ValidationFilterAttribute : IActionFilter
         var action = context.RouteData.Values["action"];
         var controller = context.RouteData.Values["controller"];
 
-        // Find any argument that is a DTO (class/record, not a primitive)
+        
         var dto = context.ActionArguments
             .FirstOrDefault(x => x.Value?.GetType().Namespace?.Contains("DataTransferObjects") == true).Value;
 
         if (dto is null)
-            return; // No DTO to validate, skip
+            return; 
 
         if (!context.ModelState.IsValid)
         {
