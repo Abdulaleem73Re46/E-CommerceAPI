@@ -25,7 +25,7 @@ public AuthenticationController(IServiceManager service)
 
 [ServiceFilter(typeof(ValidationFilterAttribute))]
 [HttpPost("register")]
-[EnableRateLimiting("fixed")]
+
 public async Task<IActionResult> SignInUser(UserForRegisterDto forRegisterDto)
 {
     var result = await _service.AuthenticationService.ResgisterUserAsync(forRegisterDto);
