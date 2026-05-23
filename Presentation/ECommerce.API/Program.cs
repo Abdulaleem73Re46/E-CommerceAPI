@@ -46,7 +46,7 @@ builder.Services.AddConfigurationJWT(builder.Configuration);
 builder.Services.ConfigureIdentity();
 builder.Services.AddAuthorization();
 
-;
+builder.Services.AddConfigureRateLimiting();
 
 
 var app = builder.Build();
@@ -97,6 +97,8 @@ app.UseRouting();
 app.UseCors("Policy");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
+
 app.MapControllers();
 
 app.Run();
