@@ -179,11 +179,53 @@ public static class ServiceExtensions
 
 
 
-            });    
-                
-                       
-                       
-                       
+            });
+
+            options.AddTokenBucketLimiter(policyName: "TokenBucketRateLimiting", opt =>
+            {
+               
+               opt.TokenLimit=20;
+               opt.TokensPerPeriod=5;
+               opt.ReplenishmentPeriod=TimeSpan.FromSeconds(50);
+               opt.AutoReplenishment=true;
+               opt.QueueLimit=2;
+               opt.QueueProcessingOrder=QueueProcessingOrder.OldestFirst;
+
+
+
+
+            });
+
+            options.AddConcurrencyLimiter(policyName: "ConcurrencyRateLimiting", opt =>
+            {
+                opt.PermitLimit=2;
+                opt.QueueLimit=10;
+                opt.QueueProcessingOrder=QueueProcessingOrder.OldestFirst;
+
+
+
+
+            });
+
+
+            options.AddPolicy(policyName:"ByIP", context =>
+            {
+                var ip=context.Connection.RemoteIpAddress?.ToString()??"Unknown";
+                return RateLimitPartition.GetSlidingWindowLimiter(partitionKey:ip,
+                factory:key=>new SlidingWindowRateLimiterOptions
+                {
+                    PermitLimit=10,
+                    Window=TimeSpan.FromMinutes(1),
+                    QueueLimit=0,
+                    SegmentsPerWindow=4
+                    
+                });
+
+
+
+            });
+
+
                        
      });
 
