@@ -5,6 +5,7 @@ using Core.Entities;
 using Core.Shared.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Service.Contracts;
 
 namespace ECommerce.Presentation;
@@ -35,6 +36,7 @@ public ProductController(IServiceManager service)
      return Ok(product);} 
 
 [HttpGet("products/{categoryId}")]
+[EnableRateLimiting("FixedWindowRateLimiting")]
   public async Task<IActionResult> GetAllProducts(Guid categoryId)
     {
         
@@ -69,12 +71,6 @@ public ProductController(IServiceManager service)
 
   }
 
-[Authorize(Roles ="admin")]
-[HttpGet("test")]
-public IActionResult GetTest()
-  {
-    return Ok("Okey ");
-  }
 
 
 }

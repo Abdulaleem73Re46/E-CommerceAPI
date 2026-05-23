@@ -55,6 +55,7 @@ builder.Services.AddConfigurationJWT(builder.Configuration);
 
 builder.Services.ConfigureIdentity();
 
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => 
@@ -70,6 +71,8 @@ new ServiceCollection().AddMvc().AddNewtonsoftJson().Services.BuildServiceProvid
 
 
 builder.Services.AddScoped<IPaymentGateway,MockPayment>();
+
+builder.Services.AddConfigureRateLimiting();
 
 
 
@@ -121,6 +124,8 @@ app.UseRouting();
 app.UseCors("Policy");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
+
 app.MapControllers();
 
 app.Run();

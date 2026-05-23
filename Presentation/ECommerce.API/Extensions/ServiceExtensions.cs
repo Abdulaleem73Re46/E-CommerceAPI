@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Identity;
 using Core.Entities;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Extensions;
 
@@ -138,24 +140,100 @@ public static class ServiceExtensions
     .AddEntityFrameworkStores<RepositoryContext>()
     .AddDefaultTokenProviders();
 
-    services.ConfigureApplicationCookie(options =>
-    {
-        options.Events.OnRedirectToLogin = context =>
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.CompletedTask;
-        };
-
-        options.Events.OnRedirectToAccessDenied = context =>
-        {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return Task.CompletedTask;
-        };
-    });
 }
 
-   
+
+
+   public static void AddConfigureRateLimiting(this IServiceCollection services)
+    {
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode=StatusCodes.Status429TooManyRequests;
+            options.OnRejected=async(context, token) =>
+            {
+                context.HttpContext.Response.ContentType="application/json";
+                context.HttpContext.Response.Headers["Retry-After"]="10";
+                
+                await context.HttpContext.Response.WriteAsJsonAsync(new
+                {
+                    error="Too Many Requests ",
+                    message="You have been exceeded the number of requests that allowed for you ",
+                    retryAfterSeconds=context.Lease.TryGetMetadata(MetadataName.RetryAfter,out var retryAfter)
+                },token);  
+                };
+            options.AddFixedWindowLimiter(policyName:"FixedWindowRateLimiting",opt =>
+            {
+                opt.PermitLimit=3;
+                opt.Window=TimeSpan.FromMinutes(1);
+                opt.QueueLimit=0;
+                //opt.QueueProcessingOrder=QueueProcessingOrder.OldestFirst; 
+            });
+
+
+            options.AddSlidingWindowLimiter(policyName: "SlidingWindowRateLimiting", opt =>
+            {
+                opt.PermitLimit=5;
+                opt.SegmentsPerWindow=3;
+                opt.QueueLimit=2;
+                opt.QueueProcessingOrder=QueueProcessingOrder.OldestFirst;
+                opt.Window=TimeSpan.FromMinutes(30);
+               opt.AutoReplenishment=true;
+
+
+
+            });
+
+            options.AddTokenBucketLimiter(policyName: "TokenBucketRateLimiting", opt =>
+            {
+               
+               opt.TokenLimit=20;
+               opt.TokensPerPeriod=5;
+               opt.ReplenishmentPeriod=TimeSpan.FromSeconds(50);
+               opt.AutoReplenishment=true;
+               opt.QueueLimit=2;
+               opt.QueueProcessingOrder=QueueProcessingOrder.OldestFirst;
+
+
+
+
+            });
+
+            options.AddConcurrencyLimiter(policyName: "ConcurrencyRateLimiting", opt =>
+            {
+                opt.PermitLimit=2;
+                opt.QueueLimit=10;
+                opt.QueueProcessingOrder=QueueProcessingOrder.OldestFirst;
+
+
+
+
+            });
+
+
+            options.AddPolicy(policyName:"ByIP", context =>
+            {
+                var ip=context.Connection.RemoteIpAddress?.ToString()??"Unknown";
+                return RateLimitPartition.GetSlidingWindowLimiter(partitionKey:ip,
+                factory:key=>new SlidingWindowRateLimiterOptions
+                {
+                    PermitLimit=10,
+                    Window=TimeSpan.FromMinutes(1),
+                    QueueLimit=0,
+                    SegmentsPerWindow=4
+                    
+                });
+
+
+
+            });
+
+
+                       
+     });
+
     }
+
+}
 
 
 public static class ExceptionMiddlewareExtensions

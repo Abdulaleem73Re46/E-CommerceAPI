@@ -2,6 +2,7 @@
 
 using Core.Shared.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Service.Contracts;
 
 namespace ECommerce.Presentation;
@@ -24,6 +25,7 @@ public AuthenticationController(IServiceManager service)
 
 [ServiceFilter(typeof(ValidationFilterAttribute))]
 [HttpPost("register")]
+[EnableRateLimiting("fixed")]
 public async Task<IActionResult> SignInUser(UserForRegisterDto forRegisterDto)
 {
     var result = await _service.AuthenticationService.ResgisterUserAsync(forRegisterDto);
@@ -55,6 +57,7 @@ public async Task<IActionResult> SignInUser(UserForRegisterDto forRegisterDto)
     
     [HttpPost("login")]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
+    [EnableRateLimiting("SlidingWindowRateLimiting")]
     public async Task<IActionResult> LogInUser([FromBody] UserLoginDto userLoginDto)
     {
         if(!await _service.AuthenticationService.ValidateUser(userLoginDto))
