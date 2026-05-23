@@ -344,14 +344,7 @@ _repository.CartRepository.DeleteCartItem(item);
   var  cartItemToPatch=_mapper.Map<CartItemForUpdateDto>(cartitem);
   return (cartItemToPatch,cartitem);
 
-
-           
-
-   
-
-
-
-    }
+}
 
     public async  Task  SaveChangesForPatch(CartItemForUpdateDto cartItemForUpdateDto, CartItem cartItem)
     {

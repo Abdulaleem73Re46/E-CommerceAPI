@@ -25,10 +25,14 @@ public record CreateProductDto
 
 public record UpdateProductDto
 {
-   public Guid ProductId{get;init;} 
+//    public Guid ProductId{get;init;} 
     public string Name { get; init; }
     public string Description { get; init; }
     public decimal Price { get; init; }
     public int StockQuantity { get; init; }
     public Guid? CategoryId { get; init; }
 }
+
+
+
+

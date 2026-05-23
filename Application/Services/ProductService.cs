@@ -126,9 +126,29 @@ _repository.ProductRepository.UpdateProduct(productEntity);
 
 
 
-} 
+}
+
+    public async Task<(UpdateProductDto partialUpdateProductDto, Product ProductEntity)> PartialUpdateProductAsync(Guid ProductId, bool Track)
+    {
+        var productEntity=await _repository.ProductRepository.GetProductAsync(ProductId,Track);
+        
+        if(productEntity is null)throw new KeyNotFoundException($"product with Id {ProductId} not found!");
+
+        var partial=_mapper.Map<UpdateProductDto>(productEntity);
+        return (partial,productEntity);
 
 
+
+
+
+    }
+
+    public async Task SavePatchAsync(UpdateProductDto updateProductDto, Product product)
+    {
+        _mapper.Map(updateProductDto,product);
+        await _repository.SaveAsync();
+    }
+}
 
 
 
@@ -163,13 +183,3 @@ public record UpdateProductDto
 
 
 */
-
-
-
-
-
-
-
-
-
-}

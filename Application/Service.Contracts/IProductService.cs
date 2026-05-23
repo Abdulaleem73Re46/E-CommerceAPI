@@ -21,5 +21,9 @@ Task<ProductDto> CreateProductAsync(CreateProductDto productDto);
 Task<ProductDto> UpdateProductAsync(Guid productId, UpdateProductDto productDto);
 
 
+Task<(UpdateProductDto partialUpdateProductDto,Product ProductEntity)> PartialUpdateProductAsync(Guid ProductId,bool Track);
+
+    Task SavePatchAsync(UpdateProductDto updateProductDto,Product product);
+
     
 }

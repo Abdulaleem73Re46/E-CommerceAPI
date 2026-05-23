@@ -4,6 +4,7 @@
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Service.Contracts;
@@ -70,6 +71,29 @@ public ProductController(IServiceManager service)
      return CreatedAtAction(nameof(GetProduct),new {productId=createdproduct.ProductId},createdproduct);
 
   }
+
+[HttpPatch("{productId:guid}")]
+  public async Task<IActionResult> PartialUpdate(Guid productId,[FromBody] JsonPatchDocument<UpdateProductDto> jsonPatchDocument)
+  {
+    if(jsonPatchDocument is null )return BadRequest("Json Patch Product is null");
+    var result=await _service.ProductService.PartialUpdateProductAsync(productId,true);
+
+    jsonPatchDocument.ApplyTo(result.partialUpdateProductDto);
+
+    await _service.ProductService.SavePatchAsync(result.partialUpdateProductDto,result.ProductEntity);
+    return NoContent();
+
+
+
+  }
+
+
+
+
+
+
+
+
 
 
 
