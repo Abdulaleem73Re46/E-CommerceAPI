@@ -35,6 +35,7 @@ private readonly IPaymentGateway _payment;
     {
         var cart=await _repository.CartRepository.GetCartWithItemsAsync(cartId);
         if(cart==null || !cart.CartItems.Any())
+        
         {
             throw new InvalidOperationException("cart is empty");
 
