@@ -85,10 +85,18 @@ var order=new Order
 
 _repository.OrderRepository.CreateOrder(userId,order);
 
-foreach(var pro in cart.CartItems)
+foreach(var item in cart.CartItems)
         {
-            var product=await _repository.ProductRepository.GetProductAsync(pro.ProductId,trackChanges:false);
-            product.StockQuantity-=pro.Quantity;
+            var product=await _repository.ProductRepository.GetProductAsync(item.ProductId,trackChanges:false);
+if (product == null)
+                throw new Exception("Product not found");
+
+           
+            if (product.StockQuantity < item.Quantity)
+                throw new InvalidOperationException(
+                    $"Insufficient stock for product {product.Name}");
+
+            product.StockQuantity-=item.Quantity;
             _repository.ProductRepository.UpdateProduct(product);
 
         }
