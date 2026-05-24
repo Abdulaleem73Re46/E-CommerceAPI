@@ -33,6 +33,13 @@ private readonly IPaymentGateway _payment;
 
     public async Task<OrderDto> CreateOrderAfterPaymentAsync(string userId,Guid cartId,ProcessPaymentForCreation processPaymentDto)
     {
+
+using var transaction=await _repository.BeginTransactionAsync();
+
+try{
+
+
+
         var cart=await _repository.CartRepository.GetCartWithItemsAsync(cartId);
         if(cart==null || !cart.CartItems.Any())
         
@@ -89,9 +96,15 @@ foreach(var pro in cart.CartItems)
          await ClearCartItem(cartId);
 
        await   _repository.SaveAsync();
+await transaction.CommitAsync();
 
 
        return _mapper.Map<OrderDto>(order);
+} catch{
+
+await transaction.RollBackAsync();
+throw;
+} 
     }
 
 
