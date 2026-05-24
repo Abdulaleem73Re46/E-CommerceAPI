@@ -87,7 +87,7 @@ _repository.OrderRepository.CreateOrder(userId,order);
 
 foreach(var item in cart.CartItems)
         {
-            var product=await _repository.ProductRepository.GetProductAsync(item.ProductId,trackChanges:false);
+            var product=await _repository.ProductRepository.GetProductAsync(item.ProductId,trackChanges:true);
 if (product == null)
                 throw new Exception("Product not found");
 
