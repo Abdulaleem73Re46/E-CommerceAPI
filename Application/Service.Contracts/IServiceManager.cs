@@ -1,5 +1,6 @@
 
 using  Core.Shared.DataTransferObjects;
+using Microsoft.Extensions.Caching.Memory;
 namespace Service.Contracts;
 
 
@@ -14,7 +15,7 @@ public interface IServiceManager
  IOrderService OrderService{get;}   
 
 IAuthenticationService AuthenticationService{get;}
-IPaymentGateway paymentGateway{get;}
+
 
 
 

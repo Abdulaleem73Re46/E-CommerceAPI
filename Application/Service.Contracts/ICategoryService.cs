@@ -1,5 +1,6 @@
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Features;
 namespace Service.Contracts;
 
 
@@ -7,7 +8,7 @@ namespace Service.Contracts;
 
 public interface ICategoryService
 {
-    Task<IEnumerable<CategoryDto>> GetCategoriesAsync(bool trackChanges);
+    Task<IEnumerable<CategoryDto>> GetCategoriesAsync(CategoryParameter categoryParameter,bool trackChanges);
     Task<CategoryDto?> CategoryAsync(Guid CategoryId,bool trackChanges);
     
     Task<IEnumerable<ProductDto?>> GetProductsDtosAsync(Guid CategoryId,bool trackChanges);
@@ -16,7 +17,7 @@ public interface ICategoryService
 
     Task UpdateCategory(CategoryForUpdateDto categoryForUpdateDto);
 
-
+Task<bool> DeleteCategoryAsync(Guid categoryId);
     
 
 

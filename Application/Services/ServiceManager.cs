@@ -2,6 +2,7 @@ using AutoMapper;
 using Core.Contracts;
 using Core.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Service.Contracts;
 
@@ -25,9 +26,9 @@ using Service.Contracts;
     private readonly Lazy<IPaymentService> _paymentService;
 
 private readonly Lazy<IAuthenticationService> _Authentication;
-private readonly Lazy<IPaymentGateway> _paymentGateway;
 
-    public ServiceManager(IRepositoryManager repository,IMapper mapper,IPaymentGateway paymentGateway,UserManager<User>  user,IConfiguration configuration)
+
+    public ServiceManager(IRepositoryManager repository,IMapper mapper,UserManager<User>  user,IConfiguration configuration,IPaymentGateway paymentGateway)
     {
 
     _categoryService=new Lazy<ICategoryService>(()=>new CategoryService(repository,mapper));
@@ -60,8 +61,11 @@ private readonly Lazy<IPaymentGateway> _paymentGateway;
 
     public IAuthenticationService AuthenticationService => _Authentication.Value;
     
+    // public IMemoryCache MemoryCache=>memoryCache.Value;
 
     
 
-    public IPaymentGateway paymentGateway => _paymentGateway.Value;
+
+
+
 }

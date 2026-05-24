@@ -3,10 +3,12 @@
 
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Features;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Caching.Memory;
 using Service.Contracts;
 
 namespace ECommerce.Presentation;
@@ -20,10 +22,14 @@ public class ProductController : ControllerBase
 {
 
 private readonly IServiceManager _service;
-public ProductController(IServiceManager service)
+
+private IMemoryCache _cache;
+
+public ProductController(IServiceManager service,IMemoryCache cache)
 {
     _service=service;
-    
+    _cache=cache;
+
 }
     
 
@@ -31,17 +37,36 @@ public ProductController(IServiceManager service)
    [HttpGet("{productId:guid}")]
    public async Task<IActionResult> GetProduct(Guid productId)
     {
-        
-   var product=await _service.ProductService.GetProductByIdAsync(productId);
+        string cacheKey="product";
+        if(_cache.TryGetValue(cacheKey,out ProductDto product))
+    {
+      Console.WriteLine("Data From  cache");
+      return Ok(product);
+    }
+     Console.WriteLine("Data From  DB");
+    product=await _service.ProductService.GetProductByIdAsync(productId);
    
-     return Ok(product);} 
+    _cache.Set(cacheKey,product,TimeSpan.FromMinutes(2));
+
+
+
+     return Ok(product);
+     } 
 
 [HttpGet("products/{categoryId}")]
 [EnableRateLimiting("FixedWindowRateLimiting")]
-  public async Task<IActionResult> GetAllProducts(Guid categoryId)
+  public async Task<IActionResult> GetAllProducts(Guid categoryId,[FromQuery] ProductParameters productParameters)
     {
-        
-    var products=await _service.ProductService.GetProductsByCategoryIdAsync(categoryId,trackChanges:false);
+        string cacheKey="products";
+        if(_cache.TryGetValue(cacheKey,out IEnumerable<ProductDto> products))
+    {
+      return Ok(products);
+    }
+
+    products=await _service.ProductService.GetProductsByCategoryIdAsync(categoryId,productParameters,trackChanges:false);
+    
+    _cache.Set(cacheKey,products,TimeSpan.FromMinutes(3));
+
     return Ok(products);
 
 

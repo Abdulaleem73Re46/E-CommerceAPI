@@ -4,6 +4,7 @@ using AutoMapper;
 using Core.Contracts;
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Features;
 using Service.Contracts;
 
 namespace Service;
@@ -38,9 +39,19 @@ private readonly IMapper _mapper;
         
     }
 
-    public async Task<IEnumerable<CategoryDto>> GetCategoriesAsync(bool trackChanges)
+    public async Task<bool> DeleteCategoryAsync(Guid categoryId)
     {
-        var categoryes=await _repository.CategoryRepository.GetCategorysAsync(trackChanges);
+        var categoryToDelete=await _repository.CategoryRepository.GetCategoryAsync(categoryId,trackChanges:false);
+        if(categoryToDelete is null)throw new KeyNotFoundException($"Category with Id {categoryId} is not found in DB");
+
+        _repository.CategoryRepository.DeleteCategory(categoryToDelete);
+        await _repository.SaveAsync();
+        return true;
+    }
+
+    public async Task<IEnumerable<CategoryDto>> GetCategoriesAsync(CategoryParameter categoryParameter ,bool trackChanges)
+    {
+        var categoryes=await _repository.CategoryRepository.GetCategoriesAsync(categoryParameter,trackChanges);
       if(categoryes is null)throw new Exception("Not Found ");
       var categoryesToReturn=_mapper.Map<IEnumerable<CategoryDto>>(categoryes);
       return categoryesToReturn;
@@ -61,6 +72,7 @@ private readonly IMapper _mapper;
 
     }
 
+
     public async Task UpdateCategory(CategoryForUpdateDto categoryForUpdateDto)
     {
             var category=await _repository.CategoryRepository.GetCategoryAsync(categoryForUpdateDto.CategoryId,false);
@@ -72,6 +84,9 @@ private readonly IMapper _mapper;
            await _repository.SaveAsync();
           
     }
+
+
+    
 
    
 }

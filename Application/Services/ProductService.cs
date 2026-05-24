@@ -5,6 +5,8 @@ using AutoMapper;
 using Core.Contracts;
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Features;
+using Microsoft.Extensions.Caching.Memory;
 using Service.Contracts;
 
 namespace Service ;
@@ -15,12 +17,14 @@ public sealed class ProductService : IProductService
 
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
+   
 
     public ProductService(IRepositoryManager repository,IMapper mapper)
     {
         
         _repository=repository;
         _mapper=mapper;
+
     }
 
     public async Task DeleteProduct(Guid Id)
@@ -49,18 +53,31 @@ await _repository.SaveAsync();
 
    public async Task<ProductDto?> GetProductByIdAsync(Guid productId)
     {
+       
+        //   if(_cache.TryGetValue("product",out Product product))
+        // {   Console.WriteLine("Data from Cache .....");
+        //     var cached=_mapper.Map<ProductDto>(product);
+        //     return cached;
+        // }
+
+
         // Option 1: If product might not exist, throw an exception
-        var product = await _repository.ProductRepository.GetProductAsync(productId, false);
+         Console.WriteLine("Data from DB .....");
+     var   product = await _repository.ProductRepository.GetProductAsync(productId, false);
         if (product == null)
         {
             throw new Exception($"Product with ID {productId} not found");
         }
-
+//_cache.Set("product",product,TimeSpan.FromMinutes(3));
         return _mapper.Map<ProductDto>(product);
     }
-    public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid catId,bool trackChanges)
+
+
+
+    
+    public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid catId,ProductParameters productParameters,bool trackChanges)
     {
-        var products=await _repository.ProductRepository.GetProductsByCategoryIdAsync(catId,trackChanges);
+        var products=await _repository.ProductRepository.GetProductsByCategoryIdAsync(catId,productParameters,trackChanges);
         if (products is null )throw new Exception();
 
       return _mapper.Map<IEnumerable<ProductDto>>(products);
@@ -148,6 +165,10 @@ _repository.ProductRepository.UpdateProduct(productEntity);
         _mapper.Map(updateProductDto,product);
         await _repository.SaveAsync();
     }
+
+
+
+
 }
 
 

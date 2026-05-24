@@ -1,5 +1,6 @@
 using Core.Contracts;
 using Core.Entities;
+using Core.Shared.Features;
 using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
@@ -19,8 +20,8 @@ public class CategoryRepository : RepositoryBase<Category>, ICategoryRepository
     public async Task<Category> GetCategoryAsync(Guid CategoryId, bool trackChanges)=>await FindByCondition(ca=>ca.CategoryId.Equals(CategoryId),trackChanges)
     .SingleOrDefaultAsync();
 
-    public async Task<IEnumerable<Category>> GetCategorysAsync(bool trackChanges)=>await FindAll(trackChanges)
-    .OrderBy(ca=>ca.Name)
+    public async Task<IEnumerable<Category>> GetCategoriesAsync(CategoryParameter categoryParameter,bool trackChanges)=>await FindAll(trackChanges)
+    .OrderBy(ca=>ca.Name).Skip((categoryParameter.PageNumber-1)* categoryParameter.PageSize).Take(categoryParameter.PageSize)
     .ToListAsync();
     public void UpdateCategory(Category Category)=>Update(Category);
 

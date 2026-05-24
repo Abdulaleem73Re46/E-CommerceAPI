@@ -1,5 +1,6 @@
 using Core.Contracts;
 using Core.Entities;
+using Core.Shared.Features;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using SQLitePCL;
@@ -42,14 +43,10 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
       .SingleOrDefaultAsync();    
     }
 
-    public async Task<IEnumerable<Product>> GetProductsAsync(Guid id,bool trackChanges)
+    public async Task<IEnumerable<Product>> GetProductsAsync(Guid id,ProductParameters productParameters,bool trackChanges)
     {
-        return await FindAll(trackChanges).OrderBy(p=>p.Name).ToListAsync();
-      
+        return await FindAll(trackChanges).OrderBy(p=>p.Name).Skip((productParameters.PageNumber-1)* productParameters.PageSize).Take(productParameters.PageSize).ToListAsync();
 
-
-    
-    
     }
 
     public void UpdateProduct(Product Product)
@@ -57,9 +54,9 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
        Update(Product);
     }
 
-  public async Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(Guid Id,bool trackChanges)
+  public async Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(Guid Id,ProductParameters productParameters,bool trackChanges)
     {
-        var prods=await FindByCondition(c=>c.CategoryId.Equals(Id),trackChanges).OrderBy(p=>p.Name).ToListAsync();
+        var prods=await FindByCondition(c=>c.CategoryId.Equals(Id),trackChanges).OrderBy(p=>p.Name).Skip((productParameters.PageNumber-1)*productParameters.PageSize).Take(productParameters.PageSize).ToListAsync();
   return prods;
 
     }

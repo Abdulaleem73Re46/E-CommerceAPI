@@ -74,7 +74,7 @@ builder.Services.AddScoped<IPaymentGateway,MockPayment>();
 
 builder.Services.AddConfigureRateLimiting();
 
-
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

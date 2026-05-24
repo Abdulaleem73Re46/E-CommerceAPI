@@ -1,5 +1,6 @@
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Features;
 
 namespace Service.Contracts;
 
@@ -10,8 +11,8 @@ public interface IProductService
 {
     Task<ProductDto?> GetProductByIdAsync(Guid productId);
 
-
-    Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid CatId,bool trackChanges);
+   
+    Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid CatId,ProductParameters productParameters,bool trackChanges);
 
    Task<int> UpdateQuantityAsync(ProductDto productDto);
    Task  DeleteProduct(Guid Id);
