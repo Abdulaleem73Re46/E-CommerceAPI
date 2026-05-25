@@ -217,7 +217,7 @@ public async Task<AuthResponse> LoginAsync(UserLoginDto loginDto)
         {
             Token = refreshToken,
             ExpiresOn = DateTime.UtcNow.AddDays(7)
-        });
+        });   
         await _userManager.UpdateAsync(user);
 
         var roles = await _userManager.GetRolesAsync(user);
