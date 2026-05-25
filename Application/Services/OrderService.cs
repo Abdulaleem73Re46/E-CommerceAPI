@@ -110,7 +110,7 @@ await transaction.CommitAsync();
        return _mapper.Map<OrderDto>(order);
 } catch{
 
-await transaction.RollBackAsync();
+await transaction.RollbackAsync();
 throw;
 } 
     }

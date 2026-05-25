@@ -351,6 +351,10 @@ namespace ECommerce.Repository.Migrations
                     b.Property<int>("StockQuantity")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
@@ -365,7 +369,8 @@ namespace ECommerce.Repository.Migrations
                             Description = "Latest smartphone with advanced features and high-resolution camera",
                             Name = "Smartphone X1",
                             Price = 699.99m,
-                            StockQuantity = 50
+                            StockQuantity = 50,
+                            Version = 0
                         },
                         new
                         {
@@ -374,7 +379,8 @@ namespace ECommerce.Repository.Migrations
                             Description = "Powerful laptop for professionals with 15-inch display and long battery life",
                             Name = "Laptop Pro 15",
                             Price = 1299.99m,
-                            StockQuantity = 25
+                            StockQuantity = 25,
+                            Version = 0
                         },
                         new
                         {
@@ -383,7 +389,8 @@ namespace ECommerce.Repository.Migrations
                             Description = "Comfortable 100% cotton t-shirt available in multiple colors",
                             Name = "Cotton T-Shirt",
                             Price = 24.99m,
-                            StockQuantity = 200
+                            StockQuantity = 200,
+                            Version = 0
                         },
                         new
                         {
@@ -392,7 +399,8 @@ namespace ECommerce.Repository.Migrations
                             Description = "Premium quality designer jeans with modern fit and style",
                             Name = "Designer Jeans",
                             Price = 89.99m,
-                            StockQuantity = 75
+                            StockQuantity = 75,
+                            Version = 0
                         },
                         new
                         {
@@ -401,7 +409,8 @@ namespace ECommerce.Repository.Migrations
                             Description = "Comprehensive guide to C# programming from basics to advanced topics",
                             Name = "C# Programming Guide",
                             Price = 49.99m,
-                            StockQuantity = 100
+                            StockQuantity = 100,
+                            Version = 0
                         },
                         new
                         {
@@ -410,7 +419,8 @@ namespace ECommerce.Repository.Migrations
                             Description = "Complete guide to modern web development with ASP.NET Core",
                             Name = "Web Development Mastery",
                             Price = 39.99m,
-                            StockQuantity = 80
+                            StockQuantity = 80,
+                            Version = 0
                         });
                 });
 
@@ -736,6 +746,41 @@ namespace ECommerce.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Core.Entities.User", b =>
+                {
+                    b.OwnsMany("Core.Entities.RefreshToken", "RefreshTokens", b1 =>
+                        {
+                            b1.Property<string>("UserId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<DateTime>("CreatedOn")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<DateTime>("ExpiresOn")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<DateTime?>("RevokedOn")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Token")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("UserId", "Id");
+
+                            b1.ToTable("RefreshToken");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

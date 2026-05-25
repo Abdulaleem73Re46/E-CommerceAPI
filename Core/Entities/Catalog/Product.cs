@@ -22,9 +22,9 @@ public class Product{
     [MaxLength(700)]
     public string Description { get; set; } = string.Empty;
 
-[Timpestamp] 
 
-public byte[] RowVersion{get;set;} 
+
+public int Version{get;set;} 
 
 
     

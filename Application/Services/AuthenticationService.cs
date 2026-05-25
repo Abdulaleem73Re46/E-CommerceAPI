@@ -56,24 +56,7 @@ public sealed class AuthenticationService : IAuthenticationService
         return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
     }
 
-    // public async Task<IdentityResult> RegisterUser(UserForRegisterDto userForRegister)
-    // {
-    //     var userEntity = _mapper.Map<User>(userForRegister);
-
-    //     var result = await _userManager.CreateAsync(userEntity, userForRegister.Password);
-
-    //     if (result.Succeeded && userForRegister.Roles != null && userForRegister.Roles.Any())
-    //     {
-    //         await _userManager.AddToRolesAsync(userEntity, userForRegister.Roles);
-    //     }
-    //     else if (result.Succeeded)
-    //     {
-    //         await _userManager.AddToRoleAsync(userEntity, "User");
-    //     }
-
-    //     return result;
-    // }
-    
+ 
 
 
     private SigningCredentials GetSigningCredentials()
@@ -223,12 +206,53 @@ public async Task<string>  CreateTokenAsync(User user)
         return Convert.ToBase64String(randomNumber);
 
     }
-
-   
-
+    
 
 
+    public async Task<AuthResponse>     LoginAsync(UserLoginDto userLoginDto){
+        var user=await _userManager.FindByNameAsync(userLoginDto.UserName);
+        if(user==null || !await _userManager.CheckPasswordAsync(user, userLoginDto.Password))
+        {
+            return new AuthResponse{Succeeded=false,Errors=new [] {"Invalid UserName Or Password"}};
 
+        }
+        // إزالة Refresh Tokens المنتهية أو الملغاة
+        user.RefreshTokens.RemoveAll(rt => !rt.IsActive);
+        var refreshToken =CreateRefreshToken();
+        user.RefreshTokens.Add(new RefreshToken
+        {
+            Token = refreshToken,
+            ExpiresOn = DateTime.UtcNow.AddMinutes(3)
+        });   
+        await _userManager.UpdateAsync(user);
+
+       
+        var accessToken =await CreateTokenAsync(user);
+
+        return new AuthResponse
+        {
+            Succeeded = true,
+            Token = accessToken,
+            RefreshToken = refreshToken,
+            Expiration = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireInMinutes"]))
+        };
+
+    }
+
+ 
+
+
+
+private async Task<User?> GetUserByAccessTokenAsync(string accessToken)
+    {
+        var principal=GetPrincipalFromExpiredToken(accessToken);
+        if(principal==null)return null;
+        var userId=principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        return await _userManager.FindByIdAsync(userId);
+
+
+
+    }
 
 
 
@@ -260,6 +284,43 @@ public async Task<string>  CreateTokenAsync(User user)
     }
 
 
+public async Task<AuthResponse> RefreshTokenAsync(RefreshTokenRequestDto refreshTokenRequestDto)
+    {
+        
+var user=await GetUserByAccessTokenAsync(refreshTokenRequestDto.AccessToken);
+if(user==null)return new AuthResponse{Succeeded=false,Errors= new[]{"Invalid access token "}};
+var storedRefreshToken=user.RefreshTokens.FirstOrDefault(rt=>rt.Token==refreshTokenRequestDto.RefreshToken && rt.IsActive);
+if(storedRefreshToken==null) return new AuthResponse{Succeeded=false,Errors=new []{"Invalid or expired refresh token"}};
+
+
+storedRefreshToken.RevokedOn=DateTime.UtcNow;
+var newRefreshToken=CreateRefreshToken();
+user.RefreshTokens.Add(new RefreshToken
+{
+   Token=newRefreshToken,
+   ExpiresOn=DateTime.UtcNow.AddMinutes(3) 
+
+});
+
+await _userManager.UpdateAsync(user);
+var newAccessToken=await CreateTokenAsync(user);
+
+return new AuthResponse
+{
+    Succeeded=true,
+    Token=newAccessToken,
+    RefreshToken=newRefreshToken,
+    Expiration=DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireInMinutes"]))
+    
+};
+
+
+
+
+    }
+
+
+
 }
 
 
@@ -267,10 +328,6 @@ public async Task<string>  CreateTokenAsync(User user)
 
 
 
-// Key
-// Issuer
-// Audience
-// ExpireInMinutes
 
 
 

@@ -23,7 +23,7 @@ public interface IAuthenticationService
 
 Task<AuthResponse> ResgisterUserAsync(UserForRegisterDto userForRegisterDto);
 
-
+Task<AuthResponse> RefreshTokenAsync(RefreshTokenRequestDto refreshTokenRequestDto);
   Task<AuthResponse> LoginAsync(UserLoginDto userLoginDto);
 
 

@@ -1,5 +1,6 @@
 using Core.Contracts;
 using Core.Entities;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Repository;
 
@@ -44,6 +45,10 @@ private readonly Lazy<IOrderRepository> _order;
     public ICategoryRepository CategoryRepository => _category.Value ;
     
     public async Task SaveAsync()=>await _repository.SaveChangesAsync();
+
+public async Task<IDbContextTransaction> BeginTransactionAsync()=>await _repository.Database.BeginTransactionAsync();
+
+
 }
 
 
