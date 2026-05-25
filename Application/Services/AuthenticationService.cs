@@ -204,7 +204,98 @@ public async Task<string>  CreateTokenAsync(User user)
 
     }
 
+public async Task<AuthResponse> LoginAsync(UserLoginDto loginDto)
+    {
+        var user = await _userManager.FindByNameAsync(loginDto.UserName);
+        if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            return new AuthResponse { Succeeded = false, Errors = new[] { "Invalid username or password" } };
 
+        // إزالة Refresh Tokens المنتهية أو الملغاة
+        user.RefreshTokens.RemoveAll(rt => !rt.IsActive);
+        var refreshToken = _tokenService.CreateRefreshToken();
+        user.RefreshTokens.Add(new RefreshToken
+        {
+            Token = refreshToken,
+            ExpiresOn = DateTime.UtcNow.AddDays(7)
+        });
+        await _userManager.UpdateAsync(user);
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var accessToken = _tokenService.CreateAccessToken(user, roles);
+
+        return new AuthResponse
+        {
+            Succeeded = true,
+            Token = accessToken,
+            RefreshToken = refreshToken,
+            Expiration = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireInMinutes"]))
+        };
+    }
+
+    public async Task<AuthResponse> RefreshTokenAsync(RefreshTokenRequestDto request)
+    {
+        // استخراج الـ Claims من الـ Access Token المنتهي
+        var principal = GetPrincipalFromExpiredToken(request.AccessToken);
+        if (principal == null)
+            return new AuthResponse { Succeeded = false, Errors = new[] { "Invalid access token" } };
+
+        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+            return new AuthResponse { Succeeded = false, Errors = new[] { "User not found" } };
+
+        var refreshToken = user.RefreshTokens.FirstOrDefault(rt => rt.Token == request.RefreshToken && rt.IsActive);
+        if (refreshToken == null)
+            return new AuthResponse { Succeeded = false, Errors = new[] { "Invalid or expired refresh token" } };
+
+        // إلغاء الـ Refresh Token المستخدم وإنشاء جديد
+        refreshToken.RevokedOn = DateTime.UtcNow;
+        var newRefreshToken = _tokenService.CreateRefreshToken();
+        user.RefreshTokens.Add(new RefreshToken
+        {
+            Token = newRefreshToken,
+            ExpiresOn = DateTime.UtcNow.AddDays(7)
+        });
+        await _userManager.UpdateAsync(user);
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var newAccessToken = _tokenService.CreateAccessToken(user, roles);
+
+        return new AuthResponse
+        {
+            Succeeded = true,
+            Token = newAccessToken,
+            RefreshToken = newRefreshToken,
+            Expiration = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireInMinutes"]))
+        };
+    }
+
+    private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+    {
+        var jwtSettings = _configuration.GetSection("JwtSettings");
+        var secretKey = jwtSettings["Key"];
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+            ValidateLifetime = false  // لا تتحقق من انتهاء الصلاحية
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+            if (securityToken is not JwtSecurityToken jwtToken ||
+                !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                return null;
+            return principal;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
 }
 
