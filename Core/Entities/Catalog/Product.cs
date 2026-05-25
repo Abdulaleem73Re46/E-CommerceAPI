@@ -21,6 +21,12 @@ public class Product{
     
     [MaxLength(700)]
     public string Description { get; set; } = string.Empty;
+
+
+
+public int Version{get;set;} 
+
+
     
     [ForeignKey("Category")]
     public Guid CategoryId { get; set; }

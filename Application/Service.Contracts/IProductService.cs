@@ -12,7 +12,7 @@ public interface IProductService
     Task<ProductDto?> GetProductByIdAsync(Guid productId);
 
    
-    Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid CatId,ProductParameters productParameters,bool trackChanges);
+    Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid CatId,ProductParameter productParameters,bool trackChanges);
 
    Task<int> UpdateQuantityAsync(ProductDto productDto);
    Task  DeleteProduct(Guid Id);

@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 
@@ -11,6 +12,7 @@ namespace ECommerce.Presentation;
 
 [Route("api/Payments")]
 [ApiController]
+[Authorize]
  public class PaymentController : ControllerBase
 {
     private readonly IServiceManager _service;

@@ -50,7 +50,8 @@ public async Task<IActionResult> SignInUser(UserForRegisterDto forRegisterDto)
   
     // var token = await _service.AuthenticationService.CreateToken();
     
-    return Ok(new {Result=result});
+    return Ok(new {result.Token,result.RefreshToken,result.Expiration});
+    
 }
 
 
@@ -76,9 +77,30 @@ public async Task<IActionResult> SignInUser(UserForRegisterDto forRegisterDto)
 
     }
 
+[HttpPost("Log")]
+public async Task<IActionResult> Login([FromBody] UserLoginDto userLogin)
+    {
+        
+        var result=await _service.AuthenticationService.LoginAsync(userLogin);
+        if (!result.Succeeded)
+        {
+            return Unauthorized(result.Errors);
+        }
+        return Ok(new {result.Token,result.RefreshToken,result.Expiration});
 
+    }
+[HttpPost("refresh")]
+public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto request)
+    {
+        
+        var result=await _service.AuthenticationService.RefreshTokenAsync(request);
+        if (!result.Succeeded)
+        {
+            return Unauthorized(result.Errors);
+        }
+        return Ok(new {result.Token,result.RefreshToken,result.Expiration});
 
-
+    }
 
 
 

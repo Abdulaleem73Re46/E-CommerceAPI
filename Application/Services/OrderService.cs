@@ -33,6 +33,13 @@ private readonly IPaymentGateway _payment;
 
     public async Task<OrderDto> CreateOrderAfterPaymentAsync(string userId,Guid cartId,ProcessPaymentForCreation processPaymentDto)
     {
+
+using var transaction=await _repository.BeginTransactionAsync();
+
+try{
+
+
+
         var cart=await _repository.CartRepository.GetCartWithItemsAsync(cartId);
         if(cart==null || !cart.CartItems.Any())
         
@@ -78,10 +85,18 @@ var order=new Order
 
 _repository.OrderRepository.CreateOrder(userId,order);
 
-foreach(var pro in cart.CartItems)
+foreach(var item in cart.CartItems)
         {
-            var product=await _repository.ProductRepository.GetProductAsync(pro.ProductId,trackChanges:false);
-            product.StockQuantity-=pro.Quantity;
+            var product=await _repository.ProductRepository.GetProductAsync(item.ProductId,trackChanges:true);
+if (product == null)
+                throw new Exception("Product not found");
+
+           
+            if (product.StockQuantity < item.Quantity)
+                throw new InvalidOperationException(
+                    $"Insufficient stock for product {product.Name}");
+
+            product.StockQuantity-=item.Quantity;
             _repository.ProductRepository.UpdateProduct(product);
 
         }
@@ -89,9 +104,15 @@ foreach(var pro in cart.CartItems)
          await ClearCartItem(cartId);
 
        await   _repository.SaveAsync();
+await transaction.CommitAsync();
 
 
        return _mapper.Map<OrderDto>(order);
+} catch{
+
+await transaction.RollbackAsync();
+throw;
+} 
     }
 
 

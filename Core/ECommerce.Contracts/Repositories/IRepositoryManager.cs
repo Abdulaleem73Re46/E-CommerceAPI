@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Storage;
+
 namespace Core.Contracts;
 
 
@@ -13,7 +15,5 @@ public interface IRepositoryManager
 
 
     Task  SaveAsync();
-    
-
-
+    Task<IDbContextTransaction> BeginTransactionAsync();
 }

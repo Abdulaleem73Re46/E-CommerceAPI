@@ -1,16 +1,14 @@
-
-
 namespace Core.Shared.Features;
 
 
 
-public class ProductParameters : RequestParameter
+
+
+    
+
+
+public class ProductParameter : RequestParameter
 {
     
 
-
-
-
-
-    
 }

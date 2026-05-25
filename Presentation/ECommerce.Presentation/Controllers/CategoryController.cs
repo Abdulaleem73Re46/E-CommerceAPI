@@ -50,6 +50,7 @@ public async Task<IActionResult> GetCategories([FromQuery] CategoryParameter cat
 
 
     } 
+
 [HttpDelete("delete")]
 public async Task<IActionResult> DeleteCategory(Guid categoryId)
     {
