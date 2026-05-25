@@ -232,6 +232,34 @@ public async Task<string>  CreateTokenAsync(User user)
 
 
 
+    private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+    {
+        var jwtSettings = _configuration.GetSection("JwtSettings");
+        var secretKey = jwtSettings["Key"];
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+            ValidateLifetime = false  // لا تتحقق من انتهاء الصلاحية
+        };
+        var tokenHandler = new JwtSecurityTokenHandler();
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+            if (securityToken is not JwtSecurityToken jwtToken ||
+                !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                return null;
+            return principal;
+        }
+        catch
+        {
+            return null;  
+        }
+    }
+
+
 }
 
 
