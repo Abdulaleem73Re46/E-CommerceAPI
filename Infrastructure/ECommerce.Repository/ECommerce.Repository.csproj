@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Entities\Entities.csproj" />
     <ProjectReference Include="..\..\Core\ECommerce.Contracts\ECommerce.Contracts.csproj" />
+    <ProjectReference Include="..\..\Core\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

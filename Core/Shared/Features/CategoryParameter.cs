@@ -7,11 +7,5 @@ public class CategoryParameter : RequestParameter
     
 
 
-
-
-
-
-
-
     
 }
