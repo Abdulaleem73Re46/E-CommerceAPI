@@ -24,4 +24,7 @@ public interface IAuthenticationService
 Task<AuthResponse> ResgisterUserAsync(UserForRegisterDto userForRegisterDto);
 
 
+  Task<AuthResponse> LoginAsync(UserLoginDto userLoginDto);
+
+
 }

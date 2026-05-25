@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
 using Core.Entities;
@@ -177,14 +178,24 @@ public sealed class AuthenticationService : IAuthenticationService
         // {
         //       await _userManager.AddToRoleAsync(userEntity, "user");
         // }
+        var refreshtoken=CreateRefreshToken();
+        userEntity.RefreshTokens.Add(new RefreshToken
+        {
+            Token=refreshtoken,
+            ExpiresOn=DateTime.UtcNow.AddMinutes(10)
+            
+        });
 
+await _userManager.UpdateAsync(userEntity);
 
 
         var token=await CreateTokenAsync(userEntity);
         return new AuthResponse
         {
             Succeeded=true,
-            Token=token
+            Token=token,
+            RefreshToken=refreshtoken,
+            Expiration=DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireInMinutes"]))
             
         };   
             
@@ -203,6 +214,21 @@ public async Task<string>  CreateTokenAsync(User user)
 
 
     }
+
+ private string CreateRefreshToken()
+    {
+        var randomNumber=new byte[32];
+        using var rng=RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+
+    }
+
+   
+
+
+
+
 
 
 
