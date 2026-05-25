@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ECommerce.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class Seedingdata : Migration
+    public partial class CreateInitail : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -288,8 +288,7 @@ namespace ECommerce.Repository.Migrations
                     ProductId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 1),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    AddedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ProductId1 = table.Column<Guid>(type: "TEXT", nullable: true)
+                    AddedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -306,11 +305,6 @@ namespace ECommerce.Repository.Migrations
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_CartItems_Products_ProductId1",
-                        column: x => x.ProductId1,
-                        principalTable: "Products",
-                        principalColumn: "ProductId");
                 });
 
             migrationBuilder.CreateTable(
@@ -454,11 +448,6 @@ namespace ECommerce.Repository.Migrations
                 name: "IX_CartItems_ProductId",
                 table: "CartItems",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CartItems_ProductId1",
-                table: "CartItems",
-                column: "ProductId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_UserId",

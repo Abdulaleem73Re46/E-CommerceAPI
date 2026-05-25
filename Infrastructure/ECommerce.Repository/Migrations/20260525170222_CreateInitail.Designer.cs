@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository;
 
@@ -10,9 +11,11 @@ using Repository;
 namespace ECommerce.Repository.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20260525170222_CreateInitail")]
+    partial class CreateInitail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.7");
@@ -743,6 +746,9 @@ namespace ECommerce.Repository.Migrations
                 {
                     b.OwnsMany("Core.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
+                            b1.Property<string>("UserId")
+                                .HasColumnType("TEXT");
+
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("INTEGER");
@@ -760,13 +766,7 @@ namespace ECommerce.Repository.Migrations
                                 .IsRequired()
                                 .HasColumnType("TEXT");
 
-                            b1.Property<string>("UserId")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("UserId");
+                            b1.HasKey("UserId", "Id");
 
                             b1.ToTable("RefreshToken");
 

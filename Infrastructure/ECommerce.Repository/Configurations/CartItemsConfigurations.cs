@@ -18,11 +18,13 @@ public class CartItemConfigurations : IEntityTypeConfiguration<CartItem>
 
 
     builder.HasOne(c=>c.Product)
-    .WithMany()
+    .WithMany(p=>p.CartItems)
     .HasForeignKey(ci=>ci.ProductId)
     .OnDelete(DeleteBehavior.Restrict);
    
-
+builder.HasOne(ci=>ci.Cart)
+.WithMany(c=>c.CartItems)
+.HasForeignKey(ci=>ci.CartId);
 
     }
 }

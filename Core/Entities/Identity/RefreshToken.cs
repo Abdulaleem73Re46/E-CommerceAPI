@@ -1,5 +1,6 @@
 
 
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Entities;
@@ -8,6 +9,8 @@ namespace Core.Entities;
 public class RefreshToken
 {
     
+[Key]
+public int Id{get;set;}
 
 public string Token{get;set;}=string.Empty;
 public DateTime ExpiresOn { get; set; }

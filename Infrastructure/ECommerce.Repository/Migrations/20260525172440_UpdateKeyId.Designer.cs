@@ -11,8 +11,8 @@ using Repository;
 namespace ECommerce.Repository.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20260525162817_Seedingdata")]
-    partial class Seedingdata
+    [Migration("20260525172440_UpdateKeyId")]
+    partial class UpdateKeyId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,9 +53,6 @@ namespace ECommerce.Repository.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("ProductId1")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Quantity")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
@@ -67,8 +64,6 @@ namespace ECommerce.Repository.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductId1");
 
                     b.HasIndex("CartId", "ProductId");
 
@@ -688,14 +683,10 @@ namespace ECommerce.Repository.Migrations
                         .IsRequired();
 
                     b.HasOne("Core.Entities.Product", "Product")
-                        .WithMany()
+                        .WithMany("CartItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Core.Entities.Product", null)
-                        .WithMany("CartItems")
-                        .HasForeignKey("ProductId1");
 
                     b.Navigation("Cart");
 
@@ -755,9 +746,6 @@ namespace ECommerce.Repository.Migrations
                 {
                     b.OwnsMany("Core.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
-                            b1.Property<string>("UserId")
-                                .HasColumnType("TEXT");
-
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("INTEGER");
@@ -775,7 +763,13 @@ namespace ECommerce.Repository.Migrations
                                 .IsRequired()
                                 .HasColumnType("TEXT");
 
-                            b1.HasKey("UserId", "Id");
+                            b1.Property<string>("UserId")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("UserId");
 
                             b1.ToTable("RefreshToken");
 
