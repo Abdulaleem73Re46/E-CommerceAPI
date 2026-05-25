@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using Core.Shared.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
@@ -13,6 +14,7 @@ namespace ECommerce.Presentation;
 [Route("api/carts")]
 
 [ApiController]
+[Authorize]
  public class CartController : ControllerBase
 {
     private readonly IServiceManager _service;

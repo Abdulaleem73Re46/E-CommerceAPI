@@ -28,6 +28,6 @@ public class RepositoryContext : IdentityDbContext<User>
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RepositoryContext).Assembly);   
         // Apply seed data
-       // modelBuilder.Seed();
+       //modelBuilder.Seed();
     }
 }

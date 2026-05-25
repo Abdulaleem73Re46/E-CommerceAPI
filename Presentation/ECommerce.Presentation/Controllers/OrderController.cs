@@ -7,12 +7,14 @@ using Service.Contracts;
 using Core.Shared.DataTransferObjects;
 using Service;
 using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace ECommerce.Presentation;
 
 [Route("api/orders")]
 [ApiController]
+[Authorize]
 public class OrderController : ControllerBase
 {
 

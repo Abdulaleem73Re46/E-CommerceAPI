@@ -43,7 +43,7 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
       .SingleOrDefaultAsync();    
     }
 
-    public async Task<IEnumerable<Product>> GetProductsAsync(Guid id,ProductParameters productParameters,bool trackChanges)
+    public async Task<IEnumerable<Product>> GetProductsAsync(Guid id,ProductParameter productParameters,bool trackChanges)
     {
         return await FindAll(trackChanges).OrderBy(p=>p.Name).Skip((productParameters.PageNumber-1)* productParameters.PageSize).Take(productParameters.PageSize).ToListAsync();
 
@@ -54,7 +54,7 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
        Update(Product);
     }
 
-  public async Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(Guid Id,ProductParameters productParameters,bool trackChanges)
+  public async Task<IEnumerable<Product>> GetProductsByCategoryIdAsync(Guid Id,ProductParameter productParameters,bool trackChanges)
     {
         var prods=await FindByCondition(c=>c.CategoryId.Equals(Id),trackChanges).OrderBy(p=>p.Name).Skip((productParameters.PageNumber-1)*productParameters.PageSize).Take(productParameters.PageSize).ToListAsync();
   return prods;

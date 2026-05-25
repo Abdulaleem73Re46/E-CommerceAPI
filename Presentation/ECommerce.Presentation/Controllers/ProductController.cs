@@ -55,7 +55,7 @@ public ProductController(IServiceManager service,IMemoryCache cache)
 
 [HttpGet("products/{categoryId}")]
 [EnableRateLimiting("FixedWindowRateLimiting")]
-  public async Task<IActionResult> GetAllProducts(Guid categoryId,[FromQuery] ProductParameters productParameters)
+  public async Task<IActionResult> GetAllProducts(Guid categoryId,[FromQuery] ProductParameter productParameters)
     {
         string cacheKey="products";
         if(_cache.TryGetValue(cacheKey,out IEnumerable<ProductDto> products))

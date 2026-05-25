@@ -11,8 +11,8 @@ using Repository;
 namespace ECommerce.Repository.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20260522154129_InitialUpdatePaymentAndOrder")]
-    partial class InitialUpdatePaymentAndOrder
+    [Migration("20260524220235_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -161,9 +161,6 @@ namespace ECommerce.Repository.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("OrderId")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("PayDate")

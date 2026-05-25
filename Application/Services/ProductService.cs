@@ -75,7 +75,7 @@ await _repository.SaveAsync();
 
 
     
-    public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid catId,ProductParameters productParameters,bool trackChanges)
+    public async Task<IEnumerable<ProductDto?>> GetProductsByCategoryIdAsync(Guid catId,ProductParameter productParameters,bool trackChanges)
     {
         var products=await _repository.ProductRepository.GetProductsByCategoryIdAsync(catId,productParameters,trackChanges);
         if (products is null )throw new Exception();
@@ -170,6 +170,13 @@ _repository.ProductRepository.UpdateProduct(productEntity);
 
 
 }
+
+
+
+
+
+
+
 
 
 
