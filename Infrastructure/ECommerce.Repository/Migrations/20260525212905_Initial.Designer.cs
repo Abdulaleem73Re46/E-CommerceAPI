@@ -11,8 +11,8 @@ using Repository;
 namespace ECommerce.Repository.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20260525172440_UpdateKeyId")]
-    partial class UpdateKeyId
+    [Migration("20260525212905_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

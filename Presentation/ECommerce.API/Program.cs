@@ -86,29 +86,29 @@ if (app.Environment.IsDevelopment())
 
 
 
-app.UseExceptionHandler(exceptionHandlerApp =>
-{
-    exceptionHandlerApp.Run(async context =>
-    {
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        context.Response.ContentType = "application/json";
+// app.UseExceptionHandler(exceptionHandlerApp =>
+// {
+//     exceptionHandlerApp.Run(async context =>
+//     {
+//         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+//         context.Response.ContentType = "application/json";
         
-        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-        var exception = exceptionHandlerPathFeature?.Error;
+//         var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+//         var exception = exceptionHandlerPathFeature?.Error;
         
-        var response = new
-        {
-            StatusCode = context.Response.StatusCode,
-            Message = exception?.Message ?? "An error occurred while processing your request.",
+//         var response = new
+//         {
+//             StatusCode = context.Response.StatusCode,
+//             Message = exception?.Message ?? "An error occurred while processing your request.",
         
-            Detail = app.Environment.IsDevelopment() ? exception?.StackTrace : null
-        };
+//             Detail = app.Environment.IsDevelopment() ? exception?.StackTrace : null
+//         };
         
-        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
-    });
-});
+//         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+//     });
+// });
 
-
+app.UseMiddleware<ExceptionMiddleWare>();
 //app.UseHttpsRedirection();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions

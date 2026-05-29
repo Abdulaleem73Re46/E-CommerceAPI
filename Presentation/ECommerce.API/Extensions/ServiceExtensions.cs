@@ -235,6 +235,109 @@ public static class ServiceExtensions
 
 }
 
+public class ExceptionMiddleWare{
+        
+
+private readonly RequestDelegate _next;
+
+public ExceptionMiddleWare(RequestDelegate next)
+{
+    _next=next;
+    
+}
+
+public async Task InvokeAsync(HttpContext context)
+    {
+        
+    
+try
+{
+    await _next(context);
+}
+catch (Exception ex)
+{
+    await HandleExceptionAsync(context,ex);
+    throw;
+}
+
+    }
+
+    private static async Task HandleExceptionAsync(HttpContext context, Exception ex)
+    {
+       context.Response.ContentType="application/json";
+       var errorDetails=new ErrorDetail
+       {
+         Instance=context.Request.Path,
+         TimeStamp=DateTime.UtcNow  
+       };
+
+        switch (ex)
+        {
+            case ValidationException validation:
+                context.Response.StatusCode=StatusCodes.Status400BadRequest;
+                errorDetails.StatusCode=StatusCodes.Status400BadRequest;
+                errorDetails.Message="Validation fails";
+                errorDetails.Detail=validation.Message
+;
+break;
+case NotFoundException notfound:
+                context.Response.StatusCode=StatusCodes.Status404NotFound;
+                errorDetails.StatusCode=StatusCodes.Status404NotFound;
+                errorDetails.Message="Resource not found ";
+                errorDetails.Detail=notfound.Message
+;
+break;
+
+case ForbidenException forbiden:
+                context.Response.StatusCode=StatusCodes.Status403Forbidden;
+                errorDetails.StatusCode=StatusCodes.Status403Forbidden;
+                errorDetails.Message="Resource is Forbiden for you ";
+                errorDetails.Detail=forbiden.Message
+;
+break;
+
+
+
+case UnauthorizedException auth:
+                context.Response.StatusCode=StatusCodes.Status401Unauthorized;
+                errorDetails.StatusCode=StatusCodes.Status401Unauthorized;
+                errorDetails.Message="";
+                errorDetails.Detail=auth.Message
+;
+break;
+       
+       
+       case UserAuthException userAuth:
+                context.Response.StatusCode=StatusCodes.Status401Unauthorized;
+                errorDetails.StatusCode=StatusCodes.Status401Unauthorized;
+                errorDetails.Message="user auth is invalids";
+                errorDetails.Detail=userAuth.Message;
+                break; 
+                
+                 case ConflictException Conflict:
+                context.Response.StatusCode=StatusCodes.Status409Conflict;
+                errorDetails.StatusCode=StatusCodes.Status409Conflict;
+                errorDetails.Message="Conflict occurs ,try again in right way ";
+                errorDetails.Detail=Conflict.Message;
+                break; 
+                default:
+                     context.Response.StatusCode=StatusCodes.Status500InternalServerError;
+                     errorDetails.StatusCode=StatusCodes.Status500InternalServerError;
+                     errorDetails.Message="Internal server error ";
+                     errorDetails.Detail="An Unexpected Error Occurs please try again Later";
+                     break;
+                }
+
+   var json=errorDetails.ToString();
+   await context.Response.WriteAsJsonAsync(json);
+
+
+
+    }
+}
+
+
+
 
 public static class ExceptionMiddlewareExtensions
 {

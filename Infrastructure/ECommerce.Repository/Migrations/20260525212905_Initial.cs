@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ECommerce.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateInitail : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -210,16 +210,17 @@ namespace ECommerce.Repository.Migrations
                 name: "RefreshToken",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     Token = table.Column<string>(type: "TEXT", nullable: false),
                     ExpiresOn = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    RevokedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    RevokedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshToken", x => new { x.UserId, x.Id });
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RefreshToken_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -480,6 +481,11 @@ namespace ECommerce.Repository.Migrations
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_UserId",
+                table: "RefreshToken",
+                column: "UserId");
         }
 
         /// <inheritdoc />
