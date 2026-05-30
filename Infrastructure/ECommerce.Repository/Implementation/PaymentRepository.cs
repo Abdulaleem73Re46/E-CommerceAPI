@@ -27,7 +27,7 @@ public class PaymentRepository : RepositoryBase<Payment>, IPaymentRepository
 
     public async Task<IEnumerable<Payment>> GetPaymentsAsync(bool trackChanges)
     {
-        return await FindAll(trackChanges).OrderBy(p => p.PayDate).ToListAsync();
+        return await FindAll(trackChanges).OrderBy(p => p.PaidAt).ToListAsync();
     }
 
     // public async Task<Payment> GetPaymentByOrderIdAsync(Guid id)

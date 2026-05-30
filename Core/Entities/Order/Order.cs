@@ -15,7 +15,7 @@ public class Order
     [Required]
     public string UserId { get; set; } = string.Empty;
      
-      public Guid PaymentId { get; set; }
+    
 
     [Required]
     [Column(TypeName = "decimal(18,2)")]
@@ -33,7 +33,7 @@ public class Order
     
       
    
-     [ForeignKey(nameof(OrderId))]
+   
     public Payment Payment { get; set; } = null!;
 
 }

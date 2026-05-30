@@ -12,7 +12,9 @@ public interface IRepositoryManager
     IProductRepository ProductRepository{get;}
     IOrderRepository OrderRepository{get;}
     ICategoryRepository CategoryRepository{get;}
-
+  IPaymentTransactionRepository PaymentTransactionRepository { get; }
+    IWebHookEventRepository WebHookEventRepository { get; }
+    IIdempotencyRecordRepository IdempotencyRecordRepository { get; }
 
     Task  SaveAsync();
     Task<IDbContextTransaction> BeginTransactionAsync();

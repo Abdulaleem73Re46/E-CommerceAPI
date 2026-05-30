@@ -320,6 +320,15 @@ break;
                 errorDetails.Message="Conflict occurs ,try again in right way ";
                 errorDetails.Detail=Conflict.Message;
                 break; 
+
+  case ForeginKeyViolationException Fk:
+                context.Response.StatusCode=StatusCodes.Status409Conflict;
+                errorDetails.StatusCode=StatusCodes.Status409Conflict;
+                errorDetails.Message="Conflict FK  occurs ,try again in right way ";
+                errorDetails.Detail=Fk.Message;
+                break;                
+
+
                 default:
                      context.Response.StatusCode=StatusCodes.Status500InternalServerError;
                      errorDetails.StatusCode=StatusCodes.Status500InternalServerError;

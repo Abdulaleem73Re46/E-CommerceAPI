@@ -17,7 +17,10 @@ private readonly Lazy<IOrderRepository> _order;
       private readonly Lazy<IPaymentRepository> _payment;
          private readonly Lazy<ICategoryRepository> _category;
          
-           
+           private readonly Lazy<IIdempotencyRecordRepository> _idempotency;
+           private readonly Lazy<IWebHookEventRepository> _webHookEventRepository;
+           private readonly Lazy<IPaymentTransactionRepository> _paymentTransaction;
+
 
  public RepositoryManager(RepositoryContext repository)
     {
@@ -28,7 +31,10 @@ private readonly Lazy<IOrderRepository> _order;
          _category=new Lazy<ICategoryRepository>(()=>new CategoryRepository(repository));
       
         _payment=new Lazy<IPaymentRepository>(()=>new PaymentRepository(repository));
-         
+          _paymentTransaction = new Lazy<IPaymentTransactionRepository>(() => new PaymentTransactionRepository(repository));
+        _webHookEventRepository = new Lazy<IWebHookEventRepository>(() => new WebhookEventRepository(repository));
+        _idempotency = new Lazy<IIdempotencyRecordRepository>(() => new IdempotencyRecordRepository(repository));
+        
 
     }
 
@@ -44,6 +50,12 @@ private readonly Lazy<IOrderRepository> _order;
 
     public ICategoryRepository CategoryRepository => _category.Value ;
     
+  public IPaymentTransactionRepository PaymentTransactionRepository => _paymentTransaction.Value;
+    public IWebHookEventRepository WebhookEventRepository => _webHookEventRepository.Value;
+    public IIdempotencyRecordRepository IdempotencyRecordRepository => _idempotency.Value;
+
+
+
     public async Task SaveAsync()=>await _repository.SaveChangesAsync();
 
 public async Task<IDbContextTransaction> BeginTransactionAsync()=>await _repository.Database.BeginTransactionAsync();
