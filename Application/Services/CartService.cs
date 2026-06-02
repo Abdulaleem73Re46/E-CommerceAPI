@@ -67,6 +67,21 @@ public sealed class CartService : ICartService
 //     var updatedItem = await _repository.CartRepository.GetCartItemAsync(cartId, cartItemDto.ProductId);
 //     return _mapper.Map<CartItemDto>(updatedItem);
 // }
+private async Task ClearCartItem(Guid cartId)
+    {
+        
+      var cartItems=await _repository.CartRepository.GetCartItemsByCartIdAsync(cartId);
+
+    foreach (var item in cartItems)
+        {
+            
+      _repository.CartRepository.RemoveItems(item);
+
+    }
+await _repository.SaveAsync();
+
+
+    }
 
     public async Task<CartItemDto> AddCartItemByCartIdAsync(Guid CartId, CartItemForCreation cartitemdto)
     {
@@ -327,6 +342,33 @@ _repository.CartRepository.DeleteCartItem(item);
      }
 
     
+
+
+public async Task<OrderForCreationDto> TransformToOrderAsync(string userId)
+    {
+        var cart=await _repository.CartRepository.GetByUserIdAsync(userId);
+        if (cart is null || !cart.CartItems.Any())throw new Exception($"cart is empty");
+     
+        var orderFor=new OrderForCreationDto
+        {
+            TotalPrice=cart.CartItems.Sum(i=>i.Quantity*i.UnitPrice),
+            OrderItems=cart.CartItems.Select(item=> new OrderItemForCreationDto
+            {
+            ProductId=item.ProductId,
+            Quantity=item.Quantity
+
+            }).ToList()
+
+        };
+
+
+
+return orderFor;
+
+
+    }
+
+
 
 
 

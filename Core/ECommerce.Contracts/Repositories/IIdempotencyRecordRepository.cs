@@ -5,4 +5,5 @@ public interface IIdempotencyRecordRepository : IRepositoryBase<IdempotencyRecor
 {
 Task<IdempotencyRecord?> GetByKeyAsync(string key);
 Task<bool> KeyExistsAsync(string key);
+void  Add(IdempotencyRecord idempotency);
 }

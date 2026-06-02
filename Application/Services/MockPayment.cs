@@ -10,7 +10,7 @@ namespace Service;
 public class MockPayment : IPaymentGateway
 {
     
-public async Task<PaymentResult> ChargeAsync(decimal amount, PaymentMethod paymentMethod, CancellationToken token=default)
+public async Task<PaymentResult> ChargeAsync(decimal amount, PaymentMethods paymentMethod, CancellationToken token=default)
     {
          await Task.Delay(2000,token);
         if (amount <= 0)

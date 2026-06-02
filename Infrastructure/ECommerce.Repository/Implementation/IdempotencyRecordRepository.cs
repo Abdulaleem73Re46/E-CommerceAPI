@@ -12,4 +12,10 @@ public async Task<IdempotencyRecord?> GetByKeyAsync(string key)
 public async Task<bool> KeyExistsAsync(string key)
 => await FindByCondition(i => i.Key == key, false)
 .AnyAsync();
+
+
+
+public void  Add(IdempotencyRecord idempotencyRecord)=>Create(idempotencyRecord);
+
+
 }

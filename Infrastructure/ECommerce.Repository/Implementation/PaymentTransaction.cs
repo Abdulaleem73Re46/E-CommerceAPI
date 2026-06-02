@@ -13,7 +13,15 @@ public class PaymentTransactionRepository : RepositoryBase<PaymentTransaction>,
 IPaymentTransactionRepository
 {
 public PaymentTransactionRepository(RepositoryContext context) : base(context) { }
-public async Task<PaymentTransaction?> GetByExternalTransactionIdAsync(string
+
+    public  void  AddAsync(PaymentTransaction paymentTransaction)
+    {
+        
+        Create(paymentTransaction);
+        
+    }
+
+    public async Task<PaymentTransaction?> GetByExternalTransactionIdAsync(string
 externalId)
 => await FindByCondition(t => t.ExternalTransactionId.Equals(externalId) , false).FirstOrDefaultAsync();
 public async Task<IEnumerable<PaymentTransaction>> GetByPaymentIdAsync(Guid

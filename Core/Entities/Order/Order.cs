@@ -34,6 +34,6 @@ public class Order
       
    
    
-    public Payment Payment { get; set; } = null!;
+    public virtual ICollection<Payment> Payments { get; set; } = null!;
 
 }

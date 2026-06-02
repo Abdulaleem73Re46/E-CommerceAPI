@@ -92,5 +92,17 @@ return NoContent();
     }
     
 
+
+[HttpPost("checkout/{userId:string}")]
+    public async Task<IActionResult> CheckOutCart(string userId)
+    {
+    var orderDto=await _service.CartService.TransformToOrderAsync(userId);
+
+var createdOrder=await _service.OrderService.CreateOrderAsync(userId,orderDto,trackChanges:true);
+return Ok(new{ orderId=createdOrder.OrderId,status=createdOrder.Status});
+
+
+    }
+
 }
 

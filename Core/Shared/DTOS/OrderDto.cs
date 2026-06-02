@@ -26,7 +26,7 @@ namespace Core.Shared.DataTransferObjects;
 
 public record OrderForCreationDto
 {
-    //public decimal TotalPrice { get; init; }
+    public decimal TotalPrice { get; init; }
     public ICollection<OrderItemForCreationDto> OrderItems { get; init; } = new List<OrderItemForCreationDto>();
 }
 

@@ -19,5 +19,9 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 
         builder.Property(p=>p.PayMethod).HasConversion<string>();
         builder.Property(p=>p.PayStatus).HasConversion<string>();    
+    
+    builder.HasOne(p=>p.Order)
+    .WithMany(o=>o.Payments).HasForeignKey(p=>p.OrderId).OnDelete(DeleteBehavior.Restrict);
+    
     }
 }

@@ -17,6 +17,7 @@ using Core.Shared.Externals;
 using Service.Contracts;
 
 using Service;
+using Core.Shared.DataTransferObjects;
 
 
 
@@ -75,6 +76,12 @@ builder.Services.AddScoped<IPaymentGateway,MockPayment>();
 builder.Services.AddConfigureRateLimiting();
 
 builder.Services.AddMemoryCache();
+
+
+
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+builder.Services.AddScoped<IPaymentService,StripePaymentService>();
+
 
 var app = builder.Build();
 

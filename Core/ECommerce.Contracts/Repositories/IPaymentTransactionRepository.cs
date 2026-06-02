@@ -8,4 +8,9 @@ public interface IPaymentTransactionRepository : IRepositoryBase<PaymentTransact
 {
 Task<PaymentTransaction?> GetByExternalTransactionIdAsync(string externalId);
 Task<IEnumerable<PaymentTransaction>> GetByPaymentIdAsync(Guid paymentId);
+void AddAsync(PaymentTransaction paymentTransaction);
+
 }
+
+
+

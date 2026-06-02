@@ -46,7 +46,7 @@ public class PaymentRepository : RepositoryBase<Payment>, IPaymentRepository
         
         await _repo.AddAsync(payment);
        
-         await _repo.SaveChangesAsync();
+      
     }
 
     public void UpdatePayment(Payment Payment)

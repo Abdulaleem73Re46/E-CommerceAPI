@@ -4,5 +4,5 @@ namespace Service.Contracts;
 
 public interface IPaymentGateway
 {
-    Task<PaymentResult> ChargeAsync(decimal amount,PaymentMethod paymentMethod,CancellationToken token=default);
+    Task<PaymentResult> ChargeAsync(decimal amount,PaymentMethods paymentMethod,CancellationToken token=default);
 }

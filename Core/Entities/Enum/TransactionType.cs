@@ -4,8 +4,10 @@ public enum TransactionType
 {
     
   Authorization,
+
   Capture,
   Refund,
+Failed,
   ChargeBack
 
 

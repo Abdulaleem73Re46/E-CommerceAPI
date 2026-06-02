@@ -15,13 +15,13 @@ public class Payment
 
     
     [Required]
-    public PaymentMethod PayMethod { get; set; }
+    public PaymentMethods PayMethod { get; set; }
     
     [Required]
 public decimal Amount {get;set;}
 
 
-
+[MaxLength(150)]
 public string ExternalPaymentId { get; set; } = string.Empty;   // Stripe PaymentIntent ID
 public string IdempotencyKey { get; set; } = string.Empty;    
 

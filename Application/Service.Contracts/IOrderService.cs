@@ -16,17 +16,16 @@ public interface IOrderService
    
    Task<IEnumerable<OrderItemDto>> GetAllOrderItemsByOrderId(Guid orderId,bool trackChanges);
 
-   Task<PaymentDto> GetPaymentByOrderIdAsync(Guid orderId,bool trackChanges);
 
 
    Task<OrderDto> CreateOrderAsync(string userId,OrderForCreationDto order,bool trackChanges);
 
-   Task<OrderDto> CreateOrderAfterPaymentAsync(string userId,Guid cartId,ProcessPaymentForCreation processPaymentDto);
+  // Task<OrderDto> CreateOrderAfterPaymentAsync(string userId,Guid cartId,ProcessPaymentForCreation processPaymentDto);
    Task<bool> DeleteOrderByIdAsync(Guid orderId);
    
 
 
-  Task<PaymentDto>    GetPaymentDtoAsync(Guid orderId);
+
 
 
    

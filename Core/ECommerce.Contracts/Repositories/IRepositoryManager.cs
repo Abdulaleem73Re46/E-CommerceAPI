@@ -19,3 +19,4 @@ public interface IRepositoryManager
     Task  SaveAsync();
     Task<IDbContextTransaction> BeginTransactionAsync();
 }
+

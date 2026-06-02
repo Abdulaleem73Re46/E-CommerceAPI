@@ -16,5 +16,7 @@ public class WebHookEventConfiguration : IEntityTypeConfiguration<WebHookEvent>
         builder.HasKey(w => w.Id);
 builder.Property(w => w.EventId).HasMaxLength(100).IsRequired();
 builder.HasIndex(w => w.EventId).IsUnique();
+
+
     }
 }
