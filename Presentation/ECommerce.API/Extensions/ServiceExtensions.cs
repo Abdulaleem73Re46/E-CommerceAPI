@@ -18,6 +18,8 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
+using Core.Shared.Helpers;
 
 namespace API.Extensions;
 

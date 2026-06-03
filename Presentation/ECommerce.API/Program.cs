@@ -77,7 +77,7 @@ new ServiceCollection().AddMvc().AddNewtonsoftJson().Services.BuildServiceProvid
 builder.Services.AddConfigureRateLimiting();
 
 builder.Services.AddMemoryCache();
-
+builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<IPaymentGateway,MockPaymentService>();
 builder.Services.AddScoped<IPaymentWebhookSimulator, MockPaymentWebhookSimulator>();
 

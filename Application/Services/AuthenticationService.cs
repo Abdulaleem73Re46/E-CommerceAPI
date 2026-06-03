@@ -8,6 +8,7 @@ using Core.Shared.DataTransferObjects;
 using Core.Shared.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contracts;
 
@@ -16,15 +17,18 @@ namespace Service;
 public sealed class AuthenticationService : IAuthenticationService
 {
     private readonly IMapper _mapper;
-    private readonly IConfiguration _configuration;
+
     private readonly UserManager<User> _userManager;  
     private User? _currentUser;
+    private readonly JWTSettings _JwtSettings;
 
-    public AuthenticationService(IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
+    public AuthenticationService(IMapper mapper, UserManager<User> userManager,IOptions<JWTSettings> JwtSettings)
     {
         _mapper = mapper;
         _userManager = userManager; 
-        _configuration = configuration;
+    
+        _JwtSettings=JwtSettings.Value;
+
     }
 
     public async Task<bool> ValidateUser(UserLoginDto userLoginDto)
@@ -63,16 +67,15 @@ public sealed class AuthenticationService : IAuthenticationService
     {
         //var secretKey = Environment.GetEnvironmentVariable("SECRETKEY"); 
           //var secretKey = "YourSuperSecretKeyThatIsAtLeast32CharactersLong123!";
-          var section=_configuration.GetSection("JwtSettings");
-          var secretKey=section["Key"];
+         // var section=   ;//_configuration.GetSection("JwtSettings");
+        //   var secretKey=_JwtSettings.Key;
           
-
         // if (string.IsNullOrEmpty(secretKey) || secretKey.Length < 32)
         // {
         //     throw new InvalidOperationException("JWT Secret Key is missing or too short. Please provide a key with at least 32 characters.");
         // }
         
-        var key = Encoding.UTF8.GetBytes(secretKey);
+        var key = Encoding.UTF8.GetBytes(_JwtSettings.Key);
         var secret = new SymmetricSecurityKey(key);
         return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
     }
@@ -102,16 +105,13 @@ public sealed class AuthenticationService : IAuthenticationService
 
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
     {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-        
-    
-        var issuer = jwtSettings["Issuer"] ;
-        var audience = jwtSettings["Audience"];
-        var expireInMinutes = Convert.ToDouble(jwtSettings["ExpireInMinutes"]);
+       
+     
+        var expireInMinutes = Convert.ToDouble(_JwtSettings.ExpireInMinutes);
         
         var tokenOptions = new JwtSecurityToken(
-            issuer: issuer,
-            audience: audience,
+            issuer: _JwtSettings.Issuer,
+            audience: _JwtSettings.Audience,
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(expireInMinutes),
             signingCredentials: signingCredentials
@@ -178,7 +178,7 @@ await _userManager.UpdateAsync(userEntity);
             Succeeded=true,
             Token=token,
             RefreshToken=refreshtoken,
-            Expiration=DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireInMinutes"]))
+            Expiration=DateTime.UtcNow.AddMinutes(Convert.ToDouble(_JwtSettings.ExpireInMinutes))
             
         };   
             
@@ -234,7 +234,7 @@ public async Task<string>  CreateTokenAsync(User user)
             Succeeded = true,
             Token = accessToken,
             RefreshToken = refreshToken,
-            Expiration = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireInMinutes"]))
+            Expiration = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_JwtSettings.ExpireInMinutes))
         };
 
     }
@@ -258,15 +258,15 @@ private async Task<User?> GetUserByAccessTokenAsync(string accessToken)
 
     private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
     {
-        var jwtSettings = _configuration.GetSection("JwtSettings");
-        var secretKey = jwtSettings["Key"];
+        // var jwtSettings = _configuration.GetSection("JwtSettings");
+        // var secretKey = jwtSettings["Key"];
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false,
             ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-            ValidateLifetime = false  // لا تتحقق من انتهاء الصلاحية
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_JwtSettings.Key)),
+            ValidateLifetime = false  
         };
         var tokenHandler = new JwtSecurityTokenHandler();
         try
@@ -310,7 +310,7 @@ return new AuthResponse
     Succeeded=true,
     Token=newAccessToken,
     RefreshToken=newRefreshToken,
-    Expiration=DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:ExpireInMinutes"]))
+    Expiration=DateTime.UtcNow.AddMinutes(Convert.ToDouble(_JwtSettings.ExpireInMinutes))
     
 };
 

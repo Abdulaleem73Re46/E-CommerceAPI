@@ -11,7 +11,9 @@ public record PaymentDto
     public decimal Aomunt{get;init;}
     public PaymentMethods PaymentMethod { get; init; }
     public PaymentStatus Status { get; init; }
+    
     public DateTime PayDate { get; init; }
+    public string PaymentProvider{get;init;}
 }
 
 public record PaymentForCreationDto
