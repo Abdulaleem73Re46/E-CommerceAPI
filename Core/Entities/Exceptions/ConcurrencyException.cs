@@ -12,8 +12,7 @@ public ConcurrencyException(string message):base(message)
 }
 
 
-public ConcurrencyException(string message,Exception innerEx):base(message
-,innerEx)
+public ConcurrencyException(string message,Exception innerEx):base(message ,innerEx)
 {
     
 }

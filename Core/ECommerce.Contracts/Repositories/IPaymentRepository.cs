@@ -14,6 +14,7 @@ public interface IPaymentRepository{
    void  UpdatePayment(Payment Payment);
     void DeletePayment(Payment Payment);
     // Task<Payment> GetPaymentByOrderIdAsync(Guid id);
+    Task<Payment> GetByIdempotencyAsync(string idempotencyKey,bool track);
     
 
 

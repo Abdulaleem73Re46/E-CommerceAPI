@@ -22,14 +22,14 @@ public decimal Amount {get;set;}
 
 
 [MaxLength(150)]
-public string ExternalPaymentId { get; set; } = string.Empty;   // Stripe PaymentIntent ID
+public string ExternalTransactionId { get; set; } = string.Empty;  
 public string IdempotencyKey { get; set; } = string.Empty;    
 
 public DateTime CreatedAt { get; set; }
 public DateTime? PaidAt { get; set; }
 
 
-public string Provider{get;set;}=string.Empty;
+public string PaymentProvider{get;set;}="PayPal";
    
    
     

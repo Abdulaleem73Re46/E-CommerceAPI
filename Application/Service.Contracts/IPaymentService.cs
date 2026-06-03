@@ -1,6 +1,7 @@
 
 using Core.Entities;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Externals;
 
 
 // namespace Service.Contracts;
@@ -38,4 +39,12 @@ Task ConfirmPaymentAsync(string externalPaymentId);
 Task FailPaymentAsync(string externalPaymentId);
 Task<PaymentDto> GetPaymentAsync(Guid paymentId);
 Task RefundPaymentAsync(Guid paymentId, decimal? amount = null);
+
+
+
+
+// Task<PayPalCreateOrderResponse> CreateOrderAsync(Guid orderId, string idempotencyKey);
+// Task CaptureOrderAsync(string paypalOrderId);
+// Task RefundAsync(Guid paymentId);
+
 }

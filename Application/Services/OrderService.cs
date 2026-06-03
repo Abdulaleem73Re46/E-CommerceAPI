@@ -20,7 +20,7 @@ public sealed class OrderService : IOrderService
 
    private readonly IRepositoryManager _repository;
    private readonly IMapper _mapper;
-private readonly IPaymentGateway _payment;
+    private readonly IPaymentGateway _payment;
     public OrderService(IRepositoryManager repository,IPaymentGateway paymentGateway,IMapper mapper)
     {
         

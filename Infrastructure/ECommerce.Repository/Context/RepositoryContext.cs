@@ -20,7 +20,10 @@ public class RepositoryContext : IdentityDbContext<User>
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    
+    public DbSet<IdempotencyRecord> IdempotencyRecords{get;set;}
+    public DbSet<PaymentTransaction> PaymentTransactions{get;set;}
+    public DbSet<WebHookEvent> WebHookEvents{get;set;}
+
 
     
      protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,6 +31,6 @@ public class RepositoryContext : IdentityDbContext<User>
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(RepositoryContext).Assembly);   
         // Apply seed data
-       modelBuilder.Seed();
+       //modelBuilder.Seed();
     }
 }

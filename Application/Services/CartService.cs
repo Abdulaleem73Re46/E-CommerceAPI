@@ -17,6 +17,7 @@ public sealed class CartService : ICartService
 
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
+    // private static readonly SemaphoreSlim semaphore=new SemaphoreSlim(1);
    
     public CartService(IRepositoryManager repository,IMapper mapper)
     {
@@ -360,6 +361,18 @@ public async Task<OrderForCreationDto> TransformToOrderAsync(string userId)
             }).ToList()
 
         };
+  
+     
+
+foreach (var item in orderFor.OrderItems)
+{
+   var prod=await _repository.ProductRepository.GetProductAsync(item.ProductId,trackChanges:false);
+   if(item.Quantity>prod.StockQuantity || prod==null){
+    throw new Exception($"Product with ID {item.ProductId} and Category/Name {prod.CategoryId}/ {prod.Name} ");
+ 
+   }
+
+}
 
 
 
@@ -369,6 +382,10 @@ return orderFor;
     }
 
 
+    
+        
+
+    
 
 
 

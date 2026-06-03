@@ -53,4 +53,10 @@ public class PaymentRepository : RepositoryBase<Payment>, IPaymentRepository
     {
         Update(Payment);
     }
+
+    public async Task<Payment> GetByIdempotencyAsync(string idempotencyKey, bool track)
+    {
+      return   await FindByCondition(p=>p.IdempotencyKey==idempotencyKey,track).FirstOrDefaultAsync();
+
+    }
 }

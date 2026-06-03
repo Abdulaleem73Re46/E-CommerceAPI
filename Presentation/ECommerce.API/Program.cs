@@ -18,6 +18,7 @@ using Service.Contracts;
 
 using Service;
 using Core.Shared.DataTransferObjects;
+using Core.Shared.Helpers;
 
 
 
@@ -71,16 +72,14 @@ NewtonsoftJsonInputFormatter GetJsonPatchInputFormatter()=>
 new ServiceCollection().AddMvc().AddNewtonsoftJson().Services.BuildServiceProvider().GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters.OfType<NewtonsoftJsonInputFormatter>().First();
 
 
-builder.Services.AddScoped<IPaymentGateway,MockPayment>();
+
 
 builder.Services.AddConfigureRateLimiting();
 
 builder.Services.AddMemoryCache();
 
-
-
-builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
-builder.Services.AddScoped<IPaymentService,StripePaymentService>();
+builder.Services.AddScoped<IPaymentGateway,MockPaymentService>();
+builder.Services.AddScoped<IPaymentWebhookSimulator, MockPaymentWebhookSimulator>();
 
 
 var app = builder.Build();
@@ -115,7 +114,7 @@ if (app.Environment.IsDevelopment())
 //     });
 // });
 
-app.UseMiddleware<ExceptionMiddleWare>();
+// app.UseMiddleware<ExceptionMiddleWare>();
 //app.UseHttpsRedirection();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions

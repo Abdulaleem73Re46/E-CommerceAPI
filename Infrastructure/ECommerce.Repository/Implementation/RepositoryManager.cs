@@ -51,10 +51,10 @@ private readonly Lazy<IOrderRepository> _order;
     public ICategoryRepository CategoryRepository => _category.Value ;
     
   public IPaymentTransactionRepository PaymentTransactionRepository => _paymentTransaction.Value;
-    public IWebHookEventRepository WebhookEventRepository => _webHookEventRepository.Value;
+  //  public IWebHookEventRepository WebhookEventRepository => _webHookEventRepository.Value;
     public IIdempotencyRecordRepository IdempotencyRecordRepository => _idempotency.Value;
 
-
+    public IWebHookEventRepository WebHookEventRepository => _webHookEventRepository.Value;
 
     public async Task SaveAsync()=>await _repository.SaveChangesAsync();
 

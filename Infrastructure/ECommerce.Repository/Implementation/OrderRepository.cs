@@ -55,15 +55,7 @@ public class OrderRepository : RepositoryBase<Order>, IOrderRepository
        
     }
 
-    public async  Task<Payment> GetPaymentByOrderId(Guid OrderId)
-    {
-        
-       var order=await _repo.Orders.FindAsync(OrderId);
-     var payment=await _repo.Payments.FindAsync(order.PaymentId);
-     return payment;
-      
     
-    }
 
 
 
