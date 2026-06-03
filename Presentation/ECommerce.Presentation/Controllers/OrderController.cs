@@ -101,7 +101,7 @@ public async Task<IActionResult> CreateOrder(string userId, [FromBody] OrderForC
 
 //     }
 
-   [HttpPost("confirmOrder{}")]
+   //[HttpPost("confirmOrder{}")]
 
 
    [HttpDelete("delete/{orderId}")]
