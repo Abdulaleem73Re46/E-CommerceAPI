@@ -69,7 +69,7 @@ namespace ECommerce.Presentation;
         }
 
 
-        var paymentIntent=await _service.PaymentService.CreatePaymentIntentAsync(OrderId,IdempotencyKey);
+        var paymentIntent=await _service.MockPaymentService.CreatePaymentIntentAsync(OrderId,IdempotencyKey);
 return Ok(paymentIntent);
         
      
