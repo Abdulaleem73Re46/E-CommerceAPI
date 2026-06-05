@@ -1,6 +1,8 @@
 using System.Text.Json;
-using Core.Shared.ErrorResponse;
+using Core.Shared.Helpers;
 using Core.Entities.Exceptions;
+
+namespace API.Middleware;
 
 public class GlobalExceptionMiddleware
 {
