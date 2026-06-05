@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
-
+using APIMiddleware;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
@@ -83,6 +83,8 @@ builder.Services.AddScoped<IPaymentWebhookSimulator, MockPaymentWebhookSimulator
 
 
 var app = builder.Build();
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -91,30 +93,6 @@ if (app.Environment.IsDevelopment())
 }   
 
 
-
-// app.UseExceptionHandler(exceptionHandlerApp =>
-// {
-//     exceptionHandlerApp.Run(async context =>
-//     {
-//         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-//         context.Response.ContentType = "application/json";
-        
-//         var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
-//         var exception = exceptionHandlerPathFeature?.Error;
-        
-//         var response = new
-//         {
-//             StatusCode = context.Response.StatusCode,
-//             Message = exception?.Message ?? "An error occurred while processing your request.",
-        
-//             Detail = app.Environment.IsDevelopment() ? exception?.StackTrace : null
-//         };
-        
-//         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
-//     });
-// });
-
-// app.UseMiddleware<ExceptionMiddleWare>();
 //app.UseHttpsRedirection();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
