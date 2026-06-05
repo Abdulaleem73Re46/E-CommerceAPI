@@ -45,7 +45,7 @@ public async Task<IActionResult> GetCategories([FromQuery] CategoryParameter cat
      public async Task<IActionResult> CreateCategoryAsync([FromBody] CategoryForCreationDto categoryForCreation)
     {
         var cateCreate=await _service.CategoryService.CreateCategoryDtoAsync(categoryForCreation,trackChanges:true);
-        return CreatedAtAction(nameof(GetCategory),new {CategoryId=cateCreate.CategoryId,cateCreate});
+        return CreatedAtAction(nameof(GetCategory),new {CategoryId=cateCreate.CategoryId} ,cateCreate);
 
 
 
