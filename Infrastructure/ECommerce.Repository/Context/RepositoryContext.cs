@@ -20,6 +20,7 @@ public class RepositoryContext : IdentityDbContext<User>
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+public DbSet<UserPermission> UserPermissions { get; set; }
     public DbSet<IdempotencyRecord> IdempotencyRecords{get;set;}
     public DbSet<PaymentTransaction> PaymentTransactions{get;set;}
     public DbSet<WebHookEvent> WebHookEvents{get;set;}
