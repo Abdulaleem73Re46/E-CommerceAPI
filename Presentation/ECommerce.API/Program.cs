@@ -68,14 +68,14 @@ builder.Services.AddAuthorization(options =>
 
 
 
-var permissionFields = typeof(Permissions).GetFields()
-        .Where(f => f.IsLiteral && f.IsStatic && f.FieldType == typeof(string));
+var permissionFields = typeof(Permissions).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+        .Where(f => f.FieldType == typeof(string));
 
     foreach (var field in permissionFields)
     {
         var permissionName = (string)field.GetValue(null);
-        options.AddPolicy($"Has{permissionName.Replace(".", "")}", policy =>
-            policy.RequireClaim("Permission", permissionName));
+        options.AddPolicy($"Has{permissionName.Replace(".", "")}", 
+            policy => policy.RequireClaim("Permission", permissionName));
     }
 });
 
