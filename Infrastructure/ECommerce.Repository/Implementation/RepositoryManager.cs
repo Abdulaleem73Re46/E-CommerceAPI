@@ -20,6 +20,7 @@ private readonly Lazy<IOrderRepository> _order;
            private readonly Lazy<IIdempotencyRecordRepository> _idempotency;
            private readonly Lazy<IWebHookEventRepository> _webHookEventRepository;
            private readonly Lazy<IPaymentTransactionRepository> _paymentTransaction;
+private IUserPermissionRepository? _userPermissionRepository;
 
 
  public RepositoryManager(RepositoryContext repository)
@@ -35,6 +36,7 @@ private readonly Lazy<IOrderRepository> _order;
         _webHookEventRepository = new Lazy<IWebHookEventRepository>(() => new WebhookEventRepository(repository));
         _idempotency = new Lazy<IIdempotencyRecordRepository>(() => new IdempotencyRecordRepository(repository));
         
+    _userPermissionRepository ??= new UserPermissionRepository(repository);
 
     }
 
@@ -55,6 +57,7 @@ private readonly Lazy<IOrderRepository> _order;
     public IIdempotencyRecordRepository IdempotencyRecordRepository => _idempotency.Value;
 
     public IWebHookEventRepository WebHookEventRepository => _webHookEventRepository.Value;
+
 
     public async Task SaveAsync()=>await _repository.SaveChangesAsync();
 
