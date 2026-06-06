@@ -17,17 +17,19 @@ namespace Service;
 public sealed class AuthenticationService : IAuthenticationService
 {
     private readonly IMapper _mapper;
+private readonly IRepositoryManager _repositoryManager;
 
     private readonly UserManager<User> _userManager;  
     private User? _currentUser;
     private readonly JWTSettings _JwtSettings;
 
-    public AuthenticationService(IMapper mapper, UserManager<User> userManager,IOptions<JWTSettings> JwtSettings)
+    public AuthenticationService(IMapper mapper, UserManager<User> userManager,IOptions<JWTSettings> JwtSettings, IRepositoryManager repository )
     {
         _mapper = mapper;
         _userManager = userManager; 
     
         _JwtSettings=JwtSettings.Value;
+_repositoryManager=repository ;
 
     }
 
@@ -101,18 +103,13 @@ public sealed class AuthenticationService : IAuthenticationService
         }
 
     
-    if (roles.Contains("Admin"))
+   
+        var permissions = await _repositoryManager.UserPermissionRepository.GetUserPermissionsAsync(user.Id);
+    foreach (var perm in permissions)
     {
-        claims.Add(new Claim("Permission", Permissions.Product_Create));
-        claims.Add(new Claim("Permission", Permissions.Product_Edit));
-        claims.Add(new Claim("Permission", Permissions.Product_Delete));
-        claims.Add(new Claim("Permission", Permissions.Order_Approve));
+        claims.Add(new Claim("Permission", perm));
     }
-    else if (roles.Contains("user"))
-    {
-        claims.Add(new Claim("Permission", Permissions.Product_View));
-        claims.Add(new Claim("Permission", Permissions.Order_Create));
-    }
+
 
         
         return claims;
