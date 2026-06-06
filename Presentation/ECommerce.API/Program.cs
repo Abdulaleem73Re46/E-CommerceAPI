@@ -65,6 +65,18 @@ builder.Services.AddAuthorization(options =>
     
     options.AddPolicy("UserOrAdmin", policy => 
         policy.RequireRole("user", "admin"));
+
+
+
+var permissionFields = typeof(Permissions).GetFields()
+        .Where(f => f.IsLiteral && f.IsStatic && f.FieldType == typeof(string));
+
+    foreach (var field in permissionFields)
+    {
+        var permissionName = (string)field.GetValue(null);
+        options.AddPolicy($"Has{permissionName.Replace(".", "")}", policy =>
+            policy.RequireClaim("Permission", permissionName));
+    }
 });
 
 
