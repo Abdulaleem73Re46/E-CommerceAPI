@@ -99,6 +99,21 @@ public sealed class AuthenticationService : IAuthenticationService
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
+
+    
+    if (roles.Contains("Admin"))
+    {
+        claims.Add(new Claim("Permission", Permissions.Product_Create));
+        claims.Add(new Claim("Permission", Permissions.Product_Edit));
+        claims.Add(new Claim("Permission", Permissions.Product_Delete));
+        claims.Add(new Claim("Permission", Permissions.Order_Approve));
+    }
+    else if (roles.Contains("user"))
+    {
+        claims.Add(new Claim("Permission", Permissions.Product_View));
+        claims.Add(new Claim("Permission", Permissions.Order_Create));
+    }
+
         
         return claims;
     }
