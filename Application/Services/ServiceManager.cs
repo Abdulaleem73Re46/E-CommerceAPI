@@ -29,9 +29,14 @@ private readonly Lazy<IPaymentGateway> _MockPaymentService;
 
 private readonly Lazy<IAuthenticationService> _Authentication;
 
+private readonly Lazy<IUserPermissionRepository> _userPermissionRepository;
+
 
     public ServiceManager(IRepositoryManager repository,IMapper mapper,UserManager<User>  user,IConfiguration configuration,IPaymentGateway paymentGateway,IOptions<JWTSettings> options)
     {
+
+_userPermissionRepository=new Lazy<IUserPermissionRepository>(()
+ =>repository.UserPermissionRepository);
 
     _categoryService=new Lazy<ICategoryService>(()=>new CategoryService(repository,mapper));
     _productService=new Lazy<IProductService>(()=>new ProductService(repository,mapper));
@@ -64,6 +69,7 @@ private readonly Lazy<IAuthenticationService> _Authentication;
     public IAuthenticationService AuthenticationService => _Authentication.Value;
 
     public IPaymentGateway MockPaymentService =>_MockPaymentService.Value ;
+    public IUserPermissionRepository UserPermissionRepository => _userPermissionRepository.Value;
 
     // public IMemoryCache MemoryCache=>memoryCache.Value;
 
