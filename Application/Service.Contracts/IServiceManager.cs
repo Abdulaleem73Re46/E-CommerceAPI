@@ -17,7 +17,7 @@ public interface IServiceManager
 IAuthenticationService AuthenticationService{get;}
 IPaymentGateway MockPaymentService{get;}
 
-
+IUserPermissionRepository UserPermissionRepository{get;} 
 
 }
 
